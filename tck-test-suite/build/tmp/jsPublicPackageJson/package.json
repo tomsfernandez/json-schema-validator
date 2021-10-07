@@ -1,0 +1,10 @@
+{
+  "name": "json-schema-validator-tck-test-suite",
+  "version": "1.0.0-SNAPSHOT",
+  "main": "json-schema-validator-tck-test-suite.js",
+  "devDependencies": {},
+  "dependencies": {},
+  "peerDependencies": {},
+  "optionalDependencies": {},
+  "bundledDependencies": []
+}

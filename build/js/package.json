@@ -1,0 +1,16 @@
+{
+  "name": "json-schema-validator",
+  "version": "unspecified",
+  "private": true,
+  "workspaces": [
+    "packages/json-schema-validator-schema-validation",
+    "packages/json-schema-validator-tck-test-suite",
+    "packages/json-schema-validator-tck-test-suite-test"
+  ],
+  "resolutions": {},
+  "devDependencies": {},
+  "dependencies": {},
+  "peerDependencies": {},
+  "optionalDependencies": {},
+  "bundledDependencies": []
+}

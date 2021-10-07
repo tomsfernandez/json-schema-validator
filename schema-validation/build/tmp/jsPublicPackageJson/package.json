@@ -1,0 +1,10 @@
+{
+  "name": "json-schema-validator-schema-validation",
+  "version": "1.0.0-SNAPSHOT",
+  "main": "json-schema-validator-schema-validation.js",
+  "devDependencies": {},
+  "dependencies": {},
+  "peerDependencies": {},
+  "optionalDependencies": {},
+  "bundledDependencies": []
+}
