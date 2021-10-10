@@ -37,7 +37,7 @@ public class MultipleOfTest {
   }
 
   @Test
-  public fun `invalid_instance_should_not_raise_error_when_float_division___inf`(): Unit {
+  public fun invalid_instance_should_not_raise_error_when_float_division___inf(): Unit {
     val schema = "{\"type\":\"integer\",\"multipleOf\":0.123456789}"
     val `always_invalid__but_naive_implementations_may_raise_an_overflow_error` = "1e308"
     run_test(schema, `always_invalid__but_naive_implementations_may_raise_an_overflow_error`, false,

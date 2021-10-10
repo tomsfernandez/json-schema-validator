@@ -9,7 +9,7 @@ import kotlin.test.assertTrue
 
 fun provideParser(draft: String): RuleParser {
     return when(draft) {
-        "DRAFT_4" -> DraftParsers.DRAFT_4
+        "DRAFT_4" -> DraftParsers.DRAFT_4_ROOT
         else -> throw RuntimeException("something")
     }
 }

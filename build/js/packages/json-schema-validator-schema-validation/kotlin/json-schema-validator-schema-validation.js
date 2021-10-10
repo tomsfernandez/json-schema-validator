@@ -37,6 +37,7 @@
   var to = Kotlin.kotlin.to_ujzrz7$;
   var mapOf = Kotlin.kotlin.collections.mapOf_qfcya0$;
   var any = Kotlin.kotlin.collections.any_7wnvza$;
+  var distinct = Kotlin.kotlin.collections.distinct_7wnvza$;
   var plus = Kotlin.kotlin.collections.plus_mydzjv$;
   var toList = Kotlin.kotlin.collections.toList_7wnvza$;
   var toSet = Kotlin.kotlin.collections.toSet_7wnvza$;
@@ -828,9 +829,49 @@
   Error_0.prototype.equals = function (other) {
     return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && Kotlin.equals(this.reason, other.reason))));
   };
+  function SchemaParseResult(rule, errors, refs, index) {
+    this.rule = rule;
+    this.errors = errors;
+    this.refs = refs;
+    this.index = index;
+  }
+  SchemaParseResult.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'SchemaParseResult',
+    interfaces: []
+  };
+  SchemaParseResult.prototype.component1 = function () {
+    return this.rule;
+  };
+  SchemaParseResult.prototype.component2 = function () {
+    return this.errors;
+  };
+  SchemaParseResult.prototype.component3 = function () {
+    return this.refs;
+  };
+  SchemaParseResult.prototype.component4 = function () {
+    return this.index;
+  };
+  SchemaParseResult.prototype.copy_kffptr$ = function (rule, errors, refs, index) {
+    return new SchemaParseResult(rule === void 0 ? this.rule : rule, errors === void 0 ? this.errors : errors, refs === void 0 ? this.refs : refs, index === void 0 ? this.index : index);
+  };
+  SchemaParseResult.prototype.toString = function () {
+    return 'SchemaParseResult(rule=' + Kotlin.toString(this.rule) + (', errors=' + Kotlin.toString(this.errors)) + (', refs=' + Kotlin.toString(this.refs)) + (', index=' + Kotlin.toString(this.index)) + ')';
+  };
+  SchemaParseResult.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.rule) | 0;
+    result = result * 31 + Kotlin.hashCode(this.errors) | 0;
+    result = result * 31 + Kotlin.hashCode(this.refs) | 0;
+    result = result * 31 + Kotlin.hashCode(this.index) | 0;
+    return result;
+  };
+  SchemaParseResult.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.rule, other.rule) && Kotlin.equals(this.errors, other.errors) && Kotlin.equals(this.refs, other.refs) && Kotlin.equals(this.index, other.index)))));
+  };
   function DraftParsers() {
     DraftParsers_instance = this;
-    this.DRAFT_4 = new SchemaRuleParser(listOf([ConstRuleParser_getInstance(), EnumRuleParser_getInstance(), TypeRuleParser_getInstance(), new AllOfRuleParser(Draft4ParserFactory_getInstance()), new AnyOfRuleParser(Draft4ParserFactory_getInstance()), new NotRuleParser(Draft4ParserFactory_getInstance()), new OneOfRuleParser(Draft4ParserFactory_getInstance()), new IfThenElseRuleParser(Draft4ParserFactory_getInstance()), ConditionalExclusiveMaximumRuleParser_getInstance(), ConditionalExclusiveMinimumRuleParser_getInstance(), RequiredRuleParser_getInstance(), MultipleOfRuleParser_getInstance(), MinLengthRuleParser_getInstance(), MaxLengthRuleParser_getInstance(), MaxPropertiesRuleParser_getInstance(), MinPropertiesRuleParser_getInstance(), new AdditionalPropertiesRuleParser(Draft4ParserFactory_getInstance()), new DependenciesRuleParser(Draft4ParserFactory_getInstance()), new PropertiesRuleParser(Draft4ParserFactory_getInstance()), MaxItemsRuleParser_getInstance(), MinItemsRuleParser_getInstance(), PatternRuleParser_getInstance(), new ItemsRuleParser(Draft4ParserFactory_getInstance()), new AdditionalItemsRuleParser(Draft4ParserFactory_getInstance()), new PatternPropertiesRuleParser(Draft4ParserFactory_getInstance()), StringFormatRuleParser$Companion_getInstance().default()]));
+    this.DRAFT_4 = new SchemaRuleParser(listOf([ConstRuleParser_getInstance(), EnumRuleParser_getInstance(), TypeRuleParser_getInstance(), new AllOfRuleParser(Draft4ParserFactory_getInstance()), new AnyOfRuleParser(Draft4ParserFactory_getInstance()), new NotRuleParser(Draft4ParserFactory_getInstance()), new OneOfRuleParser(Draft4ParserFactory_getInstance()), new IfThenElseRuleParser(Draft4ParserFactory_getInstance()), ConditionalExclusiveMaximumRuleParser_getInstance(), ConditionalExclusiveMinimumRuleParser_getInstance(), RequiredRuleParser_getInstance(), MultipleOfRuleParser_getInstance(), MinLengthRuleParser_getInstance(), MaxLengthRuleParser_getInstance(), MaxPropertiesRuleParser_getInstance(), MinPropertiesRuleParser_getInstance(), new AdditionalPropertiesRuleParser(Draft4ParserFactory_getInstance()), new DependenciesRuleParser(Draft4ParserFactory_getInstance()), new PropertiesRuleParser(Draft4ParserFactory_getInstance()), MaxItemsRuleParser_getInstance(), MinItemsRuleParser_getInstance(), PatternRuleParser_getInstance(), new ItemsRuleParser(Draft4ParserFactory_getInstance()), new AdditionalItemsRuleParser(Draft4ParserFactory_getInstance()), new PatternPropertiesRuleParser(Draft4ParserFactory_getInstance()), StringFormatRuleParser$Companion_getInstance().default(), UniqueItemsRuleParser_getInstance()]));
   }
   DraftParsers.$metadata$ = {
     kind: Kind_OBJECT,
@@ -1832,6 +1873,65 @@
     if (MinItemsRuleParser_instance === null) {
       new MinItemsRuleParser();
     }return MinItemsRuleParser_instance;
+  }
+  function UniqueItemsRule(shouldBeUnique) {
+    this.shouldBeUnique = shouldBeUnique;
+  }
+  function UniqueItemsRule$eval$lambda(values) {
+    return distinct(values.elements()).size === values.elements().size ? emptyList() : listOf_0(new Error_0('Some elements in the array are not unique'));
+  }
+  UniqueItemsRule.prototype.eval_vzh9da$ = function (element) {
+    if (!this.shouldBeUnique)
+      return emptyList();
+    return asArray(element).map_r1ursk$(UniqueItemsRule$eval$lambda).rightOrDefault_mh5how$(emptyList());
+  };
+  UniqueItemsRule.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'UniqueItemsRule',
+    interfaces: [ValidationRule]
+  };
+  UniqueItemsRule.prototype.component1 = function () {
+    return this.shouldBeUnique;
+  };
+  UniqueItemsRule.prototype.copy_6taknv$ = function (shouldBeUnique) {
+    return new UniqueItemsRule(shouldBeUnique === void 0 ? this.shouldBeUnique : shouldBeUnique);
+  };
+  UniqueItemsRule.prototype.toString = function () {
+    return 'UniqueItemsRule(shouldBeUnique=' + Kotlin.toString(this.shouldBeUnique) + ')';
+  };
+  UniqueItemsRule.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.shouldBeUnique) | 0;
+    return result;
+  };
+  UniqueItemsRule.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && Kotlin.equals(this.shouldBeUnique, other.shouldBeUnique))));
+  };
+  function UniqueItemsRuleParser() {
+    UniqueItemsRuleParser_instance = this;
+    this.key_0 = 'uniqueItems';
+  }
+  UniqueItemsRuleParser.prototype.canParse_3boyfh$ = function (element) {
+    return element.containsKey_61zpoe$(this.key_0);
+  };
+  function UniqueItemsRuleParser$parse$lambda(value) {
+    return new UniqueItemsRule(value);
+  }
+  UniqueItemsRuleParser.prototype.parse_3boyfh$ = function (element) {
+    return asBoolean(element.get_61zpoe$(this.key_0)).map_apdcv9$(getCallableRef('listOf', function (p1) {
+      return listOf_0(p1);
+    }), UniqueItemsRuleParser$parse$lambda);
+  };
+  UniqueItemsRuleParser.$metadata$ = {
+    kind: Kind_OBJECT,
+    simpleName: 'UniqueItemsRuleParser',
+    interfaces: [RuleParser]
+  };
+  var UniqueItemsRuleParser_instance = null;
+  function UniqueItemsRuleParser_getInstance() {
+    if (UniqueItemsRuleParser_instance === null) {
+      new UniqueItemsRuleParser();
+    }return UniqueItemsRuleParser_instance;
   }
   function AllOfRule(rules) {
     this.rules = rules;
@@ -4001,7 +4101,7 @@
     KnownFormatValidators_instance = this;
   }
   KnownFormatValidators.prototype.default = function () {
-    return mapOf([to('date-time', dateTimeValidator), to('email', emailValidator), to('hostname', hostNameValidator), to('ipv4', ipv4Validator), to('ipv6', ipv6Validator)]);
+    return mapOf([to('date-time', dateTimeValidator), to('email', emailValidator), to('hostname', hostNameValidator), to('ipv4', ipv4Validator), to('ipv6', ipv6Validator), to('uri', uriValidator)]);
   };
   KnownFormatValidators.$metadata$ = {
     kind: Kind_OBJECT,
@@ -4014,10 +4114,15 @@
       new KnownFormatValidators();
     }return KnownFormatValidators_instance;
   }
+  var uriRegex;
   var ipv6Regex;
   var ipv4Regex;
   var hostNameRegex;
   var emailRegex;
+  function uriValidator$lambda(value) {
+    return uriRegex.matches_6bul2c$(value) ? null : new Error_0(value + ' is not in uri format');
+  }
+  var uriValidator;
   function ipv6Validator$lambda(value) {
     return ipv6Regex.matches_6bul2c$(value) ? null : new Error_0(value + ' is not in ipv6 format');
   }
@@ -4149,6 +4254,7 @@
   package$validator.OrValidationRule = OrValidationRule;
   package$validator.Error = Error_0;
   var package$rules = package$validator.rules || (package$validator.rules = {});
+  package$rules.SchemaParseResult = SchemaParseResult;
   Object.defineProperty(package$rules, 'DraftParsers', {
     get: DraftParsers_getInstance
   });
@@ -4205,6 +4311,10 @@
   package$array.MinItemsRule = MinItemsRule;
   Object.defineProperty(package$array, 'MinItemsRuleParser', {
     get: MinItemsRuleParser_getInstance
+  });
+  package$array.UniqueItemsRule = UniqueItemsRule;
+  Object.defineProperty(package$array, 'UniqueItemsRuleParser', {
+    get: UniqueItemsRuleParser_getInstance
   });
   var package$boolean = package$rules.boolean || (package$rules.boolean = {});
   package$boolean.AllOfRule = AllOfRule;
@@ -4307,6 +4417,11 @@
   Object.defineProperty(package$string, 'KnownFormatValidators', {
     get: KnownFormatValidators_getInstance
   });
+  Object.defineProperty(package$string, 'uriRegex', {
+    get: function () {
+      return uriRegex;
+    }
+  });
   Object.defineProperty(package$string, 'ipv6Regex', {
     get: function () {
       return ipv6Regex;
@@ -4325,6 +4440,11 @@
   Object.defineProperty(package$string, 'emailRegex', {
     get: function () {
       return emailRegex;
+    }
+  });
+  Object.defineProperty(package$string, 'uriValidator', {
+    get: function () {
+      return uriValidator;
     }
   });
   Object.defineProperty(package$string, 'ipv6Validator', {
@@ -4394,10 +4514,12 @@
   MinLengthRule.prototype.getString_vzh9da$ = StringLengthRule.prototype.getString_vzh9da$;
   parseProperty = parseProperty$lambda;
   parsePatternProperty = parsePatternProperty$lambda;
+  uriRegex = Regex_init("^([a-z0-9+.-]+):(?://(?:((?:[a-z0-9-._~!$&'()*+,;=:]|%[0-9A-F]{2})*)@)?((?:[a-z0-9-._~!$&'()*+,;=]|%[0-9A-F]{2})*)(?::(\\d*))?(/(?:[a-z0-9-._~!$&'()*+,;=:@/]|%[0-9A-F]{2})*)?|(/?(?:[a-z0-9-._~!$&'()*+,;=:@]|%[0-9A-F]{2})+(?:[a-z0-9-._~!$&'()*+,;=:@/]|%[0-9A-F]{2})*)?)(?:\\?((?:[a-z0-9-._~!$&'()*+,;=:/?@]|%[0-9A-F]{2})*))?(?:#((?:[a-z0-9-._~!$&'()*+,;=:/?@]|%[0-9A-F]{2})*))?$");
   ipv6Regex = Regex_init('^\\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:)))(%.+)?\\s*$');
   ipv4Regex = Regex_init('^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$');
   hostNameRegex = Regex_init('^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)+([A-Za-z]|[A-Za-z][A-Za-z0-9\\-]*[A-Za-z0-9])$');
   emailRegex = Regex_init('(?:[a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*|"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])');
+  uriValidator = uriValidator$lambda;
   ipv6Validator = ipv6Validator$lambda;
   ipv4Validator = ipv4Validator$lambda;
   hostNameValidator = hostNameValidator$lambda;

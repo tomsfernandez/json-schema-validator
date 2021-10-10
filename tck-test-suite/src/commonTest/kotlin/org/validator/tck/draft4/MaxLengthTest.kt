@@ -16,7 +16,7 @@ public class MaxLengthTest {
     run_test(schema, `too_long_is_invalid`, false, "DRAFT_4")
     val `ignores_non_strings` = "100"
     run_test(schema, `ignores_non_strings`, true, "DRAFT_4")
-//    val `two_supplementary_Unicode_code_points_is_long_enough` = "\"💩💩\""
-//    run_test(schema, `two_supplementary_Unicode_code_points_is_long_enough`, true, "DRAFT_4")
+    val `two_supplementary_Unicode_code_points_is_long_enough` = "\"💩💩\""
+    run_test(schema, `two_supplementary_Unicode_code_points_is_long_enough`, true, "DRAFT_4")
   }
 }
