@@ -15,7 +15,7 @@ object MultipleOfRuleParser : NumberRuleParser {
 data class MultipleOfRule(val multipleOf: Number) : NumberRule {
 
     override fun eval(number: Number): List<Error> {
-        return if (number.toDouble() % multipleOf.toDouble() == 0.0) emptyList()
+        return if ((number.toDouble() / multipleOf.toDouble()) % 1 == 0.0) emptyList()
         else listOf(Error("$number is not multiple of $multipleOf"))
     }
 }

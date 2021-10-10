@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.validator.tck.draft4.PatternPropertiesTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2021-10-10T21:33:34" hostname="tomasfer-ltm.internal.salesforce.com" time="0.002">
+  <properties/>
+  <testcase name="patternProperties_validates_properties_matching_a_regex[jvm]" classname="org.validator.tck.draft4.PatternPropertiesTest" time="0.001"/>
+  <testcase name="regexes_are_not_anchored_by_default_and_are_case_sensitive[jvm]" classname="org.validator.tck.draft4.PatternPropertiesTest" time="0.0"/>
+  <testcase name="multiple_simultaneous_patternProperties_are_validated[jvm]" classname="org.validator.tck.draft4.PatternPropertiesTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

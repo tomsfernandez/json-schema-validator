@@ -21,22 +21,22 @@ object TypeRuleParser: RuleParser {
     override fun parse(element: JsonObject): Either<List<Error>, ValidationRule> {
         return when (val typeEntry = element.get("type")) {
             is JsonArray -> parseArrayElements(typeEntry)
-            is JsonScalar -> parseScalarElement(typeEntry).map(::listOf) { x -> Either.Right(x) }
+            is JsonScalar -> parseScalarElement(typeEntry).mapEither(::listOf) { x -> Either.Right(x) }
             else -> Either.Left(listOf(Error("Element is neither an array or a scalar")))
         }
     }
 
     private fun parseArrayElements(array: JsonArray): Either<List<Error>, ValidationRule> {
         val schemaOrErrors: List<Either<Error, ValidationRule>> = array.elements().map { x -> this.parseScalarElement(x) }
-        val errors = schemaOrErrors.mapNotNull { x -> x.toLeftValueOrNull() }
+        val errors = schemaOrErrors.mapNotNull { x -> x.left() }
         return if (errors.isEmpty()) {
-            val rules = OrValidationRule(schemaOrErrors.mapNotNull { it.toRightValueOrNull() })
+            val rules = OrValidationRule(schemaOrErrors.mapNotNull { it.right() })
             Either.Right(rules)
         } else Either.Left(errors)
     }
 
     private fun parseScalarElement(element: JsonElement): Either<Error, ValidationRule> {
-        return element.asScalar().map(::identity) { x -> parseScalarElement(x) }
+        return element.asScalar().mapEither(::identity) { x -> parseScalarElement(x) }
     }
 
     private fun parseScalarElement(scalar: JsonScalar): Either<Error, ValidationRule> {
@@ -96,6 +96,6 @@ object IntegerRule : ValidationRule {
     }
 
     private fun evalInteger(scalar: JsonScalar): List<Error> = scalar.asNumber().fold(::listOf) { num ->
-        if (num.toInt() == num) emptyList() else listOf(Error("Value is not an integer"))
+        if (num.toDouble() % 1.0 == 0.0) emptyList() else listOf(Error("Value is not an integer"))
     }
 }

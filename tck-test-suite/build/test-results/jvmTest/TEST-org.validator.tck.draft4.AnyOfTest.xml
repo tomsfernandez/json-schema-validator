@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.validator.tck.draft4.AnyOfTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2021-10-10T21:33:34" hostname="tomasfer-ltm.internal.salesforce.com" time="0.002">
+  <properties/>
+  <testcase name="nested_anyOf__to_check_validation_semantics[jvm]" classname="org.validator.tck.draft4.AnyOfTest" time="0.0"/>
+  <testcase name="anyOf_complex_types[jvm]" classname="org.validator.tck.draft4.AnyOfTest" time="0.001"/>
+  <testcase name="anyOf_with_base_schema[jvm]" classname="org.validator.tck.draft4.AnyOfTest" time="0.0"/>
+  <testcase name="anyOf[jvm]" classname="org.validator.tck.draft4.AnyOfTest" time="0.001"/>
+  <testcase name="anyOf_with_one_empty_schema[jvm]" classname="org.validator.tck.draft4.AnyOfTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

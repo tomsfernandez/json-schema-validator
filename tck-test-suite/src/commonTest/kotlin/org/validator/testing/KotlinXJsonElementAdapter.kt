@@ -40,7 +40,7 @@ object KotlinXJsonElementAdapter {
             else -> {
                 return when {
                     scalar.isString -> StringJsonScalar(scalar.content)
-                    scalar.intOrNull != null -> NumberJsonScalar(scalar.int)
+                    scalar.intOrNull != null -> IntJsonScalar(scalar.int)
                     scalar.booleanOrNull != null -> BooleanJsonScalar(scalar.boolean)
                     scalar.doubleOrNull != null -> NumberJsonScalar(scalar.double)
                     else -> StringJsonScalar(scalar.content)

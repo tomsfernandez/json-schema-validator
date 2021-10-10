@@ -1,14 +1,16 @@
 (function (root, factory) {
   if (typeof define === 'function' && define.amd)
-    define(['exports', 'kotlin'], factory);
+    define(['exports', 'kotlin', 'Kotlin-DateTime-library-kotlinx-datetime-js-legacy'], factory);
   else if (typeof exports === 'object')
-    factory(module.exports, require('kotlin'));
+    factory(module.exports, require('kotlin'), require('Kotlin-DateTime-library-kotlinx-datetime-js-legacy'));
   else {
     if (typeof kotlin === 'undefined') {
       throw new Error("Error loading module 'json-schema-validator-schema-validation'. Its dependency 'kotlin' was not found. Please, check whether 'kotlin' is loaded prior to 'json-schema-validator-schema-validation'.");
-    }root['json-schema-validator-schema-validation'] = factory(typeof this['json-schema-validator-schema-validation'] === 'undefined' ? {} : this['json-schema-validator-schema-validation'], kotlin);
+    }if (typeof this['Kotlin-DateTime-library-kotlinx-datetime-js-legacy'] === 'undefined') {
+      throw new Error("Error loading module 'json-schema-validator-schema-validation'. Its dependency 'Kotlin-DateTime-library-kotlinx-datetime-js-legacy' was not found. Please, check whether 'Kotlin-DateTime-library-kotlinx-datetime-js-legacy' is loaded prior to 'json-schema-validator-schema-validation'.");
+    }root['json-schema-validator-schema-validation'] = factory(typeof this['json-schema-validator-schema-validation'] === 'undefined' ? {} : this['json-schema-validator-schema-validation'], kotlin, this['Kotlin-DateTime-library-kotlinx-datetime-js-legacy']);
   }
-}(this, function (_, Kotlin) {
+}(this, function (_, Kotlin, $module$Kotlin_DateTime_library_kotlinx_datetime_js_legacy) {
   'use strict';
   var Kind_INTERFACE = Kotlin.Kind.INTERFACE;
   var equals = Kotlin.equals;
@@ -17,24 +19,34 @@
   var getOrNull = Kotlin.kotlin.collections.getOrNull_yzln2o$;
   var Kind_OBJECT = Kotlin.Kind.OBJECT;
   var throwCCE = Kotlin.throwCCE;
+  var numberToDouble = Kotlin.numberToDouble;
+  var Pair = Kotlin.kotlin.Pair;
+  var ensureNotNull = Kotlin.ensureNotNull;
+  var Any = Object;
   var ArrayList_init = Kotlin.kotlin.collections.ArrayList_init_287e2$;
-  var Pair_init = Kotlin.kotlin.Pair;
   var collectionSizeOrDefault = Kotlin.kotlin.collections.collectionSizeOrDefault_ba2ldo$;
   var ArrayList_init_0 = Kotlin.kotlin.collections.ArrayList_init_ww73n8$;
+  var JsMath = Math;
   var emptyList = Kotlin.kotlin.collections.emptyList_287e2$;
   var flatten = Kotlin.kotlin.collections.flatten_u0ad8z$;
   var Collection = Kotlin.kotlin.collections.Collection;
   var listOf = Kotlin.kotlin.collections.listOf_i5x0yv$;
   var addAll = Kotlin.kotlin.collections.addAll_ipc267$;
-  var ensureNotNull = Kotlin.ensureNotNull;
   var listOf_0 = Kotlin.kotlin.collections.listOf_mh5how$;
   var getCallableRef = Kotlin.getCallableRef;
   var to = Kotlin.kotlin.to_ujzrz7$;
   var mapOf = Kotlin.kotlin.collections.mapOf_qfcya0$;
-  var numberToInt = Kotlin.numberToInt;
+  var any = Kotlin.kotlin.collections.any_7wnvza$;
   var plus = Kotlin.kotlin.collections.plus_mydzjv$;
-  var numberToDouble = Kotlin.numberToDouble;
+  var toList = Kotlin.kotlin.collections.toList_7wnvza$;
+  var toSet = Kotlin.kotlin.collections.toSet_7wnvza$;
+  var minus = Kotlin.kotlin.collections.minus_khz7k3$;
+  var Regex_init = Kotlin.kotlin.text.Regex_init_61zpoe$;
+  var numberToInt = Kotlin.numberToInt;
   var subtract = Kotlin.kotlin.collections.subtract_q4559j$;
+  var Instant = $module$Kotlin_DateTime_library_kotlinx_datetime_js_legacy.kotlinx.datetime.Instant;
+  var toString = Kotlin.toString;
+  var Exception = Kotlin.kotlin.Exception;
   Either$Left.prototype = Object.create(Either.prototype);
   Either$Left.prototype.constructor = Either$Left;
   Either$Right.prototype = Object.create(Either.prototype);
@@ -49,6 +61,10 @@
   MaxPropertiesRuleParser.prototype.constructor = MaxPropertiesRuleParser;
   MinPropertiesRuleParser.prototype = Object.create(PropertyAmountParser.prototype);
   MinPropertiesRuleParser.prototype.constructor = MinPropertiesRuleParser;
+  PropertiesRuleParser.prototype = Object.create(AbstractPropertiesRuleParser.prototype);
+  PropertiesRuleParser.prototype.constructor = PropertiesRuleParser;
+  PatternPropertiesRuleParser.prototype = Object.create(AbstractPropertiesRuleParser.prototype);
+  PatternPropertiesRuleParser.prototype.constructor = PatternPropertiesRuleParser;
   function JsonElement() {
   }
   JsonElement.$metadata$ = {
@@ -68,6 +84,38 @@
     var tmp$;
     if (Kotlin.isType($receiver, JsonScalar))
       tmp$ = new Either$Right($receiver);
+    else
+      tmp$ = new Either$Left(new Error_0('Element is not a scalar'));
+    return tmp$;
+  }
+  function asString($receiver) {
+    var tmp$;
+    if (Kotlin.isType($receiver, JsonScalar))
+      tmp$ = asString_0($receiver);
+    else
+      tmp$ = new Either$Left(new Error_0('Element is not a scalar'));
+    return tmp$;
+  }
+  function asBoolean($receiver) {
+    var tmp$;
+    if (Kotlin.isType($receiver, JsonScalar))
+      tmp$ = asBoolean_0($receiver);
+    else
+      tmp$ = new Either$Left(new Error_0('Element is not a scalar'));
+    return tmp$;
+  }
+  function asNumber($receiver) {
+    var tmp$;
+    if (Kotlin.isType($receiver, JsonScalar))
+      tmp$ = asNumber_0($receiver);
+    else
+      tmp$ = new Either$Left(new Error_0('Element is not a scalar'));
+    return tmp$;
+  }
+  function asInteger($receiver) {
+    var tmp$;
+    if (Kotlin.isType($receiver, JsonScalar))
+      tmp$ = asInteger_0($receiver);
     else
       tmp$ = new Either$Left(new Error_0('Element is not a scalar'));
     return tmp$;
@@ -135,12 +183,27 @@
     tmp$ = $receiver.iterator();
     while (tmp$.hasNext()) {
       var item = tmp$.next();
-      destination.add_11rb$(new Pair_init(item.key, item.value));
+      destination.add_11rb$(new Pair(item.key, item.value));
     }
     return destination;
   };
   DefaultJsonObject.prototype.keys = function () {
     return this.map.keys;
+  };
+  DefaultJsonObject.prototype.containsKey_61zpoe$ = function (key) {
+    return this.map.containsKey_11rb$(key);
+  };
+  DefaultJsonObject.prototype.entries_t7befh$ = function (regex) {
+    var $receiver = this.entries();
+    var destination = ArrayList_init();
+    var tmp$;
+    tmp$ = $receiver.iterator();
+    while (tmp$.hasNext()) {
+      var element = tmp$.next();
+      if (regex.containsMatchIn_6bul2c$(element.first))
+        destination.add_11rb$(element);
+    }
+    return destination;
   };
   DefaultJsonObject.$metadata$ = {
     kind: Kind_CLASS,
@@ -257,7 +320,7 @@
       new DefaultNullElement();
     }return DefaultNullElement_instance;
   }
-  function asString($receiver) {
+  function asString_0($receiver) {
     var tmp$, tmp$_0;
     if (typeof $receiver.value === 'string') {
       tmp$_0 = new Either$Right(typeof (tmp$ = $receiver.value) === 'string' ? tmp$ : throwCCE());
@@ -265,7 +328,7 @@
       tmp$_0 = new Either$Left(new Error_0('Element is not a string'));
     return tmp$_0;
   }
-  function asBoolean($receiver) {
+  function asBoolean_0($receiver) {
     var tmp$, tmp$_0;
     if (typeof $receiver.value === 'boolean') {
       tmp$_0 = new Either$Right(typeof (tmp$ = $receiver.value) === 'boolean' ? tmp$ : throwCCE());
@@ -273,10 +336,18 @@
       tmp$_0 = new Either$Left(new Error_0('Element is not a boolean'));
     return tmp$_0;
   }
-  function asNumber($receiver) {
+  function asNumber_0($receiver) {
     var tmp$, tmp$_0;
     if (Kotlin.isNumber($receiver.value)) {
       tmp$_0 = new Either$Right(Kotlin.isNumber(tmp$ = $receiver.value) ? tmp$ : throwCCE());
+    } else
+      tmp$_0 = new Either$Left(new Error_0('Element is not a number'));
+    return tmp$_0;
+  }
+  function asInteger_0($receiver) {
+    var tmp$, tmp$_0;
+    if (typeof $receiver.value === 'number') {
+      tmp$_0 = new Either$Right(typeof (tmp$ = $receiver.value) === 'number' ? tmp$ : throwCCE());
     } else
       tmp$_0 = new Either$Left(new Error_0('Element is not a number'));
     return tmp$_0;
@@ -285,7 +356,25 @@
   }
   JsonScalar.prototype.deepEquals_vzh9da$ = function (element) {
     var tmp$;
-    if (Kotlin.isType(element, JsonScalar))
+    if (Kotlin.isType(element, NumberJsonScalar)) {
+      if (Kotlin.isType(this, NumberJsonScalar)) {
+        var x = numberToDouble(element.value) - numberToDouble(this.value);
+        tmp$ = JsMath.abs(x) === 0.0;
+      } else if (Kotlin.isType(this, IntJsonScalar)) {
+        var x_0 = numberToDouble(element.value) - this.value;
+        tmp$ = JsMath.abs(x_0) === 0.0;
+      } else
+        tmp$ = equals(element.value, this.value);
+    } else if (Kotlin.isType(element, IntJsonScalar)) {
+      if (Kotlin.isType(this, NumberJsonScalar)) {
+        var x_1 = element.value - numberToDouble(this.value);
+        tmp$ = JsMath.abs(x_1) === 0.0;
+      } else if (Kotlin.isType(this, IntJsonScalar)) {
+        var x_2 = element.value - this.value;
+        tmp$ = JsMath.abs(x_2) === 0.0;
+      } else
+        tmp$ = equals(element.value, this.value);
+    } else if (Kotlin.isType(element, JsonScalar))
       tmp$ = equals(element.value, this.value);
     else
       tmp$ = false;
@@ -296,38 +385,186 @@
     simpleName: 'JsonScalar',
     interfaces: [JsonElement]
   };
-  function DefaultJsonScalar(value) {
-    this.value_254tig$_0 = value;
+  function BooleanJsonScalar(value) {
+    this.value_lxrpsx$_0 = value;
   }
-  Object.defineProperty(DefaultJsonScalar.prototype, 'value', {
+  Object.defineProperty(BooleanJsonScalar.prototype, 'value', {
     get: function () {
-      return this.value_254tig$_0;
+      return this.value_lxrpsx$_0;
     }
   });
-  DefaultJsonScalar.$metadata$ = {
+  BooleanJsonScalar.$metadata$ = {
     kind: Kind_CLASS,
-    simpleName: 'DefaultJsonScalar',
+    simpleName: 'BooleanJsonScalar',
     interfaces: [JsonScalar]
   };
-  DefaultJsonScalar.prototype.component1 = function () {
+  BooleanJsonScalar.prototype.component1 = function () {
     return this.value;
   };
-  DefaultJsonScalar.prototype.copy_za3rmp$ = function (value) {
-    return new DefaultJsonScalar(value === void 0 ? this.value : value);
+  BooleanJsonScalar.prototype.copy_6taknv$ = function (value) {
+    return new BooleanJsonScalar(value === void 0 ? this.value : value);
   };
-  DefaultJsonScalar.prototype.toString = function () {
-    return 'DefaultJsonScalar(value=' + Kotlin.toString(this.value) + ')';
+  BooleanJsonScalar.prototype.toString = function () {
+    return 'BooleanJsonScalar(value=' + Kotlin.toString(this.value) + ')';
   };
-  DefaultJsonScalar.prototype.hashCode = function () {
+  BooleanJsonScalar.prototype.hashCode = function () {
     var result = 0;
     result = result * 31 + Kotlin.hashCode(this.value) | 0;
     return result;
   };
-  DefaultJsonScalar.prototype.equals = function (other) {
+  BooleanJsonScalar.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && Kotlin.equals(this.value, other.value))));
+  };
+  function StringJsonScalar(value) {
+    this.value_4423hw$_0 = value;
+  }
+  Object.defineProperty(StringJsonScalar.prototype, 'value', {
+    get: function () {
+      return this.value_4423hw$_0;
+    }
+  });
+  StringJsonScalar.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'StringJsonScalar',
+    interfaces: [JsonScalar]
+  };
+  StringJsonScalar.prototype.component1 = function () {
+    return this.value;
+  };
+  StringJsonScalar.prototype.copy_61zpoe$ = function (value) {
+    return new StringJsonScalar(value === void 0 ? this.value : value);
+  };
+  StringJsonScalar.prototype.toString = function () {
+    return 'StringJsonScalar(value=' + Kotlin.toString(this.value) + ')';
+  };
+  StringJsonScalar.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.value) | 0;
+    return result;
+  };
+  StringJsonScalar.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && Kotlin.equals(this.value, other.value))));
+  };
+  function NumberJsonScalar(value) {
+    this.value_oj18x8$_0 = value;
+  }
+  Object.defineProperty(NumberJsonScalar.prototype, 'value', {
+    get: function () {
+      return this.value_oj18x8$_0;
+    }
+  });
+  NumberJsonScalar.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'NumberJsonScalar',
+    interfaces: [JsonScalar]
+  };
+  NumberJsonScalar.prototype.component1 = function () {
+    return this.value;
+  };
+  NumberJsonScalar.prototype.copy_3p81yu$ = function (value) {
+    return new NumberJsonScalar(value === void 0 ? this.value : value);
+  };
+  NumberJsonScalar.prototype.toString = function () {
+    return 'NumberJsonScalar(value=' + Kotlin.toString(this.value) + ')';
+  };
+  NumberJsonScalar.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.value) | 0;
+    return result;
+  };
+  NumberJsonScalar.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && Kotlin.equals(this.value, other.value))));
+  };
+  function IntJsonScalar(value) {
+    this.value_d7u1kq$_0 = value;
+  }
+  Object.defineProperty(IntJsonScalar.prototype, 'value', {
+    get: function () {
+      return this.value_d7u1kq$_0;
+    }
+  });
+  IntJsonScalar.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'IntJsonScalar',
+    interfaces: [JsonScalar]
+  };
+  IntJsonScalar.prototype.component1 = function () {
+    return this.value;
+  };
+  IntJsonScalar.prototype.copy_za3lpa$ = function (value) {
+    return new IntJsonScalar(value === void 0 ? this.value : value);
+  };
+  IntJsonScalar.prototype.toString = function () {
+    return 'IntJsonScalar(value=' + Kotlin.toString(this.value) + ')';
+  };
+  IntJsonScalar.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.value) | 0;
+    return result;
+  };
+  IntJsonScalar.prototype.equals = function (other) {
     return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && Kotlin.equals(this.value, other.value))));
   };
   function identity(t) {
     return t;
+  }
+  function partitionList($receiver) {
+    var destination = ArrayList_init();
+    var tmp$;
+    tmp$ = $receiver.iterator();
+    while (tmp$.hasNext()) {
+      var element = tmp$.next();
+      var tmp$_0;
+      if ((tmp$_0 = element.left()) != null) {
+        destination.add_11rb$(tmp$_0);
+      }}
+    var lefts = destination;
+    var destination_0 = ArrayList_init();
+    var tmp$_1;
+    tmp$_1 = $receiver.iterator();
+    while (tmp$_1.hasNext()) {
+      var element_0 = tmp$_1.next();
+      var tmp$_0_0;
+      if ((tmp$_0_0 = element_0.right()) != null) {
+        destination_0.add_11rb$(tmp$_0_0);
+      }}
+    var rights = destination_0;
+    return new Pair(lefts, rights);
+  }
+  function partitionPairList($receiver) {
+    var destination = ArrayList_init();
+    var tmp$;
+    tmp$ = $receiver.iterator();
+    while (tmp$.hasNext()) {
+      var element = tmp$.next();
+      if (element.second.left() != null)
+        destination.add_11rb$(element);
+    }
+    var destination_0 = ArrayList_init_0(collectionSizeOrDefault(destination, 10));
+    var tmp$_0;
+    tmp$_0 = destination.iterator();
+    while (tmp$_0.hasNext()) {
+      var item = tmp$_0.next();
+      destination_0.add_11rb$(new Pair(item.first, ensureNotNull(item.second.left())));
+    }
+    var lefts = destination_0;
+    var destination_1 = ArrayList_init();
+    var tmp$_1;
+    tmp$_1 = $receiver.iterator();
+    while (tmp$_1.hasNext()) {
+      var element_0 = tmp$_1.next();
+      if (element_0.second.right() != null)
+        destination_1.add_11rb$(element_0);
+    }
+    var destination_2 = ArrayList_init_0(collectionSizeOrDefault(destination_1, 10));
+    var tmp$_2;
+    tmp$_2 = destination_1.iterator();
+    while (tmp$_2.hasNext()) {
+      var item_0 = tmp$_2.next();
+      destination_2.add_11rb$(new Pair(item_0.first, ensureNotNull(item_0.second.right())));
+    }
+    var rights = destination_2;
+    return new Pair(lefts, rights);
   }
   function Either() {
   }
@@ -393,22 +630,42 @@
       tmp$ = Kotlin.noWhenBranchMatched();
     return tmp$;
   };
-  Either.prototype.foldRight_r1ursk$ = function (fn) {
+  Either.prototype.fold_hgftkq$ = function (left, fnR) {
     var tmp$;
     if (Kotlin.isType(this, Either$Left))
-      tmp$ = this;
+      tmp$ = left;
     else if (Kotlin.isType(this, Either$Right))
-      tmp$ = new Either$Right(fn(this.r));
+      tmp$ = fnR(this.r);
     else
       tmp$ = Kotlin.noWhenBranchMatched();
     return tmp$;
   };
-  Either.prototype.map_ik7j40$ = function (fnL, fnR) {
+  Either.prototype.rightOrDefault_mh5how$ = function (left) {
+    var tmp$, tmp$_0;
+    if (Kotlin.isType(this, Either$Left))
+      tmp$_0 = left;
+    else if (Kotlin.isType(this, Either$Right))
+      tmp$_0 = (tmp$ = this.r) == null || Kotlin.isType(tmp$, Any) ? tmp$ : throwCCE();
+    else
+      tmp$_0 = Kotlin.noWhenBranchMatched();
+    return tmp$_0;
+  };
+  Either.prototype.mapEither_ik7j40$ = function (fnL, fnR) {
     var tmp$;
     if (Kotlin.isType(this, Either$Left))
       tmp$ = new Either$Left(fnL(this.l));
     else if (Kotlin.isType(this, Either$Right))
       tmp$ = fnR(this.r);
+    else
+      tmp$ = Kotlin.noWhenBranchMatched();
+    return tmp$;
+  };
+  Either.prototype.map_apdcv9$ = function (fnL, fnR) {
+    var tmp$;
+    if (Kotlin.isType(this, Either$Left))
+      tmp$ = new Either$Left(fnL(this.l));
+    else if (Kotlin.isType(this, Either$Right))
+      tmp$ = new Either$Right(fnR(this.r));
     else
       tmp$ = Kotlin.noWhenBranchMatched();
     return tmp$;
@@ -423,7 +680,17 @@
       tmp$ = Kotlin.noWhenBranchMatched();
     return tmp$;
   };
-  Either.prototype.toLeftValueOrNull = function () {
+  Either.prototype.mapLeft_2o04qz$ = function (fn) {
+    var tmp$;
+    if (Kotlin.isType(this, Either$Left))
+      tmp$ = new Either$Left(fn(this.l));
+    else if (Kotlin.isType(this, Either$Right))
+      tmp$ = this;
+    else
+      tmp$ = Kotlin.noWhenBranchMatched();
+    return tmp$;
+  };
+  Either.prototype.left = function () {
     if (Kotlin.isType(this, Either$Left))
       return this.l;
     else if (Kotlin.isType(this, Either$Right))
@@ -431,7 +698,7 @@
     else
       return Kotlin.noWhenBranchMatched();
   };
-  Either.prototype.toRightValueOrNull = function () {
+  Either.prototype.right = function () {
     if (Kotlin.isType(this, Either$Left))
       return null;
     else if (Kotlin.isType(this, Either$Right))
@@ -442,6 +709,13 @@
   Either.$metadata$ = {
     kind: Kind_CLASS,
     simpleName: 'Either',
+    interfaces: []
+  };
+  function SchemaResult() {
+  }
+  SchemaResult.$metadata$ = {
+    kind: Kind_INTERFACE,
+    simpleName: 'SchemaResult',
     interfaces: []
   };
   function ValidationRule() {
@@ -556,7 +830,7 @@
   };
   function DraftParsers() {
     DraftParsers_instance = this;
-    this.DRAFT_4 = new SchemaRuleParser(listOf([ConstRuleParser_getInstance(), EnumRuleParser_getInstance(), TypeRuleParser_getInstance(), AllOfRuleParser_getInstance(), new AnyOfRuleParser(Draft4ParserFactory_getInstance()), new NotRuleParser(Draft4ParserFactory_getInstance()), OneOfRuleParser_getInstance(), new IfThenElseRuleParser(Draft4ParserFactory_getInstance()), ExclusiveMaximumRuleParser_getInstance(), ExclusiveMinimumRuleParser_getInstance(), MinimumRuleParser_getInstance(), MaximumRuleParser_getInstance(), RequiredRuleParser_getInstance()]));
+    this.DRAFT_4 = new SchemaRuleParser(listOf([ConstRuleParser_getInstance(), EnumRuleParser_getInstance(), TypeRuleParser_getInstance(), new AllOfRuleParser(Draft4ParserFactory_getInstance()), new AnyOfRuleParser(Draft4ParserFactory_getInstance()), new NotRuleParser(Draft4ParserFactory_getInstance()), new OneOfRuleParser(Draft4ParserFactory_getInstance()), new IfThenElseRuleParser(Draft4ParserFactory_getInstance()), ConditionalExclusiveMaximumRuleParser_getInstance(), ConditionalExclusiveMinimumRuleParser_getInstance(), RequiredRuleParser_getInstance(), MultipleOfRuleParser_getInstance(), MinLengthRuleParser_getInstance(), MaxLengthRuleParser_getInstance(), MaxPropertiesRuleParser_getInstance(), MinPropertiesRuleParser_getInstance(), new AdditionalPropertiesRuleParser(Draft4ParserFactory_getInstance()), new DependenciesRuleParser(Draft4ParserFactory_getInstance()), new PropertiesRuleParser(Draft4ParserFactory_getInstance()), MaxItemsRuleParser_getInstance(), MinItemsRuleParser_getInstance(), PatternRuleParser_getInstance(), new ItemsRuleParser(Draft4ParserFactory_getInstance()), new AdditionalItemsRuleParser(Draft4ParserFactory_getInstance()), new PatternPropertiesRuleParser(Draft4ParserFactory_getInstance()), StringFormatRuleParser$Companion_getInstance().default()]));
   }
   DraftParsers.$metadata$ = {
     kind: Kind_OBJECT,
@@ -624,7 +898,7 @@
     while (tmp$_1.hasNext()) {
       var element_1 = tmp$_1.next();
       var tmp$_0_0;
-      if ((tmp$_0_0 = element_1.toLeftValueOrNull()) != null) {
+      if ((tmp$_0_0 = element_1.left()) != null) {
         destination_1.add_11rb$(tmp$_0_0);
       }}
     var errors = flatten(destination_1);
@@ -634,7 +908,7 @@
     while (tmp$_2.hasNext()) {
       var element_2 = tmp$_2.next();
       var tmp$_0_1;
-      if ((tmp$_0_1 = element_2.toRightValueOrNull()) != null) {
+      if ((tmp$_0_1 = element_2.right()) != null) {
         destination_2.add_11rb$(tmp$_0_1);
       }}
     var schemas = destination_2;
@@ -675,7 +949,8 @@
       var list = element_0.eval_vzh9da$(element);
       addAll(destination, list);
     }
-    return destination;
+    var results = destination;
+    return results;
   };
   SchemaRule.$metadata$ = {
     kind: Kind_CLASS,
@@ -758,7 +1033,7 @@
     return new Either$Right(new EnumRule(array.elements()));
   }
   EnumRuleParser.prototype.parse_3boyfh$ = function (element) {
-    return asArray(element.get_61zpoe$('enum')).map_ik7j40$(getCallableRef('listOf', function (p1) {
+    return asArray(element.get_61zpoe$('enum')).mapEither_ik7j40$(getCallableRef('listOf', function (p1) {
       return listOf_0(p1);
     }), EnumRuleParser$parse$lambda);
   };
@@ -835,7 +1110,7 @@
     if (Kotlin.isType(typeEntry, JsonArray))
       tmp$ = this.parseArrayElements_0(typeEntry);
     else if (Kotlin.isType(typeEntry, JsonScalar))
-      tmp$ = this.parseScalarElement_0(typeEntry).map_ik7j40$(getCallableRef('listOf', function (p1) {
+      tmp$ = this.parseScalarElement_0(typeEntry).mapEither_ik7j40$(getCallableRef('listOf', function (p1) {
         return listOf_0(p1);
       }), TypeRuleParser$parse$lambda);
     else
@@ -859,7 +1134,7 @@
     while (tmp$_1.hasNext()) {
       var element = tmp$_1.next();
       var tmp$_0_0;
-      if ((tmp$_0_0 = element.toLeftValueOrNull()) != null) {
+      if ((tmp$_0_0 = element.left()) != null) {
         destination_0.add_11rb$(tmp$_0_0);
       }}
     var errors = destination_0;
@@ -870,7 +1145,7 @@
       while (tmp$_2.hasNext()) {
         var element_0 = tmp$_2.next();
         var tmp$_0_1;
-        if ((tmp$_0_1 = element_0.toRightValueOrNull()) != null) {
+        if ((tmp$_0_1 = element_0.right()) != null) {
           destination_1.add_11rb$(tmp$_0_1);
         }}
       var rules = new OrValidationRule(destination_1);
@@ -885,7 +1160,7 @@
     };
   }
   TypeRuleParser.prototype.parseScalarElement_1 = function (element) {
-    return asScalar(element).map_ik7j40$(getCallableRef('identity', function (p1) {
+    return asScalar(element).mapEither_ik7j40$(getCallableRef('identity', function (p1) {
       return identity(p1);
     }), TypeRuleParser$parseScalarElement$lambda(this));
   };
@@ -899,7 +1174,7 @@
     };
   }
   TypeRuleParser.prototype.parseScalarElement_0 = function (scalar) {
-    return asString(scalar).fold_hfmbsx$(TypeRuleParser$parseScalarElement$lambda_0, TypeRuleParser$parseScalarElement$lambda_1(this));
+    return asString_0(scalar).fold_hfmbsx$(TypeRuleParser$parseScalarElement$lambda_0, TypeRuleParser$parseScalarElement$lambda_1(this));
   };
   TypeRuleParser.$metadata$ = {
     kind: Kind_OBJECT,
@@ -973,7 +1248,7 @@
     return emptyList();
   }
   StringRule.prototype.evalString_0 = function (scalar) {
-    return asString(scalar).fold_hfmbsx$(getCallableRef('listOf', function (p1) {
+    return asString_0(scalar).fold_hfmbsx$(getCallableRef('listOf', function (p1) {
       return listOf_0(p1);
     }), StringRule$evalString$lambda);
   };
@@ -1005,7 +1280,7 @@
     return emptyList();
   }
   BooleanRule.prototype.evalBoolean_0 = function (scalar) {
-    return asBoolean(scalar).fold_hfmbsx$(getCallableRef('listOf', function (p1) {
+    return asBoolean_0(scalar).fold_hfmbsx$(getCallableRef('listOf', function (p1) {
       return listOf_0(p1);
     }), BooleanRule$evalBoolean$lambda);
   };
@@ -1037,7 +1312,7 @@
     return emptyList();
   }
   NumberRule.prototype.evalNumber_0 = function (scalar) {
-    return asNumber(scalar).fold_hfmbsx$(getCallableRef('listOf', function (p1) {
+    return asNumber_0(scalar).fold_hfmbsx$(getCallableRef('listOf', function (p1) {
       return listOf_0(p1);
     }), NumberRule$evalNumber$lambda);
   };
@@ -1088,10 +1363,10 @@
     }), IntegerRule$eval$lambda(this));
   };
   function IntegerRule$evalInteger$lambda(num) {
-    return equals(numberToInt(num), num) ? emptyList() : listOf_0(new Error_0('Value is not an integer'));
+    return numberToDouble(num) % 1.0 === 0.0 ? emptyList() : listOf_0(new Error_0('Value is not an integer'));
   }
   IntegerRule.prototype.evalInteger_0 = function (scalar) {
-    return asNumber(scalar).fold_hfmbsx$(getCallableRef('listOf', function (p1) {
+    return asNumber_0(scalar).fold_hfmbsx$(getCallableRef('listOf', function (p1) {
       return listOf_0(p1);
     }), IntegerRule$evalInteger$lambda);
   };
@@ -1106,6 +1381,458 @@
       new IntegerRule();
     }return IntegerRule_instance;
   }
+  function BooleanAdditionalItemsRule(itemsKeyExists, itemsIsObject, amountOfItems, allowAdditional) {
+    this.itemsKeyExists = itemsKeyExists;
+    this.itemsIsObject = itemsIsObject;
+    this.amountOfItems = amountOfItems;
+    this.allowAdditional = allowAdditional;
+  }
+  function BooleanAdditionalItemsRule$eval$lambda(this$BooleanAdditionalItemsRule) {
+    return function (it) {
+      return this$BooleanAdditionalItemsRule.eval_0(it);
+    };
+  }
+  BooleanAdditionalItemsRule.prototype.eval_vzh9da$ = function (element) {
+    return asArray(element).map_r1ursk$(BooleanAdditionalItemsRule$eval$lambda(this)).rightOrDefault_mh5how$(emptyList());
+  };
+  BooleanAdditionalItemsRule.prototype.eval_0 = function (array) {
+    return this.itemsIsObject || !this.itemsKeyExists ? emptyList() : !this.allowAdditional && array.elements().size > this.amountOfItems ? listOf_0(new Error_0('Array has ' + (array.elements().size > this.amountOfItems) + ' more items')) : emptyList();
+  };
+  BooleanAdditionalItemsRule.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'BooleanAdditionalItemsRule',
+    interfaces: [ValidationRule]
+  };
+  BooleanAdditionalItemsRule.prototype.component1 = function () {
+    return this.itemsKeyExists;
+  };
+  BooleanAdditionalItemsRule.prototype.component2 = function () {
+    return this.itemsIsObject;
+  };
+  BooleanAdditionalItemsRule.prototype.component3 = function () {
+    return this.amountOfItems;
+  };
+  BooleanAdditionalItemsRule.prototype.component4 = function () {
+    return this.allowAdditional;
+  };
+  BooleanAdditionalItemsRule.prototype.copy_aoxpz9$ = function (itemsKeyExists, itemsIsObject, amountOfItems, allowAdditional) {
+    return new BooleanAdditionalItemsRule(itemsKeyExists === void 0 ? this.itemsKeyExists : itemsKeyExists, itemsIsObject === void 0 ? this.itemsIsObject : itemsIsObject, amountOfItems === void 0 ? this.amountOfItems : amountOfItems, allowAdditional === void 0 ? this.allowAdditional : allowAdditional);
+  };
+  BooleanAdditionalItemsRule.prototype.toString = function () {
+    return 'BooleanAdditionalItemsRule(itemsKeyExists=' + Kotlin.toString(this.itemsKeyExists) + (', itemsIsObject=' + Kotlin.toString(this.itemsIsObject)) + (', amountOfItems=' + Kotlin.toString(this.amountOfItems)) + (', allowAdditional=' + Kotlin.toString(this.allowAdditional)) + ')';
+  };
+  BooleanAdditionalItemsRule.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.itemsKeyExists) | 0;
+    result = result * 31 + Kotlin.hashCode(this.itemsIsObject) | 0;
+    result = result * 31 + Kotlin.hashCode(this.amountOfItems) | 0;
+    result = result * 31 + Kotlin.hashCode(this.allowAdditional) | 0;
+    return result;
+  };
+  BooleanAdditionalItemsRule.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.itemsKeyExists, other.itemsKeyExists) && Kotlin.equals(this.itemsIsObject, other.itemsIsObject) && Kotlin.equals(this.amountOfItems, other.amountOfItems) && Kotlin.equals(this.allowAdditional, other.allowAdditional)))));
+  };
+  function ObjectAdditionalItemsRule(itemsKeyExists, itemsIsObject, amountOfItems, rule) {
+    this.itemsKeyExists = itemsKeyExists;
+    this.itemsIsObject = itemsIsObject;
+    this.amountOfItems = amountOfItems;
+    this.rule = rule;
+  }
+  function ObjectAdditionalItemsRule$eval$lambda(this$ObjectAdditionalItemsRule) {
+    return function (it) {
+      return this$ObjectAdditionalItemsRule.eval_0(it);
+    };
+  }
+  ObjectAdditionalItemsRule.prototype.eval_vzh9da$ = function (element) {
+    return asArray(element).map_r1ursk$(ObjectAdditionalItemsRule$eval$lambda(this)).rightOrDefault_mh5how$(emptyList());
+  };
+  ObjectAdditionalItemsRule.prototype.eval_0 = function (array) {
+    var tmp$;
+    if (this.itemsIsObject || !this.itemsKeyExists)
+      tmp$ = emptyList();
+    else if (array.elements().size > this.amountOfItems) {
+      var startIndex = array.elements().size - this.amountOfItems | 0;
+      var elementsToTest = array.elements().subList_vux9f0$(startIndex, array.elements().size);
+      var destination = ArrayList_init();
+      var tmp$_0;
+      tmp$_0 = elementsToTest.iterator();
+      while (tmp$_0.hasNext()) {
+        var element = tmp$_0.next();
+        var list = this.rule.eval_vzh9da$(element);
+        addAll(destination, list);
+      }
+      tmp$ = destination;
+    } else
+      tmp$ = emptyList();
+    return tmp$;
+  };
+  ObjectAdditionalItemsRule.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'ObjectAdditionalItemsRule',
+    interfaces: [ValidationRule]
+  };
+  ObjectAdditionalItemsRule.prototype.component1 = function () {
+    return this.itemsKeyExists;
+  };
+  ObjectAdditionalItemsRule.prototype.component2 = function () {
+    return this.itemsIsObject;
+  };
+  ObjectAdditionalItemsRule.prototype.component3 = function () {
+    return this.amountOfItems;
+  };
+  ObjectAdditionalItemsRule.prototype.component4 = function () {
+    return this.rule;
+  };
+  ObjectAdditionalItemsRule.prototype.copy_rjis05$ = function (itemsKeyExists, itemsIsObject, amountOfItems, rule) {
+    return new ObjectAdditionalItemsRule(itemsKeyExists === void 0 ? this.itemsKeyExists : itemsKeyExists, itemsIsObject === void 0 ? this.itemsIsObject : itemsIsObject, amountOfItems === void 0 ? this.amountOfItems : amountOfItems, rule === void 0 ? this.rule : rule);
+  };
+  ObjectAdditionalItemsRule.prototype.toString = function () {
+    return 'ObjectAdditionalItemsRule(itemsKeyExists=' + Kotlin.toString(this.itemsKeyExists) + (', itemsIsObject=' + Kotlin.toString(this.itemsIsObject)) + (', amountOfItems=' + Kotlin.toString(this.amountOfItems)) + (', rule=' + Kotlin.toString(this.rule)) + ')';
+  };
+  ObjectAdditionalItemsRule.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.itemsKeyExists) | 0;
+    result = result * 31 + Kotlin.hashCode(this.itemsIsObject) | 0;
+    result = result * 31 + Kotlin.hashCode(this.amountOfItems) | 0;
+    result = result * 31 + Kotlin.hashCode(this.rule) | 0;
+    return result;
+  };
+  ObjectAdditionalItemsRule.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.itemsKeyExists, other.itemsKeyExists) && Kotlin.equals(this.itemsIsObject, other.itemsIsObject) && Kotlin.equals(this.amountOfItems, other.amountOfItems) && Kotlin.equals(this.rule, other.rule)))));
+  };
+  function AdditionalItemsRuleParser(factory) {
+    this.factory = factory;
+    this.key_0 = 'additionalItems';
+  }
+  AdditionalItemsRuleParser.prototype.canParse_3boyfh$ = function (element) {
+    return element.containsKey_61zpoe$(this.key_0);
+  };
+  function AdditionalItemsRuleParser$parse$lambda(closure$itemsProp, closure$itemsIsObject, closure$itemsArraySize) {
+    return function (it) {
+      return new ObjectAdditionalItemsRule(closure$itemsProp != null, closure$itemsIsObject, closure$itemsArraySize, it);
+    };
+  }
+  AdditionalItemsRuleParser.prototype.parse_3boyfh$ = function (element) {
+    var tmp$;
+    var itemsProp = element.get_61zpoe$('items');
+    var itemsIsObject = Kotlin.isType(itemsProp, JsonObject);
+    var itemsArraySize = Kotlin.isType(itemsProp, JsonArray) ? itemsProp.elements().size : 0;
+    var entry = element.get_61zpoe$(this.key_0);
+    if (Kotlin.isType(entry, BooleanJsonScalar))
+      tmp$ = new Either$Right(new BooleanAdditionalItemsRule(itemsProp != null, itemsIsObject, itemsArraySize, entry.value));
+    else if (Kotlin.isType(entry, JsonObject))
+      tmp$ = this.factory.make().parse_3boyfh$(entry).map_r1ursk$(AdditionalItemsRuleParser$parse$lambda(itemsProp, itemsIsObject, itemsArraySize));
+    else
+      tmp$ = new Either$Left(listOf_0(new Error_0("'additionalItems' key must be boolean or object")));
+    return tmp$;
+  };
+  AdditionalItemsRuleParser.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'AdditionalItemsRuleParser',
+    interfaces: [RuleParser]
+  };
+  AdditionalItemsRuleParser.prototype.component1 = function () {
+    return this.factory;
+  };
+  AdditionalItemsRuleParser.prototype.copy_im5jht$ = function (factory) {
+    return new AdditionalItemsRuleParser(factory === void 0 ? this.factory : factory);
+  };
+  AdditionalItemsRuleParser.prototype.toString = function () {
+    return 'AdditionalItemsRuleParser(factory=' + Kotlin.toString(this.factory) + ')';
+  };
+  AdditionalItemsRuleParser.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.factory) | 0;
+    return result;
+  };
+  AdditionalItemsRuleParser.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && Kotlin.equals(this.factory, other.factory))));
+  };
+  function SingleItemsRule(rule) {
+    this.rule = rule;
+  }
+  function SingleItemsRule$eval$lambda(this$SingleItemsRule) {
+    return function (array) {
+      var $receiver = array.elements();
+      var destination = ArrayList_init();
+      var tmp$;
+      tmp$ = $receiver.iterator();
+      while (tmp$.hasNext()) {
+        var element = tmp$.next();
+        var list = this$SingleItemsRule.rule.eval_vzh9da$(element);
+        addAll(destination, list);
+      }
+      return destination;
+    };
+  }
+  SingleItemsRule.prototype.eval_vzh9da$ = function (element) {
+    return asArray(element).map_r1ursk$(SingleItemsRule$eval$lambda(this)).rightOrDefault_mh5how$(emptyList());
+  };
+  SingleItemsRule.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'SingleItemsRule',
+    interfaces: [ValidationRule]
+  };
+  SingleItemsRule.prototype.component1 = function () {
+    return this.rule;
+  };
+  SingleItemsRule.prototype.copy_qx94pn$ = function (rule) {
+    return new SingleItemsRule(rule === void 0 ? this.rule : rule);
+  };
+  SingleItemsRule.prototype.toString = function () {
+    return 'SingleItemsRule(rule=' + Kotlin.toString(this.rule) + ')';
+  };
+  SingleItemsRule.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.rule) | 0;
+    return result;
+  };
+  SingleItemsRule.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && Kotlin.equals(this.rule, other.rule))));
+  };
+  function TupleRule(rules) {
+    this.rules = rules;
+  }
+  function TupleRule$eval$lambda(this$TupleRule) {
+    return function (array) {
+      var $receiver = zip(array.elements(), this$TupleRule.rules);
+      var destination = ArrayList_init();
+      var tmp$;
+      tmp$ = $receiver.iterator();
+      while (tmp$.hasNext()) {
+        var element = tmp$.next();
+        var list = element.second.eval_vzh9da$(element.first);
+        addAll(destination, list);
+      }
+      return destination;
+    };
+  }
+  TupleRule.prototype.eval_vzh9da$ = function (element) {
+    return asArray(element).map_r1ursk$(TupleRule$eval$lambda(this)).rightOrDefault_mh5how$(emptyList());
+  };
+  TupleRule.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'TupleRule',
+    interfaces: [ValidationRule]
+  };
+  TupleRule.prototype.component1 = function () {
+    return this.rules;
+  };
+  TupleRule.prototype.copy_6vpe0g$ = function (rules) {
+    return new TupleRule(rules === void 0 ? this.rules : rules);
+  };
+  TupleRule.prototype.toString = function () {
+    return 'TupleRule(rules=' + Kotlin.toString(this.rules) + ')';
+  };
+  TupleRule.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.rules) | 0;
+    return result;
+  };
+  TupleRule.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && Kotlin.equals(this.rules, other.rules))));
+  };
+  function ItemsRuleParser(factory) {
+    this.factory = factory;
+    this.key_0 = 'items';
+  }
+  ItemsRuleParser.prototype.canParse_3boyfh$ = function (element) {
+    return element.containsKey_61zpoe$(this.key_0);
+  };
+  ItemsRuleParser.prototype.parse_3boyfh$ = function (element) {
+    var tmp$;
+    var entry = element.get_61zpoe$(this.key_0);
+    if (Kotlin.isType(entry, JsonObject))
+      tmp$ = this.parseSingleItems_0(entry);
+    else if (Kotlin.isType(entry, JsonArray))
+      tmp$ = this.parseTuple_0(entry);
+    else
+      tmp$ = new Either$Left(listOf_0(new Error_0("'items' is neither an object or an array")));
+    return tmp$;
+  };
+  function ItemsRuleParser$parseSingleItems$lambda(rule) {
+    return new SingleItemsRule(rule);
+  }
+  ItemsRuleParser.prototype.parseSingleItems_0 = function (obj) {
+    return this.factory.make().parse_3boyfh$(obj).map_r1ursk$(ItemsRuleParser$parseSingleItems$lambda);
+  };
+  ItemsRuleParser.prototype.parseTuple_0 = function (array) {
+    var schemaParser = this.factory.make();
+    var $receiver = array.elements();
+    var destination = ArrayList_init_0(collectionSizeOrDefault($receiver, 10));
+    var tmp$;
+    tmp$ = $receiver.iterator();
+    while (tmp$.hasNext()) {
+      var item = tmp$.next();
+      destination.add_11rb$(asObject(item));
+    }
+    var tmp$_0 = partitionList(destination);
+    var errors = tmp$_0.component1()
+    , objs = tmp$_0.component2();
+    if (any(errors))
+      return new Either$Left(errors);
+    var destination_0 = ArrayList_init_0(collectionSizeOrDefault(objs, 10));
+    var tmp$_1;
+    tmp$_1 = objs.iterator();
+    while (tmp$_1.hasNext()) {
+      var item_0 = tmp$_1.next();
+      destination_0.add_11rb$(schemaParser.parse_3boyfh$(item_0));
+    }
+    var tmp$_2 = partitionList(destination_0);
+    var parseErrors = tmp$_2.component1()
+    , schemas = tmp$_2.component2();
+    if (any(parseErrors))
+      return new Either$Left(flatten(parseErrors));
+    return new Either$Right(new TupleRule(schemas));
+  };
+  ItemsRuleParser.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'ItemsRuleParser',
+    interfaces: [RuleParser]
+  };
+  ItemsRuleParser.prototype.component1 = function () {
+    return this.factory;
+  };
+  ItemsRuleParser.prototype.copy_im5jht$ = function (factory) {
+    return new ItemsRuleParser(factory === void 0 ? this.factory : factory);
+  };
+  ItemsRuleParser.prototype.toString = function () {
+    return 'ItemsRuleParser(factory=' + Kotlin.toString(this.factory) + ')';
+  };
+  ItemsRuleParser.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.factory) | 0;
+    return result;
+  };
+  ItemsRuleParser.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && Kotlin.equals(this.factory, other.factory))));
+  };
+  function MaxItemsRule(maximum) {
+    this.maximum = maximum;
+  }
+  function MaxItemsRule$eval$lambda(this$MaxItemsRule) {
+    return function (it) {
+      return this$MaxItemsRule.assertSize_0(it);
+    };
+  }
+  MaxItemsRule.prototype.eval_vzh9da$ = function (element) {
+    return asArray(element).map_r1ursk$(MaxItemsRule$eval$lambda(this)).rightOrDefault_mh5how$(emptyList());
+  };
+  MaxItemsRule.prototype.assertSize_0 = function (array) {
+    return array.elements().size > this.maximum ? listOf_0(new Error_0('Array must have less than ' + this.maximum + ' elements')) : emptyList();
+  };
+  MaxItemsRule.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'MaxItemsRule',
+    interfaces: [ValidationRule]
+  };
+  MaxItemsRule.prototype.component1 = function () {
+    return this.maximum;
+  };
+  MaxItemsRule.prototype.copy_za3lpa$ = function (maximum) {
+    return new MaxItemsRule(maximum === void 0 ? this.maximum : maximum);
+  };
+  MaxItemsRule.prototype.toString = function () {
+    return 'MaxItemsRule(maximum=' + Kotlin.toString(this.maximum) + ')';
+  };
+  MaxItemsRule.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.maximum) | 0;
+    return result;
+  };
+  MaxItemsRule.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && Kotlin.equals(this.maximum, other.maximum))));
+  };
+  function MaxItemsRuleParser() {
+    MaxItemsRuleParser_instance = this;
+    this.key_0 = 'maxItems';
+  }
+  MaxItemsRuleParser.prototype.canParse_3boyfh$ = function (element) {
+    return element.get_61zpoe$(this.key_0) != null;
+  };
+  MaxItemsRuleParser.prototype.parse_3boyfh$ = function (element) {
+    var tmp$;
+    var entry = element.get_61zpoe$(this.key_0);
+    if (Kotlin.isType(entry, IntJsonScalar))
+      tmp$ = new Either$Right(new MaxItemsRule(entry.value));
+    else
+      tmp$ = new Either$Left(listOf_0(new Error_0('maxItems must be an integer')));
+    return tmp$;
+  };
+  MaxItemsRuleParser.$metadata$ = {
+    kind: Kind_OBJECT,
+    simpleName: 'MaxItemsRuleParser',
+    interfaces: [RuleParser]
+  };
+  var MaxItemsRuleParser_instance = null;
+  function MaxItemsRuleParser_getInstance() {
+    if (MaxItemsRuleParser_instance === null) {
+      new MaxItemsRuleParser();
+    }return MaxItemsRuleParser_instance;
+  }
+  function MinItemsRule(minimum) {
+    this.minimum = minimum;
+  }
+  function MinItemsRule$eval$lambda(this$MinItemsRule) {
+    return function (it) {
+      return this$MinItemsRule.assertSize_0(it);
+    };
+  }
+  MinItemsRule.prototype.eval_vzh9da$ = function (element) {
+    return asArray(element).map_r1ursk$(MinItemsRule$eval$lambda(this)).rightOrDefault_mh5how$(emptyList());
+  };
+  MinItemsRule.prototype.assertSize_0 = function (array) {
+    return array.elements().size < this.minimum ? listOf_0(new Error_0('Array must have more than ' + this.minimum + ' elements')) : emptyList();
+  };
+  MinItemsRule.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'MinItemsRule',
+    interfaces: [ValidationRule]
+  };
+  MinItemsRule.prototype.component1 = function () {
+    return this.minimum;
+  };
+  MinItemsRule.prototype.copy_za3lpa$ = function (minimum) {
+    return new MinItemsRule(minimum === void 0 ? this.minimum : minimum);
+  };
+  MinItemsRule.prototype.toString = function () {
+    return 'MinItemsRule(minimum=' + Kotlin.toString(this.minimum) + ')';
+  };
+  MinItemsRule.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.minimum) | 0;
+    return result;
+  };
+  MinItemsRule.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && Kotlin.equals(this.minimum, other.minimum))));
+  };
+  function MinItemsRuleParser() {
+    MinItemsRuleParser_instance = this;
+    this.key_0 = 'minItems';
+  }
+  MinItemsRuleParser.prototype.canParse_3boyfh$ = function (element) {
+    return element.get_61zpoe$(this.key_0) != null;
+  };
+  MinItemsRuleParser.prototype.parse_3boyfh$ = function (element) {
+    var tmp$;
+    var entry = element.get_61zpoe$(this.key_0);
+    if (Kotlin.isType(entry, IntJsonScalar))
+      tmp$ = new Either$Right(new MinItemsRule(entry.value));
+    else
+      tmp$ = new Either$Left(listOf_0(new Error_0('minItems must be an integer')));
+    return tmp$;
+  };
+  MinItemsRuleParser.$metadata$ = {
+    kind: Kind_OBJECT,
+    simpleName: 'MinItemsRuleParser',
+    interfaces: [RuleParser]
+  };
+  var MinItemsRuleParser_instance = null;
+  function MinItemsRuleParser_getInstance() {
+    if (MinItemsRuleParser_instance === null) {
+      new MinItemsRuleParser();
+    }return MinItemsRuleParser_instance;
+  }
   function AllOfRule(rules) {
     this.rules = rules;
   }
@@ -1118,7 +1845,7 @@
       var item = tmp$.next();
       destination.add_11rb$(item.eval_vzh9da$(element));
     }
-    var hasAnyErrors = flatten(destination).isEmpty();
+    var hasAnyErrors = any(flatten(destination));
     return hasAnyErrors ? listOf_0(new Error_0("Schema doesn't conform to all schemas in allOf")) : emptyList();
   };
   AllOfRule.$metadata$ = {
@@ -1143,27 +1870,40 @@
   AllOfRule.prototype.equals = function (other) {
     return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && Kotlin.equals(this.rules, other.rules))));
   };
-  function AllOfRuleParser() {
-    AllOfRuleParser_instance = this;
-    ArrayOfRuleParser.call(this, 'allOf', AllOfRuleParser_init$lambda, AllOfRuleParser_init$lambda_0);
+  function AllOfRuleParser(parserFactory) {
+    ArrayOfRuleParser.call(this, 'allOf', AllOfRuleParser_init$lambda, AllOfRuleParser_init$lambda_0(parserFactory));
+    this.parserFactory = parserFactory;
   }
   function AllOfRuleParser_init$lambda(schemas) {
     return new AllOfRule(schemas);
   }
-  function AllOfRuleParser_init$lambda_0(element) {
-    return new Either$Right(new AllOfRule(emptyList()));
+  function AllOfRuleParser_init$lambda_0(closure$parserFactory) {
+    return function (element) {
+      return closure$parserFactory.make().parse_3boyfh$(element);
+    };
   }
   AllOfRuleParser.$metadata$ = {
-    kind: Kind_OBJECT,
+    kind: Kind_CLASS,
     simpleName: 'AllOfRuleParser',
     interfaces: [ArrayOfRuleParser]
   };
-  var AllOfRuleParser_instance = null;
-  function AllOfRuleParser_getInstance() {
-    if (AllOfRuleParser_instance === null) {
-      new AllOfRuleParser();
-    }return AllOfRuleParser_instance;
-  }
+  AllOfRuleParser.prototype.component1 = function () {
+    return this.parserFactory;
+  };
+  AllOfRuleParser.prototype.copy_im5jht$ = function (parserFactory) {
+    return new AllOfRuleParser(parserFactory === void 0 ? this.parserFactory : parserFactory);
+  };
+  AllOfRuleParser.prototype.toString = function () {
+    return 'AllOfRuleParser(parserFactory=' + Kotlin.toString(this.parserFactory) + ')';
+  };
+  AllOfRuleParser.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.parserFactory) | 0;
+    return result;
+  };
+  AllOfRuleParser.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && Kotlin.equals(this.parserFactory, other.parserFactory))));
+  };
   function AnyOfRule(rules) {
     this.rules = rules;
   }
@@ -1240,14 +1980,14 @@
       tmp$ = $receiver.iterator();
       while (tmp$.hasNext()) {
         var item = tmp$.next();
-        destination.add_11rb$(this$ArrayOfRuleParser.parser(ensureNotNull(asObject(item).toRightValueOrNull())));
+        destination.add_11rb$(this$ArrayOfRuleParser.parser(ensureNotNull(asObject(item).right())));
       }
       var listOfEithers = destination;
       return this$ArrayOfRuleParser.flatten_k34c7c$_0(listOfEithers).map_r1ursk$(ArrayOfRuleParser$parse$lambda$lambda(this$ArrayOfRuleParser));
     };
   }
   ArrayOfRuleParser.prototype.parse_3boyfh$ = function (element) {
-    return asArray(element.get_61zpoe$(this.key_6qpk8v$_0)).map_ik7j40$(getCallableRef('listOf', function (p1) {
+    return asArray(element.get_61zpoe$(this.key_6qpk8v$_0)).mapEither_ik7j40$(getCallableRef('listOf', function (p1) {
       return listOf_0(p1);
     }), ArrayOfRuleParser$parse$lambda(this));
   };
@@ -1258,13 +1998,13 @@
     tmp$ = eitherList.iterator();
     while (tmp$.hasNext()) {
       var element = tmp$.next();
-      if (element.toLeftValueOrNull() != null) {
+      if (element.left() != null) {
         first.add_11rb$(element);
       } else {
         second.add_11rb$(element);
       }
     }
-    var tmp$_0 = new Pair_init(first, second);
+    var tmp$_0 = new Pair(first, second);
     var errors = tmp$_0.component1()
     , schemas = tmp$_0.component2();
     var tmp$_1;
@@ -1274,7 +2014,7 @@
       tmp$_2 = schemas.iterator();
       while (tmp$_2.hasNext()) {
         var item = tmp$_2.next();
-        destination.add_11rb$(ensureNotNull(item.toRightValueOrNull()));
+        destination.add_11rb$(ensureNotNull(item.right()));
       }
       tmp$_1 = new Either$Right(destination);
     } else {
@@ -1283,7 +2023,7 @@
       tmp$_3 = errors.iterator();
       while (tmp$_3.hasNext()) {
         var item_0 = tmp$_3.next();
-        destination_0.add_11rb$(ensureNotNull(item_0.toLeftValueOrNull()));
+        destination_0.add_11rb$(ensureNotNull(item_0.left()));
       }
       tmp$_1 = new Either$Left(flatten(destination_0));
     }
@@ -1335,11 +2075,14 @@
       return this$NotRuleParser.parserFactory.make().parse_3boyfh$(objEntry);
     };
   }
+  function NotRuleParser$parse$lambda_0(it) {
+    return new NotRule(it);
+  }
   NotRuleParser.prototype.parse_3boyfh$ = function (element) {
     var notValue = ensureNotNull(element.get_61zpoe$(this.key_0));
-    return asObject(notValue).map_ik7j40$(getCallableRef('listOf', function (p1) {
+    return asObject(notValue).mapEither_ik7j40$(getCallableRef('listOf', function (p1) {
       return listOf_0(p1);
-    }), NotRuleParser$parse$lambda(this));
+    }), NotRuleParser$parse$lambda(this)).map_r1ursk$(NotRuleParser$parse$lambda_0);
   };
   NotRuleParser.$metadata$ = {
     kind: Kind_CLASS,
@@ -1368,23 +2111,17 @@
   }
   OneOfRule.prototype.eval_vzh9da$ = function (element) {
     var $receiver = this.rules;
-    var destination = ArrayList_init_0(collectionSizeOrDefault($receiver, 10));
+    var destination = ArrayList_init();
     var tmp$;
     tmp$ = $receiver.iterator();
     while (tmp$.hasNext()) {
-      var item = tmp$.next();
-      destination.add_11rb$(!item.eval_vzh9da$(element).isEmpty());
+      var element_0 = tmp$.next();
+      if (!element_0.eval_vzh9da$(element).isEmpty())
+        destination.add_11rb$(element_0);
     }
-    var destination_0 = ArrayList_init();
-    var tmp$_0;
-    tmp$_0 = destination.iterator();
-    while (tmp$_0.hasNext()) {
-      var element_0 = tmp$_0.next();
-      if (element_0)
-        destination_0.add_11rb$(element_0);
-    }
-    var onlyOne = destination_0.size === 1;
-    return onlyOne ? listOf_0(new Error_0("Schema doesn't conform to only one schema of the oneOf")) : emptyList();
+    var nonCompliantRules = destination;
+    var onlyOneRuleIsValid = (this.rules.size - nonCompliantRules.size | 0) === 1;
+    return onlyOneRuleIsValid ? emptyList() : listOf_0(new Error_0("Schema doesn't conform to only one schema of the oneOf"));
   };
   OneOfRule.$metadata$ = {
     kind: Kind_CLASS,
@@ -1408,27 +2145,40 @@
   OneOfRule.prototype.equals = function (other) {
     return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && Kotlin.equals(this.rules, other.rules))));
   };
-  function OneOfRuleParser() {
-    OneOfRuleParser_instance = this;
-    ArrayOfRuleParser.call(this, 'oneOf', OneOfRuleParser_init$lambda, OneOfRuleParser_init$lambda_0);
+  function OneOfRuleParser(parserFactory) {
+    ArrayOfRuleParser.call(this, 'oneOf', OneOfRuleParser_init$lambda, OneOfRuleParser_init$lambda_0(parserFactory));
+    this.parserFactory = parserFactory;
   }
   function OneOfRuleParser_init$lambda(schemas) {
     return new OneOfRule(schemas);
   }
-  function OneOfRuleParser_init$lambda_0(element) {
-    return new Either$Right(new OneOfRule(emptyList()));
+  function OneOfRuleParser_init$lambda_0(closure$parserFactory) {
+    return function (element) {
+      return closure$parserFactory.make().parse_3boyfh$(element);
+    };
   }
   OneOfRuleParser.$metadata$ = {
-    kind: Kind_OBJECT,
+    kind: Kind_CLASS,
     simpleName: 'OneOfRuleParser',
     interfaces: [ArrayOfRuleParser]
   };
-  var OneOfRuleParser_instance = null;
-  function OneOfRuleParser_getInstance() {
-    if (OneOfRuleParser_instance === null) {
-      new OneOfRuleParser();
-    }return OneOfRuleParser_instance;
-  }
+  OneOfRuleParser.prototype.component1 = function () {
+    return this.parserFactory;
+  };
+  OneOfRuleParser.prototype.copy_im5jht$ = function (parserFactory) {
+    return new OneOfRuleParser(parserFactory === void 0 ? this.parserFactory : parserFactory);
+  };
+  OneOfRuleParser.prototype.toString = function () {
+    return 'OneOfRuleParser(parserFactory=' + Kotlin.toString(this.parserFactory) + ')';
+  };
+  OneOfRuleParser.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.parserFactory) | 0;
+    return result;
+  };
+  OneOfRuleParser.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && Kotlin.equals(this.parserFactory, other.parserFactory))));
+  };
   function IfThenElseRule(ifSchema, thenSchema, elseSchema) {
     this.ifSchema = ifSchema;
     this.thenSchema = thenSchema;
@@ -1489,14 +2239,14 @@
     var thenSchemaEither = this.parse_0(element.get_61zpoe$('then'));
     var errors = plus(plus(this.leftOrEmptyList_0(ifSchemaEither), this.leftOrEmptyList_0(elseSchemaEither)), this.leftOrEmptyList_0(thenSchemaEither));
     if (errors.isEmpty()) {
-      tmp$ = new Either$Right(new IfThenElseRule(ifSchemaEither.toRightValueOrNull(), thenSchemaEither.toRightValueOrNull(), elseSchemaEither.toRightValueOrNull()));
+      tmp$ = new Either$Right(new IfThenElseRule(ifSchemaEither.right(), thenSchemaEither.right(), elseSchemaEither.right()));
     } else
       tmp$ = new Either$Left(errors);
     return tmp$;
   };
   IfThenElseRuleParser.prototype.leftOrEmptyList_0 = function (either) {
     var tmp$;
-    return (tmp$ = either.toLeftValueOrNull()) != null ? tmp$ : emptyList();
+    return (tmp$ = either.left()) != null ? tmp$ : emptyList();
   };
   function IfThenElseRuleParser$parse$lambda(this$IfThenElseRuleParser) {
     return function (x) {
@@ -1505,7 +2255,7 @@
   }
   IfThenElseRuleParser.prototype.parse_0 = function (element) {
     var tmp$, tmp$_0;
-    return (tmp$_0 = (tmp$ = element != null ? asObject(element) : null) != null ? tmp$.map_ik7j40$(getCallableRef('listOf', function (p1) {
+    return (tmp$_0 = (tmp$ = element != null ? asObject(element) : null) != null ? tmp$.mapEither_ik7j40$(getCallableRef('listOf', function (p1) {
       return listOf_0(p1);
     }), IfThenElseRuleParser$parse$lambda(this)) : null) != null ? tmp$_0 : new Either$Right(null);
   };
@@ -1530,6 +2280,182 @@
   };
   IfThenElseRuleParser.prototype.equals = function (other) {
     return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && Kotlin.equals(this.factory, other.factory))));
+  };
+  function ConditionalExclusiveMaximumRuleParser() {
+    ConditionalExclusiveMaximumRuleParser_instance = this;
+    this.key_0 = 'maximum';
+    this.conditionalKey_0 = 'exclusiveMaximum';
+  }
+  ConditionalExclusiveMaximumRuleParser.prototype.canParse_3boyfh$ = function (element) {
+    return element.get_61zpoe$(this.key_0) != null || element.get_61zpoe$(this.conditionalKey_0) != null;
+  };
+  ConditionalExclusiveMaximumRuleParser.prototype.parse_3boyfh$ = function (element) {
+    var tmp$, tmp$_0;
+    var maximum = element.get_61zpoe$(this.key_0);
+    var exclusive = element.get_61zpoe$(this.conditionalKey_0);
+    if (maximum == null && exclusive != null)
+      return new Either$Left(listOf_0(new Error_0('maximum key must exist to use exclusiveMaximum')));
+    var maxInt = asNumber(maximum);
+    if (Kotlin.isType(maxInt, Either$Left))
+      tmp$_0 = maxInt.mapLeft_2o04qz$(getCallableRef('listOf', function (p1) {
+        return listOf_0(p1);
+      }));
+    else if (Kotlin.isType(maxInt, Either$Right)) {
+      if (exclusive == null)
+        return new Either$Right(new ConditionalExclusiveMaximumRule(maxInt.r, false));
+      var exclusiveBool = asBoolean(exclusive);
+      if (Kotlin.isType(exclusiveBool, Either$Left))
+        tmp$ = exclusiveBool.mapLeft_2o04qz$(getCallableRef('listOf', function (p1) {
+          return listOf_0(p1);
+        }));
+      else if (Kotlin.isType(exclusiveBool, Either$Right))
+        tmp$ = new Either$Right(new ConditionalExclusiveMaximumRule(maxInt.r, exclusiveBool.r));
+      else
+        tmp$ = Kotlin.noWhenBranchMatched();
+      return tmp$;
+    } else
+      tmp$_0 = Kotlin.noWhenBranchMatched();
+    return tmp$_0;
+  };
+  ConditionalExclusiveMaximumRuleParser.$metadata$ = {
+    kind: Kind_OBJECT,
+    simpleName: 'ConditionalExclusiveMaximumRuleParser',
+    interfaces: [RuleParser]
+  };
+  var ConditionalExclusiveMaximumRuleParser_instance = null;
+  function ConditionalExclusiveMaximumRuleParser_getInstance() {
+    if (ConditionalExclusiveMaximumRuleParser_instance === null) {
+      new ConditionalExclusiveMaximumRuleParser();
+    }return ConditionalExclusiveMaximumRuleParser_instance;
+  }
+  function ConditionalExclusiveMaximumRule(maximum, exclusive) {
+    this.maximum = maximum;
+    this.exclusive = exclusive;
+  }
+  function ConditionalExclusiveMaximumRule$eval$lambda(this$ConditionalExclusiveMaximumRule) {
+    return function (it) {
+      return this$ConditionalExclusiveMaximumRule.eval_0(it);
+    };
+  }
+  ConditionalExclusiveMaximumRule.prototype.eval_vzh9da$ = function (element) {
+    return asNumber(element).map_r1ursk$(ConditionalExclusiveMaximumRule$eval$lambda(this)).rightOrDefault_mh5how$(emptyList());
+  };
+  ConditionalExclusiveMaximumRule.prototype.eval_0 = function (number) {
+    return this.exclusive && numberToDouble(number) >= numberToDouble(this.maximum) ? listOf_0(new Error_0(number.toString() + ' is equal or bigger than ' + this.maximum.toString())) : numberToDouble(number) <= numberToDouble(this.maximum) ? emptyList() : listOf_0(new Error_0(number.toString() + ' is bigger than ' + this.maximum.toString()));
+  };
+  ConditionalExclusiveMaximumRule.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'ConditionalExclusiveMaximumRule',
+    interfaces: [ValidationRule]
+  };
+  ConditionalExclusiveMaximumRule.prototype.component1 = function () {
+    return this.maximum;
+  };
+  ConditionalExclusiveMaximumRule.prototype.component2 = function () {
+    return this.exclusive;
+  };
+  ConditionalExclusiveMaximumRule.prototype.copy_a41xm7$ = function (maximum, exclusive) {
+    return new ConditionalExclusiveMaximumRule(maximum === void 0 ? this.maximum : maximum, exclusive === void 0 ? this.exclusive : exclusive);
+  };
+  ConditionalExclusiveMaximumRule.prototype.toString = function () {
+    return 'ConditionalExclusiveMaximumRule(maximum=' + Kotlin.toString(this.maximum) + (', exclusive=' + Kotlin.toString(this.exclusive)) + ')';
+  };
+  ConditionalExclusiveMaximumRule.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.maximum) | 0;
+    result = result * 31 + Kotlin.hashCode(this.exclusive) | 0;
+    return result;
+  };
+  ConditionalExclusiveMaximumRule.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.maximum, other.maximum) && Kotlin.equals(this.exclusive, other.exclusive)))));
+  };
+  function ConditionalExclusiveMinimumRuleParser() {
+    ConditionalExclusiveMinimumRuleParser_instance = this;
+    this.key_0 = 'minimum';
+    this.conditionalKey_0 = 'exclusiveMinimum';
+  }
+  ConditionalExclusiveMinimumRuleParser.prototype.canParse_3boyfh$ = function (element) {
+    return element.get_61zpoe$(this.key_0) != null || element.get_61zpoe$(this.conditionalKey_0) != null;
+  };
+  ConditionalExclusiveMinimumRuleParser.prototype.parse_3boyfh$ = function (element) {
+    var tmp$, tmp$_0;
+    var minimum = element.get_61zpoe$(this.key_0);
+    var exclusive = element.get_61zpoe$(this.conditionalKey_0);
+    if (minimum == null && exclusive != null)
+      return new Either$Left(listOf_0(new Error_0('minimum key must exist to use exclusiveMinimum')));
+    var minInt = asNumber(minimum);
+    if (Kotlin.isType(minInt, Either$Left))
+      tmp$_0 = minInt.mapLeft_2o04qz$(getCallableRef('listOf', function (p1) {
+        return listOf_0(p1);
+      }));
+    else if (Kotlin.isType(minInt, Either$Right)) {
+      if (exclusive == null)
+        return new Either$Right(new ConditionalExclusiveMinimumRule(minInt.r, false));
+      var exclusiveBool = asBoolean(exclusive);
+      if (Kotlin.isType(exclusiveBool, Either$Left))
+        tmp$ = exclusiveBool.mapLeft_2o04qz$(getCallableRef('listOf', function (p1) {
+          return listOf_0(p1);
+        }));
+      else if (Kotlin.isType(exclusiveBool, Either$Right))
+        tmp$ = new Either$Right(new ConditionalExclusiveMinimumRule(minInt.r, exclusiveBool.r));
+      else
+        tmp$ = Kotlin.noWhenBranchMatched();
+      return tmp$;
+    } else
+      tmp$_0 = Kotlin.noWhenBranchMatched();
+    return tmp$_0;
+  };
+  ConditionalExclusiveMinimumRuleParser.$metadata$ = {
+    kind: Kind_OBJECT,
+    simpleName: 'ConditionalExclusiveMinimumRuleParser',
+    interfaces: [RuleParser]
+  };
+  var ConditionalExclusiveMinimumRuleParser_instance = null;
+  function ConditionalExclusiveMinimumRuleParser_getInstance() {
+    if (ConditionalExclusiveMinimumRuleParser_instance === null) {
+      new ConditionalExclusiveMinimumRuleParser();
+    }return ConditionalExclusiveMinimumRuleParser_instance;
+  }
+  function ConditionalExclusiveMinimumRule(minimum, exclusive) {
+    this.minimum = minimum;
+    this.exclusive = exclusive;
+  }
+  function ConditionalExclusiveMinimumRule$eval$lambda(this$ConditionalExclusiveMinimumRule) {
+    return function (it) {
+      return this$ConditionalExclusiveMinimumRule.eval_0(it);
+    };
+  }
+  ConditionalExclusiveMinimumRule.prototype.eval_vzh9da$ = function (element) {
+    return asNumber(element).map_r1ursk$(ConditionalExclusiveMinimumRule$eval$lambda(this)).rightOrDefault_mh5how$(emptyList());
+  };
+  ConditionalExclusiveMinimumRule.prototype.eval_0 = function (number) {
+    return this.exclusive && numberToDouble(number) <= numberToDouble(this.minimum) ? listOf_0(new Error_0(number.toString() + ' is equal or smaller than ' + this.minimum.toString())) : numberToDouble(number) >= numberToDouble(this.minimum) ? emptyList() : listOf_0(new Error_0(number.toString() + ' is smaller than ' + this.minimum.toString()));
+  };
+  ConditionalExclusiveMinimumRule.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'ConditionalExclusiveMinimumRule',
+    interfaces: [ValidationRule]
+  };
+  ConditionalExclusiveMinimumRule.prototype.component1 = function () {
+    return this.minimum;
+  };
+  ConditionalExclusiveMinimumRule.prototype.component2 = function () {
+    return this.exclusive;
+  };
+  ConditionalExclusiveMinimumRule.prototype.copy_a41xm7$ = function (minimum, exclusive) {
+    return new ConditionalExclusiveMinimumRule(minimum === void 0 ? this.minimum : minimum, exclusive === void 0 ? this.exclusive : exclusive);
+  };
+  ConditionalExclusiveMinimumRule.prototype.toString = function () {
+    return 'ConditionalExclusiveMinimumRule(minimum=' + Kotlin.toString(this.minimum) + (', exclusive=' + Kotlin.toString(this.exclusive)) + ')';
+  };
+  ConditionalExclusiveMinimumRule.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.minimum) | 0;
+    result = result * 31 + Kotlin.hashCode(this.exclusive) | 0;
+    return result;
+  };
+  ConditionalExclusiveMinimumRule.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.minimum, other.minimum) && Kotlin.equals(this.exclusive, other.exclusive)))));
   };
   function ExclusiveMaximumRuleParser() {
     ExclusiveMaximumRuleParser_instance = this;
@@ -1767,7 +2693,7 @@
     this.multipleOf = multipleOf;
   }
   MultipleOfRule.prototype.eval_3p81yu$ = function (number) {
-    return numberToDouble(number) % numberToDouble(this.multipleOf) === 0.0 ? emptyList() : listOf_0(new Error_0(number.toString() + ' is not multiple of ' + this.multipleOf.toString()));
+    return numberToDouble(number) / numberToDouble(this.multipleOf) % 1 === 0.0 ? emptyList() : listOf_0(new Error_0(number.toString() + ' is not multiple of ' + this.multipleOf.toString()));
   };
   MultipleOfRule.$metadata$ = {
     kind: Kind_CLASS,
@@ -1806,7 +2732,7 @@
     return null;
   }
   function NumberRule$getNumber$lambda_0(scalar) {
-    return asNumber(scalar);
+    return asNumber_0(scalar);
   }
   function NumberRule$getNumber$lambda_1(it) {
     return null;
@@ -1815,7 +2741,7 @@
     return x;
   }
   NumberRule_0.prototype.getNumber_vzh9da$ = function (element) {
-    return asScalar(element).map_ik7j40$(NumberRule$getNumber$lambda, NumberRule$getNumber$lambda_0).fold_hfmbsx$(NumberRule$getNumber$lambda_1, NumberRule$getNumber$lambda_2);
+    return asScalar(element).mapEither_ik7j40$(NumberRule$getNumber$lambda, NumberRule$getNumber$lambda_0).fold_hfmbsx$(NumberRule$getNumber$lambda_1, NumberRule$getNumber$lambda_2);
   };
   NumberRule_0.$metadata$ = {
     kind: Kind_INTERFACE,
@@ -1829,7 +2755,7 @@
   };
   function NumberRuleParser$parse$lambda(this$NumberRuleParser) {
     return function (scalar) {
-      return asNumber(scalar).map_ik7j40$(getCallableRef('listOf', function (p1) {
+      return asNumber_0(scalar).mapEither_ik7j40$(getCallableRef('listOf', function (p1) {
         return listOf_0(p1);
       }), getCallableRef('parse', function ($receiver, p1) {
         return $receiver.parse_3p81yu$(p1);
@@ -1838,7 +2764,7 @@
   }
   NumberRuleParser.prototype.parse_3boyfh$ = function (element) {
     var constElement = ensureNotNull(element.get_61zpoe$(this.key));
-    return asScalar(constElement).map_ik7j40$(getCallableRef('listOf', function (p1) {
+    return asScalar(constElement).mapEither_ik7j40$(getCallableRef('listOf', function (p1) {
       return listOf_0(p1);
     }), NumberRuleParser$parse$lambda(this));
   };
@@ -1847,23 +2773,493 @@
     simpleName: 'NumberRuleParser',
     interfaces: [RuleParser]
   };
+  function AdditionalPropertiesRuleParser(factory) {
+    this.factory = factory;
+    this.key_0 = 'additionalProperties';
+  }
+  AdditionalPropertiesRuleParser.prototype.canParse_3boyfh$ = function (element) {
+    return element.get_61zpoe$(this.key_0) != null;
+  };
+  AdditionalPropertiesRuleParser.prototype.parse_3boyfh$ = function (element) {
+    var tmp$;
+    var entry = element.get_61zpoe$(this.key_0);
+    if (Kotlin.isType(entry, BooleanJsonScalar))
+      tmp$ = this.parseBooleanValue_0(entry, element);
+    else if (Kotlin.isType(entry, JsonObject))
+      tmp$ = this.parseObjectValue_0(entry, element);
+    else
+      tmp$ = new Either$Left(listOf_0(new Error_0('additionalProperties should be a boolean')));
+    return tmp$;
+  };
+  function AdditionalPropertiesRuleParser$parseObjectValue$lambda(closure$ignoredProperties, closure$pattern) {
+    return function (rule) {
+      return new ObjectAdditionalPropertiesRule(rule, closure$ignoredProperties, closure$pattern);
+    };
+  }
+  AdditionalPropertiesRuleParser.prototype.parseObjectValue_0 = function (element, parent) {
+    var parsedRule = this.factory.make().parse_3boyfh$(element);
+    var ignoredProperties = this.scanDeclaredProperties_0(parent);
+    var pattern = this.scanPatternProperties_0(parent);
+    return parsedRule.map_r1ursk$(AdditionalPropertiesRuleParser$parseObjectValue$lambda(ignoredProperties, pattern));
+  };
+  AdditionalPropertiesRuleParser.prototype.parseBooleanValue_0 = function (scalar, parent) {
+    var allowed = !scalar.value ? this.scanDeclaredProperties_0(parent) : emptyList();
+    var pattern = !scalar.value ? this.scanPatternProperties_0(parent) : emptyList();
+    return new Either$Right(new BooleanAdditionalPropertiesRule(scalar.value, allowed, pattern));
+  };
+  function AdditionalPropertiesRuleParser$scanDeclaredProperties$lambda(x) {
+    return toList(x.keys());
+  }
+  AdditionalPropertiesRuleParser.prototype.scanDeclaredProperties_0 = function (parent) {
+    return asObject(parent.get_61zpoe$('properties')).map_r1ursk$(AdditionalPropertiesRuleParser$scanDeclaredProperties$lambda).rightOrDefault_mh5how$(emptyList());
+  };
+  function AdditionalPropertiesRuleParser$scanPatternProperties$lambda(x) {
+    var $receiver = x.keys();
+    var destination = ArrayList_init_0(collectionSizeOrDefault($receiver, 10));
+    var tmp$;
+    tmp$ = $receiver.iterator();
+    while (tmp$.hasNext()) {
+      var item = tmp$.next();
+      destination.add_11rb$(Regex_init(item));
+    }
+    return toList(destination);
+  }
+  AdditionalPropertiesRuleParser.prototype.scanPatternProperties_0 = function (parent) {
+    return asObject(parent.get_61zpoe$('patternProperties')).map_r1ursk$(AdditionalPropertiesRuleParser$scanPatternProperties$lambda).rightOrDefault_mh5how$(emptyList());
+  };
+  AdditionalPropertiesRuleParser.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'AdditionalPropertiesRuleParser',
+    interfaces: [RuleParser]
+  };
+  AdditionalPropertiesRuleParser.prototype.component1 = function () {
+    return this.factory;
+  };
+  AdditionalPropertiesRuleParser.prototype.copy_im5jht$ = function (factory) {
+    return new AdditionalPropertiesRuleParser(factory === void 0 ? this.factory : factory);
+  };
+  AdditionalPropertiesRuleParser.prototype.toString = function () {
+    return 'AdditionalPropertiesRuleParser(factory=' + Kotlin.toString(this.factory) + ')';
+  };
+  AdditionalPropertiesRuleParser.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.factory) | 0;
+    return result;
+  };
+  AdditionalPropertiesRuleParser.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && Kotlin.equals(this.factory, other.factory))));
+  };
+  function BooleanAdditionalPropertiesRule(unlimitedProperties, allowedList, patternProps) {
+    this.unlimitedProperties = unlimitedProperties;
+    this.allowedList = allowedList;
+    this.patternProps = patternProps;
+  }
+  BooleanAdditionalPropertiesRule.prototype.eval_vzh9da$ = function (element) {
+    var tmp$, tmp$_0;
+    if (this.unlimitedProperties)
+      tmp$_0 = emptyList();
+    else {
+      if (Kotlin.isType(element, JsonObject)) {
+        var explicitNotAllowed = minus(element.keys(), toSet(this.allowedList));
+        var destination = ArrayList_init();
+        var tmp$_1;
+        tmp$_1 = explicitNotAllowed.iterator();
+        loop_label: while (tmp$_1.hasNext()) {
+          var element_0 = tmp$_1.next();
+          var $receiver = this.patternProps;
+          var none$result;
+          none$break: do {
+            var tmp$_2;
+            if (Kotlin.isType($receiver, Collection) && $receiver.isEmpty()) {
+              none$result = true;
+              break none$break;
+            }tmp$_2 = $receiver.iterator();
+            while (tmp$_2.hasNext()) {
+              var element_1 = tmp$_2.next();
+              if (element_1.containsMatchIn_6bul2c$(element_0)) {
+                none$result = false;
+                break none$break;
+              }}
+            none$result = true;
+          }
+           while (false);
+          if (none$result)
+            destination.add_11rb$(element_0);
+        }
+        var patternedNotAllowed = destination;
+        var destination_0 = ArrayList_init_0(collectionSizeOrDefault(patternedNotAllowed, 10));
+        var tmp$_3;
+        tmp$_3 = patternedNotAllowed.iterator();
+        while (tmp$_3.hasNext()) {
+          var item = tmp$_3.next();
+          destination_0.add_11rb$(new Error_0(item + ' is not an allowed property'));
+        }
+        return destination_0;
+      } else
+        tmp$ = emptyList();
+      return tmp$;
+    }
+    return tmp$_0;
+  };
+  BooleanAdditionalPropertiesRule.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'BooleanAdditionalPropertiesRule',
+    interfaces: [ValidationRule]
+  };
+  BooleanAdditionalPropertiesRule.prototype.component1 = function () {
+    return this.unlimitedProperties;
+  };
+  BooleanAdditionalPropertiesRule.prototype.component2 = function () {
+    return this.allowedList;
+  };
+  BooleanAdditionalPropertiesRule.prototype.component3 = function () {
+    return this.patternProps;
+  };
+  BooleanAdditionalPropertiesRule.prototype.copy_za1qz8$ = function (unlimitedProperties, allowedList, patternProps) {
+    return new BooleanAdditionalPropertiesRule(unlimitedProperties === void 0 ? this.unlimitedProperties : unlimitedProperties, allowedList === void 0 ? this.allowedList : allowedList, patternProps === void 0 ? this.patternProps : patternProps);
+  };
+  BooleanAdditionalPropertiesRule.prototype.toString = function () {
+    return 'BooleanAdditionalPropertiesRule(unlimitedProperties=' + Kotlin.toString(this.unlimitedProperties) + (', allowedList=' + Kotlin.toString(this.allowedList)) + (', patternProps=' + Kotlin.toString(this.patternProps)) + ')';
+  };
+  BooleanAdditionalPropertiesRule.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.unlimitedProperties) | 0;
+    result = result * 31 + Kotlin.hashCode(this.allowedList) | 0;
+    result = result * 31 + Kotlin.hashCode(this.patternProps) | 0;
+    return result;
+  };
+  BooleanAdditionalPropertiesRule.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.unlimitedProperties, other.unlimitedProperties) && Kotlin.equals(this.allowedList, other.allowedList) && Kotlin.equals(this.patternProps, other.patternProps)))));
+  };
+  function ObjectAdditionalPropertiesRule(rule, ignoredProperties, patternProps) {
+    this.rule = rule;
+    this.ignoredProperties = ignoredProperties;
+    this.patternProps = patternProps;
+  }
+  ObjectAdditionalPropertiesRule.prototype.eval_vzh9da$ = function (element) {
+    var tmp$;
+    if (Kotlin.isType(element, JsonObject)) {
+      var $receiver = minus(element.keys(), toSet(this.ignoredProperties));
+      var destination = ArrayList_init();
+      var tmp$_0;
+      tmp$_0 = $receiver.iterator();
+      loop_label: while (tmp$_0.hasNext()) {
+        var element_0 = tmp$_0.next();
+        var $receiver_0 = this.patternProps;
+        var any$result;
+        any$break: do {
+          var tmp$_1;
+          if (Kotlin.isType($receiver_0, Collection) && $receiver_0.isEmpty()) {
+            any$result = false;
+            break any$break;
+          }tmp$_1 = $receiver_0.iterator();
+          while (tmp$_1.hasNext()) {
+            var element_1 = tmp$_1.next();
+            if (element_1.containsMatchIn_6bul2c$(element_0)) {
+              any$result = true;
+              break any$break;
+            }}
+          any$result = false;
+        }
+         while (false);
+        if (!any$result)
+          destination.add_11rb$(element_0);
+      }
+      var notAllowed = destination;
+      var destination_0 = ArrayList_init();
+      var tmp$_2;
+      tmp$_2 = notAllowed.iterator();
+      while (tmp$_2.hasNext()) {
+        var element_2 = tmp$_2.next();
+        var tmp$_0_0;
+        if ((tmp$_0_0 = element.get_61zpoe$(element_2)) != null) {
+          destination_0.add_11rb$(tmp$_0_0);
+        }}
+      var destination_1 = ArrayList_init_0(collectionSizeOrDefault(destination_0, 10));
+      var tmp$_3;
+      tmp$_3 = destination_0.iterator();
+      while (tmp$_3.hasNext()) {
+        var item = tmp$_3.next();
+        destination_1.add_11rb$(this.rule.eval_vzh9da$(item));
+      }
+      return flatten(destination_1);
+    } else
+      tmp$ = emptyList();
+    return tmp$;
+  };
+  ObjectAdditionalPropertiesRule.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'ObjectAdditionalPropertiesRule',
+    interfaces: [ValidationRule]
+  };
+  ObjectAdditionalPropertiesRule.prototype.component1 = function () {
+    return this.rule;
+  };
+  ObjectAdditionalPropertiesRule.prototype.component2 = function () {
+    return this.ignoredProperties;
+  };
+  ObjectAdditionalPropertiesRule.prototype.component3 = function () {
+    return this.patternProps;
+  };
+  ObjectAdditionalPropertiesRule.prototype.copy_5fe7ro$ = function (rule, ignoredProperties, patternProps) {
+    return new ObjectAdditionalPropertiesRule(rule === void 0 ? this.rule : rule, ignoredProperties === void 0 ? this.ignoredProperties : ignoredProperties, patternProps === void 0 ? this.patternProps : patternProps);
+  };
+  ObjectAdditionalPropertiesRule.prototype.toString = function () {
+    return 'ObjectAdditionalPropertiesRule(rule=' + Kotlin.toString(this.rule) + (', ignoredProperties=' + Kotlin.toString(this.ignoredProperties)) + (', patternProps=' + Kotlin.toString(this.patternProps)) + ')';
+  };
+  ObjectAdditionalPropertiesRule.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.rule) | 0;
+    result = result * 31 + Kotlin.hashCode(this.ignoredProperties) | 0;
+    result = result * 31 + Kotlin.hashCode(this.patternProps) | 0;
+    return result;
+  };
+  ObjectAdditionalPropertiesRule.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.rule, other.rule) && Kotlin.equals(this.ignoredProperties, other.ignoredProperties) && Kotlin.equals(this.patternProps, other.patternProps)))));
+  };
+  function SchemaDependenciesRule(property, rule) {
+    this.property = property;
+    this.rule = rule;
+  }
+  SchemaDependenciesRule.prototype.eval_vzh9da$ = function (element) {
+    var tmp$;
+    if (Kotlin.isType(element, JsonObject)) {
+      var propertyExists = element.containsKey_61zpoe$(this.property);
+      return propertyExists ? this.rule.eval_vzh9da$(element) : emptyList();
+    } else
+      tmp$ = emptyList();
+    return tmp$;
+  };
+  SchemaDependenciesRule.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'SchemaDependenciesRule',
+    interfaces: [ValidationRule]
+  };
+  SchemaDependenciesRule.prototype.component1 = function () {
+    return this.property;
+  };
+  SchemaDependenciesRule.prototype.component2 = function () {
+    return this.rule;
+  };
+  SchemaDependenciesRule.prototype.copy_itxqo9$ = function (property, rule) {
+    return new SchemaDependenciesRule(property === void 0 ? this.property : property, rule === void 0 ? this.rule : rule);
+  };
+  SchemaDependenciesRule.prototype.toString = function () {
+    return 'SchemaDependenciesRule(property=' + Kotlin.toString(this.property) + (', rule=' + Kotlin.toString(this.rule)) + ')';
+  };
+  SchemaDependenciesRule.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.property) | 0;
+    result = result * 31 + Kotlin.hashCode(this.rule) | 0;
+    return result;
+  };
+  SchemaDependenciesRule.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.property, other.property) && Kotlin.equals(this.rule, other.rule)))));
+  };
+  function DependenciesRuleParser(factory) {
+    this.factory = factory;
+    this.key_0 = 'dependencies';
+  }
+  DependenciesRuleParser.prototype.canParse_3boyfh$ = function (element) {
+    return element.get_61zpoe$(this.key_0) != null;
+  };
+  function DependenciesRuleParser$parse$lambda(this$DependenciesRuleParser) {
+    return function (obj) {
+      var $receiver = obj.entries();
+      var destination = ArrayList_init_0(collectionSizeOrDefault($receiver, 10));
+      var tmp$;
+      tmp$ = $receiver.iterator();
+      while (tmp$.hasNext()) {
+        var item = tmp$.next();
+        destination.add_11rb$(this$DependenciesRuleParser.parseRule_0(item.first, item.second));
+      }
+      var parseResults = destination;
+      var destination_0 = ArrayList_init();
+      var tmp$_0;
+      tmp$_0 = parseResults.iterator();
+      while (tmp$_0.hasNext()) {
+        var element = tmp$_0.next();
+        var tmp$_0_0;
+        if ((tmp$_0_0 = element.left()) != null) {
+          destination_0.add_11rb$(tmp$_0_0);
+        }}
+      var errors = flatten(destination_0);
+      var tmp$_1;
+      if (any(errors))
+        tmp$_1 = new Either$Left(errors);
+      else {
+        var destination_1 = ArrayList_init();
+        var tmp$_2;
+        tmp$_2 = parseResults.iterator();
+        while (tmp$_2.hasNext()) {
+          var element_0 = tmp$_2.next();
+          var tmp$_0_1;
+          if ((tmp$_0_1 = element_0.right()) != null) {
+            destination_1.add_11rb$(tmp$_0_1);
+          }}
+        tmp$_1 = new Either$Right(new SchemaRule(destination_1));
+      }
+      return tmp$_1;
+    };
+  }
+  DependenciesRuleParser.prototype.parse_3boyfh$ = function (element) {
+    return asObject(element.get_61zpoe$(this.key_0)).mapEither_ik7j40$(getCallableRef('listOf', function (p1) {
+      return listOf_0(p1);
+    }), DependenciesRuleParser$parse$lambda(this));
+  };
+  DependenciesRuleParser.prototype.parseRule_0 = function (key, element) {
+    var tmp$;
+    if (Kotlin.isType(element, JsonArray))
+      tmp$ = this.parseRequiredRule_0(key, element);
+    else if (Kotlin.isType(element, JsonObject))
+      tmp$ = this.parseSchemaRule_0(key, element);
+    else
+      tmp$ = new Either$Left(listOf_0(new Error_0('Value is neither an array or an object')));
+    return tmp$;
+  };
+  function DependenciesRuleParser$parseSchemaRule$lambda(closure$key) {
+    return function (it) {
+      return new SchemaDependenciesRule(closure$key, it);
+    };
+  }
+  DependenciesRuleParser.prototype.parseSchemaRule_0 = function (key, obj) {
+    var rule = this.factory.make().parse_3boyfh$(obj);
+    return rule.map_r1ursk$(DependenciesRuleParser$parseSchemaRule$lambda(key));
+  };
+  DependenciesRuleParser.prototype.parseRequiredRule_0 = function (key, array) {
+    var $receiver = array.elements();
+    var destination = ArrayList_init_0(collectionSizeOrDefault($receiver, 10));
+    var tmp$;
+    tmp$ = $receiver.iterator();
+    while (tmp$.hasNext()) {
+      var item = tmp$.next();
+      destination.add_11rb$(asString(item));
+    }
+    var conversions = destination;
+    var destination_0 = ArrayList_init();
+    var tmp$_0;
+    tmp$_0 = conversions.iterator();
+    while (tmp$_0.hasNext()) {
+      var element = tmp$_0.next();
+      var tmp$_0_0;
+      if ((tmp$_0_0 = element.left()) != null) {
+        destination_0.add_11rb$(tmp$_0_0);
+      }}
+    var errors = destination_0;
+    var tmp$_1;
+    if (any(errors))
+      tmp$_1 = new Either$Left(errors);
+    else {
+      var destination_1 = ArrayList_init();
+      var tmp$_2;
+      tmp$_2 = conversions.iterator();
+      while (tmp$_2.hasNext()) {
+        var element_0 = tmp$_2.next();
+        var tmp$_0_1;
+        if ((tmp$_0_1 = element_0.right()) != null) {
+          destination_1.add_11rb$(tmp$_0_1);
+        }}
+      tmp$_1 = new Either$Right(new PropertyDependenciesRule(key, toSet(destination_1)));
+    }
+    return tmp$_1;
+  };
+  DependenciesRuleParser.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'DependenciesRuleParser',
+    interfaces: [RuleParser]
+  };
+  DependenciesRuleParser.prototype.component1 = function () {
+    return this.factory;
+  };
+  DependenciesRuleParser.prototype.copy_im5jht$ = function (factory) {
+    return new DependenciesRuleParser(factory === void 0 ? this.factory : factory);
+  };
+  DependenciesRuleParser.prototype.toString = function () {
+    return 'DependenciesRuleParser(factory=' + Kotlin.toString(this.factory) + ')';
+  };
+  DependenciesRuleParser.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.factory) | 0;
+    return result;
+  };
+  DependenciesRuleParser.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && Kotlin.equals(this.factory, other.factory))));
+  };
+  function PropertyDependenciesRule(property, required) {
+    this.property = property;
+    this.required = required;
+  }
+  PropertyDependenciesRule.prototype.eval_vzh9da$ = function (element) {
+    var tmp$, tmp$_0;
+    if (Kotlin.isType(element, JsonObject)) {
+      var propertyValue = element.get_61zpoe$(this.property);
+      var missingRequiredProperties = minus(this.required, element.keys());
+      if (propertyValue == null)
+        tmp$ = emptyList();
+      else if (missingRequiredProperties.isEmpty())
+        tmp$ = emptyList();
+      else {
+        var destination = ArrayList_init_0(collectionSizeOrDefault(missingRequiredProperties, 10));
+        var tmp$_1;
+        tmp$_1 = missingRequiredProperties.iterator();
+        while (tmp$_1.hasNext()) {
+          var item = tmp$_1.next();
+          destination.add_11rb$(new Error_0(item + ' is required because ' + this.property + ' entry exists'));
+        }
+        tmp$ = destination;
+      }
+      return tmp$;
+    } else
+      tmp$_0 = emptyList();
+    return tmp$_0;
+  };
+  PropertyDependenciesRule.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'PropertyDependenciesRule',
+    interfaces: [ValidationRule]
+  };
+  PropertyDependenciesRule.prototype.component1 = function () {
+    return this.property;
+  };
+  PropertyDependenciesRule.prototype.component2 = function () {
+    return this.required;
+  };
+  PropertyDependenciesRule.prototype.copy_qwyf15$ = function (property, required) {
+    return new PropertyDependenciesRule(property === void 0 ? this.property : property, required === void 0 ? this.required : required);
+  };
+  PropertyDependenciesRule.prototype.toString = function () {
+    return 'PropertyDependenciesRule(property=' + Kotlin.toString(this.property) + (', required=' + Kotlin.toString(this.required)) + ')';
+  };
+  PropertyDependenciesRule.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.property) | 0;
+    result = result * 31 + Kotlin.hashCode(this.required) | 0;
+    return result;
+  };
+  PropertyDependenciesRule.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.property, other.property) && Kotlin.equals(this.required, other.required)))));
+  };
   function PropertyAmountParser() {
   }
   PropertyAmountParser.prototype.canParse_3boyfh$ = function (element) {
     return element.get_61zpoe$(this.key) != null;
   };
-  function PropertyAmountParser$parse$lambda$lambda(number) {
-    return numberToInt(number) < 0 ? new Either$Left(listOf_0(new Error_0('maxProperties should have a non-negative value'))) : new Either$Right(new MaxPropertiesRule(numberToInt(number)));
+  function PropertyAmountParser$parse$lambda$lambda(this$PropertyAmountParser) {
+    return function (number) {
+      return numberToInt(number) < 0 ? new Either$Left(listOf_0(new Error_0('maxProperties should have a non-negative value'))) : this$PropertyAmountParser.parse_3p81yu$(number);
+    };
   }
-  function PropertyAmountParser$parse$lambda(scalar) {
-    return asNumber(scalar).map_ik7j40$(getCallableRef('listOf', function (p1) {
-      return listOf_0(p1);
-    }), PropertyAmountParser$parse$lambda$lambda);
+  function PropertyAmountParser$parse$lambda(this$PropertyAmountParser) {
+    return function (scalar) {
+      return asNumber_0(scalar).mapEither_ik7j40$(getCallableRef('listOf', function (p1) {
+        return listOf_0(p1);
+      }), PropertyAmountParser$parse$lambda$lambda(this$PropertyAmountParser));
+    };
   }
   PropertyAmountParser.prototype.parse_3boyfh$ = function (element) {
-    return asScalar(element.get_61zpoe$(this.key)).map_ik7j40$(getCallableRef('listOf', function (p1) {
+    return asScalar(element.get_61zpoe$(this.key)).mapEither_ik7j40$(getCallableRef('listOf', function (p1) {
       return listOf_0(p1);
-    }), PropertyAmountParser$parse$lambda);
+    }), PropertyAmountParser$parse$lambda(this));
   };
   PropertyAmountParser.$metadata$ = {
     kind: Kind_CLASS,
@@ -1992,45 +3388,137 @@
   MinPropertiesRule.prototype.equals = function (other) {
     return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && Kotlin.equals(this.minimum, other.minimum))));
   };
-  function PropertyRuleParser(factory) {
-    this.factory = factory;
-    this.key_0 = 'properties';
+  function AbstractPropertiesRuleParser(key, factory, parser) {
+    this.key = key;
+    this.factory_g22d18$_0 = factory;
+    this.parser = parser;
   }
-  PropertyRuleParser.prototype.canParse_3boyfh$ = function (element) {
-    return element.get_61zpoe$(this.key_0) != null;
+  AbstractPropertiesRuleParser.prototype.canParse_3boyfh$ = function (element) {
+    return element.get_61zpoe$(this.key) != null;
   };
-  PropertyRuleParser.prototype.parse_3boyfh$ = function (element) {
-    return new Either$Left(listOf_0(new Error_0('asdasdasd')));
+  AbstractPropertiesRuleParser.prototype.parse_3boyfh$ = function (element) {
+    var tmp$;
+    var entry = element.get_61zpoe$(this.key);
+    if (Kotlin.isType(entry, JsonObject)) {
+      var $receiver = entry.entries();
+      var destination = ArrayList_init_0(collectionSizeOrDefault($receiver, 10));
+      var tmp$_0;
+      tmp$_0 = $receiver.iterator();
+      while (tmp$_0.hasNext()) {
+        var item = tmp$_0.next();
+        destination.add_11rb$(new Pair(item.first, asObject(item.second)));
+      }
+      var maybeObjects = destination;
+      var tmp$_1 = partitionPairList(maybeObjects);
+      var errors = tmp$_1.component1()
+      , conversions = tmp$_1.component2();
+      if (any(errors)) {
+        var destination_0 = ArrayList_init_0(collectionSizeOrDefault(errors, 10));
+        var tmp$_2;
+        tmp$_2 = errors.iterator();
+        while (tmp$_2.hasNext()) {
+          var item_0 = tmp$_2.next();
+          destination_0.add_11rb$(item_0.second);
+        }
+        return new Either$Left(destination_0);
+      }var destination_1 = ArrayList_init_0(collectionSizeOrDefault(conversions, 10));
+      var tmp$_3;
+      tmp$_3 = conversions.iterator();
+      while (tmp$_3.hasNext()) {
+        var item_1 = tmp$_3.next();
+        destination_1.add_11rb$(this.parseProperty_315dgn$_0(item_1.first, item_1.second));
+      }
+      var tmp$_4 = partitionList(destination_1);
+      var parseErrors = tmp$_4.component1()
+      , rules = tmp$_4.component2();
+      var tmp$_5;
+      if (any(parseErrors)) {
+        var destination_2 = ArrayList_init_0(collectionSizeOrDefault(errors, 10));
+        var tmp$_6;
+        tmp$_6 = errors.iterator();
+        while (tmp$_6.hasNext()) {
+          var item_2 = tmp$_6.next();
+          destination_2.add_11rb$(item_2.second);
+        }
+        tmp$_5 = new Either$Left(destination_2);
+      } else
+        tmp$_5 = new Either$Right(new PropertiesRule(rules));
+      return tmp$_5;
+    } else
+      tmp$ = new Either$Left(listOf_0(new Error_0('Properties must be an object')));
+    return tmp$;
   };
-  function PropertyRuleParser$parseProperty$lambda(closure$key) {
-    return function (x) {
-      return new PropertyRule(closure$key, x);
+  function AbstractPropertiesRuleParser$parseProperty$lambda(this$AbstractPropertiesRuleParser, closure$key) {
+    return function (rule) {
+      return this$AbstractPropertiesRuleParser.parser(closure$key, rule);
     };
   }
-  PropertyRuleParser.prototype.parseProperty_0 = function (key, element) {
-    var eitherRule = this.factory.make().parse_3boyfh$(element);
-    return eitherRule.map_r1ursk$(PropertyRuleParser$parseProperty$lambda(key));
+  AbstractPropertiesRuleParser.prototype.parseProperty_315dgn$_0 = function (key, obj) {
+    return this.factory_g22d18$_0.make().parse_3boyfh$(obj).map_r1ursk$(AbstractPropertiesRuleParser$parseProperty$lambda(this, key));
   };
-  PropertyRuleParser.$metadata$ = {
+  AbstractPropertiesRuleParser.$metadata$ = {
     kind: Kind_CLASS,
-    simpleName: 'PropertyRuleParser',
+    simpleName: 'AbstractPropertiesRuleParser',
     interfaces: [RuleParser]
   };
-  PropertyRuleParser.prototype.component1 = function () {
+  function parseProperty$lambda(key, rule) {
+    return new PropertyRule(key, rule);
+  }
+  var parseProperty;
+  function parsePatternProperty$lambda(key, rule) {
+    return new PatternPropertyRule(Regex_init(key), rule);
+  }
+  var parsePatternProperty;
+  function PropertiesRuleParser(factory) {
+    AbstractPropertiesRuleParser.call(this, 'properties', factory, parseProperty);
+    this.factory = factory;
+  }
+  PropertiesRuleParser.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'PropertiesRuleParser',
+    interfaces: [AbstractPropertiesRuleParser]
+  };
+  PropertiesRuleParser.prototype.component1 = function () {
     return this.factory;
   };
-  PropertyRuleParser.prototype.copy_im5jht$ = function (factory) {
-    return new PropertyRuleParser(factory === void 0 ? this.factory : factory);
+  PropertiesRuleParser.prototype.copy_im5jht$ = function (factory) {
+    return new PropertiesRuleParser(factory === void 0 ? this.factory : factory);
   };
-  PropertyRuleParser.prototype.toString = function () {
-    return 'PropertyRuleParser(factory=' + Kotlin.toString(this.factory) + ')';
+  PropertiesRuleParser.prototype.toString = function () {
+    return 'PropertiesRuleParser(factory=' + Kotlin.toString(this.factory) + ')';
   };
-  PropertyRuleParser.prototype.hashCode = function () {
+  PropertiesRuleParser.prototype.hashCode = function () {
     var result = 0;
     result = result * 31 + Kotlin.hashCode(this.factory) | 0;
     return result;
   };
-  PropertyRuleParser.prototype.equals = function (other) {
+  PropertiesRuleParser.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && Kotlin.equals(this.factory, other.factory))));
+  };
+  function PatternPropertiesRuleParser(factory) {
+    AbstractPropertiesRuleParser.call(this, 'patternProperties', factory, parsePatternProperty);
+    this.factory = factory;
+  }
+  PatternPropertiesRuleParser.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'PatternPropertiesRuleParser',
+    interfaces: [AbstractPropertiesRuleParser]
+  };
+  PatternPropertiesRuleParser.prototype.component1 = function () {
+    return this.factory;
+  };
+  PatternPropertiesRuleParser.prototype.copy_im5jht$ = function (factory) {
+    return new PatternPropertiesRuleParser(factory === void 0 ? this.factory : factory);
+  };
+  PatternPropertiesRuleParser.prototype.toString = function () {
+    return 'PatternPropertiesRuleParser(factory=' + Kotlin.toString(this.factory) + ')';
+  };
+  PatternPropertiesRuleParser.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.factory) | 0;
+    return result;
+  };
+  PatternPropertiesRuleParser.prototype.equals = function (other) {
     return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && Kotlin.equals(this.factory, other.factory))));
   };
   function PropertiesRule(rules) {
@@ -2056,7 +3544,7 @@
   PropertiesRule.prototype.component1 = function () {
     return this.rules;
   };
-  PropertiesRule.prototype.copy_yjd5o2$ = function (rules) {
+  PropertiesRule.prototype.copy_6vpe0g$ = function (rules) {
     return new PropertiesRule(rules === void 0 ? this.rules : rules);
   };
   PropertiesRule.prototype.toString = function () {
@@ -2069,6 +3557,56 @@
   };
   PropertiesRule.prototype.equals = function (other) {
     return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && Kotlin.equals(this.rules, other.rules))));
+  };
+  function PatternPropertyRule(regex, rule) {
+    this.regex = regex;
+    this.rule = rule;
+  }
+  function PatternPropertyRule$eval$lambda(it) {
+    return emptyList();
+  }
+  function PatternPropertyRule$eval$lambda_0(this$PatternPropertyRule) {
+    return function (obj) {
+      var properties = obj.entries_t7befh$(this$PatternPropertyRule.regex);
+      var destination = ArrayList_init();
+      var tmp$;
+      tmp$ = properties.iterator();
+      while (tmp$.hasNext()) {
+        var element = tmp$.next();
+        var list = this$PatternPropertyRule.rule.eval_vzh9da$(element.second);
+        addAll(destination, list);
+      }
+      return destination;
+    };
+  }
+  PatternPropertyRule.prototype.eval_vzh9da$ = function (element) {
+    return asObject(element).fold_hfmbsx$(PatternPropertyRule$eval$lambda, PatternPropertyRule$eval$lambda_0(this));
+  };
+  PatternPropertyRule.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'PatternPropertyRule',
+    interfaces: [ValidationRule]
+  };
+  PatternPropertyRule.prototype.component1 = function () {
+    return this.regex;
+  };
+  PatternPropertyRule.prototype.component2 = function () {
+    return this.rule;
+  };
+  PatternPropertyRule.prototype.copy_q6dnnw$ = function (regex, rule) {
+    return new PatternPropertyRule(regex === void 0 ? this.regex : regex, rule === void 0 ? this.rule : rule);
+  };
+  PatternPropertyRule.prototype.toString = function () {
+    return 'PatternPropertyRule(regex=' + Kotlin.toString(this.regex) + (', rule=' + Kotlin.toString(this.rule)) + ')';
+  };
+  PatternPropertyRule.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.regex) | 0;
+    result = result * 31 + Kotlin.hashCode(this.rule) | 0;
+    return result;
+  };
+  PatternPropertyRule.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.regex, other.regex) && Kotlin.equals(this.rule, other.rule)))));
   };
   function PropertyRule(name, rule) {
     this.name = name;
@@ -2130,7 +3668,7 @@
       while (tmp$_0.hasNext()) {
         var element_0 = tmp$_0.next();
         var tmp$_0_0;
-        if ((tmp$_0_0 = asScalar(element_0).toRightValueOrNull()) != null) {
+        if ((tmp$_0_0 = asScalar(element_0).right()) != null) {
           destination.add_11rb$(tmp$_0_0);
         }}
       var destination_0 = ArrayList_init();
@@ -2139,7 +3677,7 @@
       while (tmp$_1.hasNext()) {
         var element_1 = tmp$_1.next();
         var tmp$_0_1;
-        if ((tmp$_0_1 = asString(element_1).toRightValueOrNull()) != null) {
+        if ((tmp$_0_1 = asString_0(element_1).right()) != null) {
           destination_0.add_11rb$(tmp$_0_1);
         }}
       var requiredKeys = destination_0;
@@ -2162,10 +3700,8 @@
   function RequiredRule(members) {
     this.members = members;
   }
-  function RequiredRule$eval$lambda(this$RequiredRule) {
-    return function (it) {
-      return this$RequiredRule.createErrors_0(this$RequiredRule.members);
-    };
+  function RequiredRule$eval$lambda(it) {
+    return emptyList();
   }
   function RequiredRule$eval$lambda_0(this$RequiredRule) {
     return function (x) {
@@ -2174,7 +3710,7 @@
     };
   }
   RequiredRule.prototype.eval_vzh9da$ = function (element) {
-    return asObject(element).fold_hfmbsx$(RequiredRule$eval$lambda(this), RequiredRule$eval$lambda_0(this));
+    return asObject(element).fold_hfmbsx$(RequiredRule$eval$lambda, RequiredRule$eval$lambda_0(this));
   };
   RequiredRule.prototype.createErrors_0 = function (keys) {
     var destination = ArrayList_init_0(collectionSizeOrDefault(keys, 10));
@@ -2208,11 +3744,377 @@
   RequiredRule.prototype.equals = function (other) {
     return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && Kotlin.equals(this.members, other.members))));
   };
+  function MaxLengthRuleParser() {
+    MaxLengthRuleParser_instance = this;
+    this.key_gjcwos$_0 = 'maxLength';
+  }
+  Object.defineProperty(MaxLengthRuleParser.prototype, 'key', {
+    configurable: true,
+    get: function () {
+      return this.key_gjcwos$_0;
+    }
+  });
+  MaxLengthRuleParser.prototype.parse_za3lpa$ = function (amount) {
+    return new Either$Right(new MaxLengthRule(amount));
+  };
+  MaxLengthRuleParser.$metadata$ = {
+    kind: Kind_OBJECT,
+    simpleName: 'MaxLengthRuleParser',
+    interfaces: [StringLengthRuleParser]
+  };
+  var MaxLengthRuleParser_instance = null;
+  function MaxLengthRuleParser_getInstance() {
+    if (MaxLengthRuleParser_instance === null) {
+      new MaxLengthRuleParser();
+    }return MaxLengthRuleParser_instance;
+  }
+  function MaxLengthRule(maximum) {
+    this.maximum = maximum;
+  }
+  MaxLengthRule.prototype.eval_61zpoe$ = function (string) {
+    return string.length > this.maximum ? listOf_0(new Error_0('String should be longer than ' + this.maximum)) : emptyList();
+  };
+  MaxLengthRule.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'MaxLengthRule',
+    interfaces: [StringLengthRule]
+  };
+  MaxLengthRule.prototype.component1 = function () {
+    return this.maximum;
+  };
+  MaxLengthRule.prototype.copy_za3lpa$ = function (maximum) {
+    return new MaxLengthRule(maximum === void 0 ? this.maximum : maximum);
+  };
+  MaxLengthRule.prototype.toString = function () {
+    return 'MaxLengthRule(maximum=' + Kotlin.toString(this.maximum) + ')';
+  };
+  MaxLengthRule.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.maximum) | 0;
+    return result;
+  };
+  MaxLengthRule.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && Kotlin.equals(this.maximum, other.maximum))));
+  };
+  function MinLengthRuleParser() {
+    MinLengthRuleParser_instance = this;
+    this.key_c0a46i$_0 = 'minLength';
+  }
+  Object.defineProperty(MinLengthRuleParser.prototype, 'key', {
+    configurable: true,
+    get: function () {
+      return this.key_c0a46i$_0;
+    }
+  });
+  MinLengthRuleParser.prototype.parse_za3lpa$ = function (amount) {
+    return new Either$Right(new MinLengthRule(amount));
+  };
+  MinLengthRuleParser.$metadata$ = {
+    kind: Kind_OBJECT,
+    simpleName: 'MinLengthRuleParser',
+    interfaces: [StringLengthRuleParser]
+  };
+  var MinLengthRuleParser_instance = null;
+  function MinLengthRuleParser_getInstance() {
+    if (MinLengthRuleParser_instance === null) {
+      new MinLengthRuleParser();
+    }return MinLengthRuleParser_instance;
+  }
+  function MinLengthRule(minimum) {
+    this.minimum = minimum;
+  }
+  MinLengthRule.prototype.eval_61zpoe$ = function (string) {
+    return string.length < this.minimum ? listOf_0(new Error_0('String should be shorter than ' + this.minimum)) : emptyList();
+  };
+  MinLengthRule.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'MinLengthRule',
+    interfaces: [StringLengthRule]
+  };
+  MinLengthRule.prototype.component1 = function () {
+    return this.minimum;
+  };
+  MinLengthRule.prototype.copy_za3lpa$ = function (minimum) {
+    return new MinLengthRule(minimum === void 0 ? this.minimum : minimum);
+  };
+  MinLengthRule.prototype.toString = function () {
+    return 'MinLengthRule(minimum=' + Kotlin.toString(this.minimum) + ')';
+  };
+  MinLengthRule.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.minimum) | 0;
+    return result;
+  };
+  MinLengthRule.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && Kotlin.equals(this.minimum, other.minimum))));
+  };
+  function PatternRule(pattern) {
+    this.pattern = pattern;
+  }
+  function PatternRule$eval$lambda(this$PatternRule) {
+    return function (it) {
+      var matches = this$PatternRule.pattern.containsMatchIn_6bul2c$(it);
+      return !matches ? listOf_0(new Error_0("Value doesn't match regex")) : emptyList();
+    };
+  }
+  PatternRule.prototype.eval_vzh9da$ = function (element) {
+    return asString(element).map_r1ursk$(PatternRule$eval$lambda(this)).rightOrDefault_mh5how$(emptyList());
+  };
+  PatternRule.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'PatternRule',
+    interfaces: [ValidationRule]
+  };
+  PatternRule.prototype.component1 = function () {
+    return this.pattern;
+  };
+  PatternRule.prototype.copy_t7befh$ = function (pattern) {
+    return new PatternRule(pattern === void 0 ? this.pattern : pattern);
+  };
+  PatternRule.prototype.toString = function () {
+    return 'PatternRule(pattern=' + Kotlin.toString(this.pattern) + ')';
+  };
+  PatternRule.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.pattern) | 0;
+    return result;
+  };
+  PatternRule.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && Kotlin.equals(this.pattern, other.pattern))));
+  };
+  function PatternRuleParser() {
+    PatternRuleParser_instance = this;
+    this.key_0 = 'pattern';
+  }
+  PatternRuleParser.prototype.canParse_3boyfh$ = function (element) {
+    return element.get_61zpoe$(this.key_0) != null;
+  };
+  function PatternRuleParser$parse$lambda(it) {
+    return new PatternRule(Regex_init(it));
+  }
+  PatternRuleParser.prototype.parse_3boyfh$ = function (element) {
+    return asString(element.get_61zpoe$(this.key_0)).map_apdcv9$(getCallableRef('listOf', function (p1) {
+      return listOf_0(p1);
+    }), PatternRuleParser$parse$lambda);
+  };
+  PatternRuleParser.$metadata$ = {
+    kind: Kind_OBJECT,
+    simpleName: 'PatternRuleParser',
+    interfaces: [RuleParser]
+  };
+  var PatternRuleParser_instance = null;
+  function PatternRuleParser_getInstance() {
+    if (PatternRuleParser_instance === null) {
+      new PatternRuleParser();
+    }return PatternRuleParser_instance;
+  }
+  function StringFormatRule(formatter) {
+    this.formatter = formatter;
+  }
+  function StringFormatRule$eval$lambda(maybeError) {
+    return maybeError != null ? listOf_0(maybeError) : emptyList();
+  }
+  StringFormatRule.prototype.eval_vzh9da$ = function (element) {
+    return asString(element).map_r1ursk$(this.formatter).map_r1ursk$(StringFormatRule$eval$lambda).rightOrDefault_mh5how$(emptyList());
+  };
+  StringFormatRule.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'StringFormatRule',
+    interfaces: [ValidationRule]
+  };
+  StringFormatRule.prototype.component1 = function () {
+    return this.formatter;
+  };
+  StringFormatRule.prototype.copy_asyhrz$ = function (formatter) {
+    return new StringFormatRule(formatter === void 0 ? this.formatter : formatter);
+  };
+  StringFormatRule.prototype.toString = function () {
+    return 'StringFormatRule(formatter=' + Kotlin.toString(this.formatter) + ')';
+  };
+  StringFormatRule.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.formatter) | 0;
+    return result;
+  };
+  StringFormatRule.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && Kotlin.equals(this.formatter, other.formatter))));
+  };
+  function StringFormatRuleParser(formatters) {
+    StringFormatRuleParser$Companion_getInstance();
+    this.formatters = formatters;
+    this.key_0 = 'format';
+  }
+  function StringFormatRuleParser$Companion() {
+    StringFormatRuleParser$Companion_instance = this;
+  }
+  StringFormatRuleParser$Companion.prototype.default = function () {
+    return new StringFormatRuleParser(KnownFormatValidators_getInstance().default());
+  };
+  StringFormatRuleParser$Companion.$metadata$ = {
+    kind: Kind_OBJECT,
+    simpleName: 'Companion',
+    interfaces: []
+  };
+  var StringFormatRuleParser$Companion_instance = null;
+  function StringFormatRuleParser$Companion_getInstance() {
+    if (StringFormatRuleParser$Companion_instance === null) {
+      new StringFormatRuleParser$Companion();
+    }return StringFormatRuleParser$Companion_instance;
+  }
+  StringFormatRuleParser.prototype.canParse_3boyfh$ = function (element) {
+    return element.containsKey_61zpoe$(this.key_0);
+  };
+  function StringFormatRuleParser$parse$lambda(this$StringFormatRuleParser) {
+    return function (format) {
+      var maybeFormatter = this$StringFormatRuleParser.formatters.get_11rb$(format);
+      return maybeFormatter == null ? new Either$Left(listOf_0(new Error_0("Couldn't find formatter for format: " + format))) : new Either$Right(new StringFormatRule(maybeFormatter));
+    };
+  }
+  StringFormatRuleParser.prototype.parse_3boyfh$ = function (element) {
+    return asString(element.get_61zpoe$(this.key_0)).mapEither_ik7j40$(getCallableRef('listOf', function (p1) {
+      return listOf_0(p1);
+    }), StringFormatRuleParser$parse$lambda(this));
+  };
+  StringFormatRuleParser.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'StringFormatRuleParser',
+    interfaces: [RuleParser]
+  };
+  StringFormatRuleParser.prototype.component1 = function () {
+    return this.formatters;
+  };
+  StringFormatRuleParser.prototype.copy_5zqefa$ = function (formatters) {
+    return new StringFormatRuleParser(formatters === void 0 ? this.formatters : formatters);
+  };
+  StringFormatRuleParser.prototype.toString = function () {
+    return 'StringFormatRuleParser(formatters=' + Kotlin.toString(this.formatters) + ')';
+  };
+  StringFormatRuleParser.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.formatters) | 0;
+    return result;
+  };
+  StringFormatRuleParser.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && Kotlin.equals(this.formatters, other.formatters))));
+  };
+  function KnownFormatValidators() {
+    KnownFormatValidators_instance = this;
+  }
+  KnownFormatValidators.prototype.default = function () {
+    return mapOf([to('date-time', dateTimeValidator), to('email', emailValidator), to('hostname', hostNameValidator), to('ipv4', ipv4Validator), to('ipv6', ipv6Validator)]);
+  };
+  KnownFormatValidators.$metadata$ = {
+    kind: Kind_OBJECT,
+    simpleName: 'KnownFormatValidators',
+    interfaces: []
+  };
+  var KnownFormatValidators_instance = null;
+  function KnownFormatValidators_getInstance() {
+    if (KnownFormatValidators_instance === null) {
+      new KnownFormatValidators();
+    }return KnownFormatValidators_instance;
+  }
+  var ipv6Regex;
+  var ipv4Regex;
+  var hostNameRegex;
+  var emailRegex;
+  function ipv6Validator$lambda(value) {
+    return ipv6Regex.matches_6bul2c$(value) ? null : new Error_0(value + ' is not in ipv6 format');
+  }
+  var ipv6Validator;
+  function ipv4Validator$lambda(value) {
+    return ipv4Regex.matches_6bul2c$(value) ? null : new Error_0(value + ' is not in ipv4 format');
+  }
+  var ipv4Validator;
+  function hostNameValidator$lambda(value) {
+    return hostNameRegex.matches_6bul2c$(value) ? null : new Error_0(value + ' is not in hostname format');
+  }
+  var hostNameValidator;
+  function emailValidator$lambda(value) {
+    return emailRegex.matches_6bul2c$(value) ? null : new Error_0(value + ' is not in email format');
+  }
+  var emailValidator;
+  function dateTimeValidator$lambda(value) {
+    try {
+      Instant.Companion.parse_61zpoe$(value);
+      return null;
+    } catch (exception) {
+      if (Kotlin.isType(exception, Exception)) {
+        var message = value + ' is not date-time because: ' + toString(exception.message);
+        return new Error_0(message);
+      } else
+        throw exception;
+    }
+  }
+  var dateTimeValidator;
+  function StringLengthRule() {
+  }
+  StringLengthRule.prototype.eval_vzh9da$ = function (element) {
+    var tmp$;
+    var string = this.getString_vzh9da$(element);
+    if (string != null) {
+      tmp$ = this.eval_61zpoe$(string);
+    } else
+      tmp$ = emptyList();
+    return tmp$;
+  };
+  function StringLengthRule$getString$lambda(it) {
+    return null;
+  }
+  function StringLengthRule$getString$lambda_0(scalar) {
+    return asString_0(scalar);
+  }
+  function StringLengthRule$getString$lambda_1(it) {
+    return null;
+  }
+  function StringLengthRule$getString$lambda_2(x) {
+    return x;
+  }
+  StringLengthRule.prototype.getString_vzh9da$ = function (element) {
+    return asScalar(element).mapEither_ik7j40$(StringLengthRule$getString$lambda, StringLengthRule$getString$lambda_0).fold_hfmbsx$(StringLengthRule$getString$lambda_1, StringLengthRule$getString$lambda_2);
+  };
+  StringLengthRule.$metadata$ = {
+    kind: Kind_INTERFACE,
+    simpleName: 'StringLengthRule',
+    interfaces: [ValidationRule]
+  };
+  function StringLengthRuleParser() {
+  }
+  StringLengthRuleParser.prototype.canParse_3boyfh$ = function (element) {
+    return element.get_61zpoe$(this.key) != null;
+  };
+  function StringLengthRuleParser$parse$lambda$lambda(it) {
+    return numberToInt(it);
+  }
+  function StringLengthRuleParser$parse$lambda(this$StringLengthRuleParser) {
+    return function (scalar) {
+      return asNumber_0(scalar).map_r1ursk$(StringLengthRuleParser$parse$lambda$lambda).mapEither_ik7j40$(getCallableRef('listOf', function (p1) {
+        return listOf_0(p1);
+      }), getCallableRef('parse', function ($receiver, p1) {
+        return $receiver.parse_za3lpa$(p1);
+      }.bind(null, this$StringLengthRuleParser)));
+    };
+  }
+  StringLengthRuleParser.prototype.parse_3boyfh$ = function (element) {
+    var constElement = ensureNotNull(element.get_61zpoe$(this.key));
+    return asScalar(constElement).mapEither_ik7j40$(getCallableRef('listOf', function (p1) {
+      return listOf_0(p1);
+    }), StringLengthRuleParser$parse$lambda(this));
+  };
+  StringLengthRuleParser.$metadata$ = {
+    kind: Kind_INTERFACE,
+    simpleName: 'StringLengthRuleParser',
+    interfaces: [RuleParser]
+  };
   var package$org = _.org || (_.org = {});
   var package$validator = package$org.validator || (package$org.validator = {});
   package$validator.JsonElement = JsonElement;
   package$validator.asObject_ia0mbm$ = asObject;
   package$validator.asScalar_ia0mbm$ = asScalar;
+  package$validator.asString_ia0mbm$ = asString;
+  package$validator.asBoolean_ia0mbm$ = asBoolean;
+  package$validator.asNumber_ia0mbm$ = asNumber;
+  package$validator.asInteger_ia0mbm$ = asInteger;
   package$validator.asArray_ia0mbm$ = asArray;
   package$validator.asNull_ia0mbm$ = asNull;
   package$validator.JsonObject = JsonObject;
@@ -2223,15 +4125,22 @@
   Object.defineProperty(package$validator, 'DefaultNullElement', {
     get: DefaultNullElement_getInstance
   });
-  package$validator.asString_k22kqd$ = asString;
-  package$validator.asBoolean_k22kqd$ = asBoolean;
-  package$validator.asNumber_k22kqd$ = asNumber;
+  package$validator.asString_k22kqd$ = asString_0;
+  package$validator.asBoolean_k22kqd$ = asBoolean_0;
+  package$validator.asNumber_k22kqd$ = asNumber_0;
+  package$validator.asInteger_k22kqd$ = asInteger_0;
   package$validator.JsonScalar = JsonScalar;
-  package$validator.DefaultJsonScalar = DefaultJsonScalar;
+  package$validator.BooleanJsonScalar = BooleanJsonScalar;
+  package$validator.StringJsonScalar = StringJsonScalar;
+  package$validator.NumberJsonScalar = NumberJsonScalar;
+  package$validator.IntJsonScalar = IntJsonScalar;
   package$validator.identity_mh5how$ = identity;
+  package$validator.partitionList_oc11nf$ = partitionList;
+  package$validator.partitionPairList_an3zhs$ = partitionPairList;
   Either.Left = Either$Left;
   Either.Right = Either$Right;
   package$validator.Either = Either;
+  package$validator.SchemaResult = SchemaResult;
   package$validator.ValidationRule = ValidationRule;
   package$validator.RuleParser = RuleParser;
   Object.defineProperty(package$validator, 'NothingValidationRule', {
@@ -2282,24 +4191,43 @@
   Object.defineProperty(package$any, 'IntegerRule', {
     get: IntegerRule_getInstance
   });
+  var package$array = package$rules.array || (package$rules.array = {});
+  package$array.BooleanAdditionalItemsRule = BooleanAdditionalItemsRule;
+  package$array.ObjectAdditionalItemsRule = ObjectAdditionalItemsRule;
+  package$array.AdditionalItemsRuleParser = AdditionalItemsRuleParser;
+  package$array.SingleItemsRule = SingleItemsRule;
+  package$array.TupleRule = TupleRule;
+  package$array.ItemsRuleParser = ItemsRuleParser;
+  package$array.MaxItemsRule = MaxItemsRule;
+  Object.defineProperty(package$array, 'MaxItemsRuleParser', {
+    get: MaxItemsRuleParser_getInstance
+  });
+  package$array.MinItemsRule = MinItemsRule;
+  Object.defineProperty(package$array, 'MinItemsRuleParser', {
+    get: MinItemsRuleParser_getInstance
+  });
   var package$boolean = package$rules.boolean || (package$rules.boolean = {});
   package$boolean.AllOfRule = AllOfRule;
-  Object.defineProperty(package$boolean, 'AllOfRuleParser', {
-    get: AllOfRuleParser_getInstance
-  });
+  package$boolean.AllOfRuleParser = AllOfRuleParser;
   package$boolean.AnyOfRule = AnyOfRule;
   package$boolean.AnyOfRuleParser = AnyOfRuleParser;
   package$boolean.ArrayOfRuleParser = ArrayOfRuleParser;
   package$boolean.NotRule = NotRule;
   package$boolean.NotRuleParser = NotRuleParser;
   package$boolean.OneOfRule = OneOfRule;
-  Object.defineProperty(package$boolean, 'OneOfRuleParser', {
-    get: OneOfRuleParser_getInstance
-  });
+  package$boolean.OneOfRuleParser = OneOfRuleParser;
   var package$conditional = package$rules.conditional || (package$rules.conditional = {});
   package$conditional.IfThenElseRule = IfThenElseRule;
   package$conditional.IfThenElseRuleParser = IfThenElseRuleParser;
   var package$numeric = package$rules.numeric || (package$rules.numeric = {});
+  Object.defineProperty(package$numeric, 'ConditionalExclusiveMaximumRuleParser', {
+    get: ConditionalExclusiveMaximumRuleParser_getInstance
+  });
+  package$numeric.ConditionalExclusiveMaximumRule = ConditionalExclusiveMaximumRule;
+  Object.defineProperty(package$numeric, 'ConditionalExclusiveMinimumRuleParser', {
+    get: ConditionalExclusiveMinimumRuleParser_getInstance
+  });
+  package$numeric.ConditionalExclusiveMinimumRule = ConditionalExclusiveMinimumRule;
   Object.defineProperty(package$numeric, 'ExclusiveMaximumRuleParser', {
     get: ExclusiveMaximumRuleParser_getInstance
   });
@@ -2323,6 +4251,12 @@
   package$numeric.NumberRule = NumberRule_0;
   package$numeric.NumberRuleParser = NumberRuleParser;
   var package$object = package$rules.object || (package$rules.object = {});
+  package$object.AdditionalPropertiesRuleParser = AdditionalPropertiesRuleParser;
+  package$object.BooleanAdditionalPropertiesRule = BooleanAdditionalPropertiesRule;
+  package$object.ObjectAdditionalPropertiesRule = ObjectAdditionalPropertiesRule;
+  package$object.SchemaDependenciesRule = SchemaDependenciesRule;
+  package$object.DependenciesRuleParser = DependenciesRuleParser;
+  package$object.PropertyDependenciesRule = PropertyDependenciesRule;
   package$object.PropertyAmountParser = PropertyAmountParser;
   Object.defineProperty(package$object, 'MaxPropertiesRuleParser', {
     get: MaxPropertiesRuleParser_getInstance
@@ -2332,20 +4266,104 @@
     get: MinPropertiesRuleParser_getInstance
   });
   package$object.MinPropertiesRule = MinPropertiesRule;
-  package$object.PropertyRuleParser = PropertyRuleParser;
+  package$object.AbstractPropertiesRuleParser = AbstractPropertiesRuleParser;
+  Object.defineProperty(package$object, 'parseProperty', {
+    get: function () {
+      return parseProperty;
+    }
+  });
+  Object.defineProperty(package$object, 'parsePatternProperty', {
+    get: function () {
+      return parsePatternProperty;
+    }
+  });
+  package$object.PropertiesRuleParser = PropertiesRuleParser;
+  package$object.PatternPropertiesRuleParser = PatternPropertiesRuleParser;
   package$object.PropertiesRule = PropertiesRule;
+  package$object.PatternPropertyRule = PatternPropertyRule;
   package$object.PropertyRule = PropertyRule;
   Object.defineProperty(package$object, 'RequiredRuleParser', {
     get: RequiredRuleParser_getInstance
   });
   package$object.RequiredRule = RequiredRule;
+  var package$string = package$rules.string || (package$rules.string = {});
+  Object.defineProperty(package$string, 'MaxLengthRuleParser', {
+    get: MaxLengthRuleParser_getInstance
+  });
+  package$string.MaxLengthRule = MaxLengthRule;
+  Object.defineProperty(package$string, 'MinLengthRuleParser', {
+    get: MinLengthRuleParser_getInstance
+  });
+  package$string.MinLengthRule = MinLengthRule;
+  package$string.PatternRule = PatternRule;
+  Object.defineProperty(package$string, 'PatternRuleParser', {
+    get: PatternRuleParser_getInstance
+  });
+  package$string.StringFormatRule = StringFormatRule;
+  Object.defineProperty(StringFormatRuleParser, 'Companion', {
+    get: StringFormatRuleParser$Companion_getInstance
+  });
+  package$string.StringFormatRuleParser = StringFormatRuleParser;
+  Object.defineProperty(package$string, 'KnownFormatValidators', {
+    get: KnownFormatValidators_getInstance
+  });
+  Object.defineProperty(package$string, 'ipv6Regex', {
+    get: function () {
+      return ipv6Regex;
+    }
+  });
+  Object.defineProperty(package$string, 'ipv4Regex', {
+    get: function () {
+      return ipv4Regex;
+    }
+  });
+  Object.defineProperty(package$string, 'hostNameRegex', {
+    get: function () {
+      return hostNameRegex;
+    }
+  });
+  Object.defineProperty(package$string, 'emailRegex', {
+    get: function () {
+      return emailRegex;
+    }
+  });
+  Object.defineProperty(package$string, 'ipv6Validator', {
+    get: function () {
+      return ipv6Validator;
+    }
+  });
+  Object.defineProperty(package$string, 'ipv4Validator', {
+    get: function () {
+      return ipv4Validator;
+    }
+  });
+  Object.defineProperty(package$string, 'hostNameValidator', {
+    get: function () {
+      return hostNameValidator;
+    }
+  });
+  Object.defineProperty(package$string, 'emailValidator', {
+    get: function () {
+      return emailValidator;
+    }
+  });
+  Object.defineProperty(package$string, 'dateTimeValidator', {
+    get: function () {
+      return dateTimeValidator;
+    }
+  });
+  package$string.StringLengthRule = StringLengthRule;
+  package$string.StringLengthRuleParser = StringLengthRuleParser;
   DefaultJsonObject.prototype.deepEquals_vzh9da$ = JsonObject.prototype.deepEquals_vzh9da$;
   DefaultJsonObject.prototype.hasSameChildren_mbcpqv$_0 = JsonObject.prototype.hasSameChildren_mbcpqv$_0;
   DefaultJsonObject.prototype.hasSameKeys_xksyj8$_0 = JsonObject.prototype.hasSameKeys_xksyj8$_0;
   DefaultJsonArray.prototype.deepEquals_vzh9da$ = JsonArray.prototype.deepEquals_vzh9da$;
   DefaultJsonArray.prototype.hasSameElements_hlw545$_0 = JsonArray.prototype.hasSameElements_hlw545$_0;
   DefaultNullElement.prototype.deepEquals_vzh9da$ = NullElement.prototype.deepEquals_vzh9da$;
-  DefaultJsonScalar.prototype.deepEquals_vzh9da$ = JsonScalar.prototype.deepEquals_vzh9da$;
+  BooleanJsonScalar.prototype.deepEquals_vzh9da$ = JsonScalar.prototype.deepEquals_vzh9da$;
+  StringJsonScalar.prototype.deepEquals_vzh9da$ = JsonScalar.prototype.deepEquals_vzh9da$;
+  NumberJsonScalar.prototype.deepEquals_vzh9da$ = JsonScalar.prototype.deepEquals_vzh9da$;
+  IntJsonScalar.prototype.deepEquals_vzh9da$ = JsonScalar.prototype.deepEquals_vzh9da$;
   ExclusiveMaximumRuleParser.prototype.parse_3boyfh$ = NumberRuleParser.prototype.parse_3boyfh$;
   ExclusiveMaximumRuleParser.prototype.canParse_3boyfh$ = NumberRuleParser.prototype.canParse_3boyfh$;
   ExclusiveMaximumRule.prototype.eval_vzh9da$ = NumberRule_0.prototype.eval_vzh9da$;
@@ -2366,6 +4384,25 @@
   MultipleOfRuleParser.prototype.canParse_3boyfh$ = NumberRuleParser.prototype.canParse_3boyfh$;
   MultipleOfRule.prototype.eval_vzh9da$ = NumberRule_0.prototype.eval_vzh9da$;
   MultipleOfRule.prototype.getNumber_vzh9da$ = NumberRule_0.prototype.getNumber_vzh9da$;
+  MaxLengthRuleParser.prototype.parse_3boyfh$ = StringLengthRuleParser.prototype.parse_3boyfh$;
+  MaxLengthRuleParser.prototype.canParse_3boyfh$ = StringLengthRuleParser.prototype.canParse_3boyfh$;
+  MaxLengthRule.prototype.eval_vzh9da$ = StringLengthRule.prototype.eval_vzh9da$;
+  MaxLengthRule.prototype.getString_vzh9da$ = StringLengthRule.prototype.getString_vzh9da$;
+  MinLengthRuleParser.prototype.parse_3boyfh$ = StringLengthRuleParser.prototype.parse_3boyfh$;
+  MinLengthRuleParser.prototype.canParse_3boyfh$ = StringLengthRuleParser.prototype.canParse_3boyfh$;
+  MinLengthRule.prototype.eval_vzh9da$ = StringLengthRule.prototype.eval_vzh9da$;
+  MinLengthRule.prototype.getString_vzh9da$ = StringLengthRule.prototype.getString_vzh9da$;
+  parseProperty = parseProperty$lambda;
+  parsePatternProperty = parsePatternProperty$lambda;
+  ipv6Regex = Regex_init('^\\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:)))(%.+)?\\s*$');
+  ipv4Regex = Regex_init('^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$');
+  hostNameRegex = Regex_init('^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)+([A-Za-z]|[A-Za-z][A-Za-z0-9\\-]*[A-Za-z0-9])$');
+  emailRegex = Regex_init('(?:[a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*|"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])');
+  ipv6Validator = ipv6Validator$lambda;
+  ipv4Validator = ipv4Validator$lambda;
+  hostNameValidator = hostNameValidator$lambda;
+  emailValidator = emailValidator$lambda;
+  dateTimeValidator = dateTimeValidator$lambda;
   Kotlin.defineModule('json-schema-validator-schema-validation', _);
   return _;
 }));

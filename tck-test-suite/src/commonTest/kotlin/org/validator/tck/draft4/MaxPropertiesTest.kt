@@ -23,7 +23,7 @@ public class MaxPropertiesTest {
   }
 
   @Test
-  public fun `maxProperties_=_0_means_the_object_is_empty`(): Unit {
+  public fun `maxProperties___0_means_the_object_is_empty`(): Unit {
     val schema = "{\"maxProperties\":0}"
     val `no_properties_is_valid` = "{}"
     run_test(schema, `no_properties_is_valid`, true, "DRAFT_4")

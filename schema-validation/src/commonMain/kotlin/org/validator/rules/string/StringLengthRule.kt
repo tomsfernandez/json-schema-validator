@@ -14,7 +14,7 @@ interface StringLengthRule : ValidationRule {
 
     fun getString(element: JsonElement): String? {
         return element.asScalar()
-            .map({null}) { scalar -> scalar.asString() }
+            .mapEither({null}) { scalar -> scalar.asString() }
             .fold({null}) { x -> x }
     }
 }
@@ -27,8 +27,8 @@ interface StringLengthRuleParser : RuleParser {
 
     override fun parse(element: JsonObject): Either<List<Error>, ValidationRule> {
         val constElement = element.get(key) !!
-        return constElement.asScalar().map(::listOf) { scalar ->
-            scalar.asNumber().map { it.toInt() }.map(::listOf, ::parse)
+        return constElement.asScalar().mapEither(::listOf) { scalar ->
+            scalar.asNumber().map { it.toInt() }.mapEither(::listOf, ::parse)
         }
     }
 

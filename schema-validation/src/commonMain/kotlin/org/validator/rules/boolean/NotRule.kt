@@ -19,6 +19,6 @@ data class NotRuleParser(val parserFactory: SchemaRuleParserFactory): RuleParser
 
     override fun parse(element: JsonObject): Either<List<Error>, ValidationRule> {
         val notValue = element.get(key) !!
-        return notValue.asObject().map(::listOf) { objEntry -> parserFactory.make().parse(objEntry) }
+        return notValue.asObject().mapEither(::listOf) { objEntry -> parserFactory.make().parse(objEntry) }.map { NotRule(it) }
     }
 }

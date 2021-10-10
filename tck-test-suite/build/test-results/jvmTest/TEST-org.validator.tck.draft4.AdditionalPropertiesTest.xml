@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.validator.tck.draft4.AdditionalPropertiesTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2021-10-10T21:33:34" hostname="tomasfer-ltm.internal.salesforce.com" time="0.003">
+  <properties/>
+  <testcase name="additionalProperties_allows_a_schema_which_should_validate[jvm]" classname="org.validator.tck.draft4.AdditionalPropertiesTest" time="0.0"/>
+  <testcase name="additionalProperties_can_exist_by_itself[jvm]" classname="org.validator.tck.draft4.AdditionalPropertiesTest" time="0.001"/>
+  <testcase name="non_ASCII_pattern_with_additionalProperties[jvm]" classname="org.validator.tck.draft4.AdditionalPropertiesTest" time="0.0"/>
+  <testcase name="additionalProperties_are_allowed_by_default[jvm]" classname="org.validator.tck.draft4.AdditionalPropertiesTest" time="0.0"/>
+  <testcase name="additionalProperties_being_false_does_not_allow_other_properties[jvm]" classname="org.validator.tck.draft4.AdditionalPropertiesTest" time="0.001"/>
+  <testcase name="additionalProperties_should_not_look_in_applicators[jvm]" classname="org.validator.tck.draft4.AdditionalPropertiesTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

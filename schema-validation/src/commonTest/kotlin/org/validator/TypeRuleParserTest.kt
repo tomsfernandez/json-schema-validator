@@ -48,8 +48,8 @@ class TypeRuleParserTest {
         val schemaAsString = loadResourceText(file)
         val schema = adapt(schemaAsString) as JsonObject
         val rule = TypeRuleParser.parse(schema)
-        assertEquals(rule.toLeftValueOrNull(), null)
-        when(rule.toRightValueOrNull()) {
+        assertEquals(rule.left(), null)
+        when(rule.right()) {
             expected -> assertTrue(true)
             else -> assertTrue(false)
         }

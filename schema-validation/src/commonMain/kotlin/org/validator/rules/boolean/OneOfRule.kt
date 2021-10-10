@@ -5,9 +5,10 @@ import org.validator.rules.SchemaRuleParserFactory
 
 data class OneOfRule(val rules: List<ValidationRule>): ValidationRule {
     override fun eval(element: JsonElement): List<Error> {
-        val onlyOne = rules.map { x -> x.eval(element).isNotEmpty() }.filter { x -> x }.size == 1
-        return if (onlyOne) listOf(Error("Schema doesn't conform to only one schema of the oneOf"))
-        else emptyList()
+        val nonCompliantRules = rules.filter { x -> x.eval(element).isNotEmpty() }
+        val onlyOneRuleIsValid = (rules.size - nonCompliantRules.size) == 1
+        return if (onlyOneRuleIsValid) emptyList()
+        else listOf(Error("Schema doesn't conform to only one schema of the oneOf"))
     }
 }
 

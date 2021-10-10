@@ -31,13 +31,13 @@ class ConstRuleParserTest : JsonParsingHelper {
         val schema = parseJson(schemaPath)
         val payload = parseJson(payloadPath)
         val rule = ConstRuleParser.parse(schema)
-        assertEquals(rule.toRightValueOrNull()?.eval(payload)?.isEmpty(), valid)
+        assertEquals(rule.right()?.eval(payload)?.isEmpty(), valid)
     }
 
     private fun test_const_rule(schemaPath: String, payloadPath: String, valid: Boolean) {
         val schema = parseJson(schemaPath)
         val payload = parseJsonScalar(payloadPath)
         val rule = ConstRuleParser.parse(schema)
-        assertEquals(rule.toRightValueOrNull()?.eval(payload)?.isEmpty(), valid)
+        assertEquals(rule.right()?.eval(payload)?.isEmpty(), valid)
     }
 }

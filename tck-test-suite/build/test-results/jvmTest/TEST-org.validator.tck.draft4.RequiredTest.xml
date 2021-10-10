@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.validator.tck.draft4.RequiredTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2021-10-10T21:33:34" hostname="tomasfer-ltm.internal.salesforce.com" time="0.001">
+  <properties/>
+  <testcase name="required_with_escaped_characters[jvm]" classname="org.validator.tck.draft4.RequiredTest" time="0.0"/>
+  <testcase name="required_validation[jvm]" classname="org.validator.tck.draft4.RequiredTest" time="0.001"/>
+  <testcase name="required_default_validation[jvm]" classname="org.validator.tck.draft4.RequiredTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

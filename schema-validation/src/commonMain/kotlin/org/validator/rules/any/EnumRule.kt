@@ -8,7 +8,7 @@ object EnumRuleParser: RuleParser {
     }
 
     override fun parse(element: JsonObject): Either<List<Error>, ValidationRule> {
-        return element.get("enum").asArray().map(::listOf) { array -> Either.Right(EnumRule(array.elements())) }
+        return element.get("enum").asArray().mapEither(::listOf) { array -> Either.Right(EnumRule(array.elements())) }
     }
 }
 

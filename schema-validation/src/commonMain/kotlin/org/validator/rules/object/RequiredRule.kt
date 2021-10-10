@@ -11,8 +11,8 @@ object RequiredRuleParser : RuleParser {
     override fun parse(element: JsonObject): Either<List<Error>, ValidationRule> {
        return  when(val elem = element.get(key)) {
             is JsonArray -> {
-                val requiredKeys = elem.elements().mapNotNull { x -> x.asScalar().toRightValueOrNull() }.mapNotNull { scalar ->
-                    scalar.asString().toRightValueOrNull()
+                val requiredKeys = elem.elements().mapNotNull { x -> x.asScalar().right() }.mapNotNull { scalar ->
+                    scalar.asString().right()
                 }
                 if (requiredKeys.size != elem.elements().size) Either.Left(listOf(Error("Some elements in the array are not strings")))
                 else Either.Right(RequiredRule(requiredKeys))

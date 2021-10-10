@@ -4,7 +4,7 @@ import kotlin.Unit
 import kotlin.test.Test
 import org.validator.tck.run_test
 
-public class `Date-timeTest` {
+public class `Date_timeTest` {
   @Test
   public fun validation_of_date_time_strings(): Unit {
     val schema = "{\"format\":\"date-time\"}"

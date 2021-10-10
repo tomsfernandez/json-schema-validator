@@ -28,17 +28,17 @@ data class IfThenElseRuleParser(val factory: SchemaRuleParserFactory): RuleParse
         val thenSchemaEither = parse(element.get("then"))
         val errors = leftOrEmptyList(ifSchemaEither) + leftOrEmptyList(elseSchemaEither) + leftOrEmptyList(thenSchemaEither)
         return if (errors.isEmpty()) {
-            Either.Right(IfThenElseRule(ifSchemaEither.toRightValueOrNull(),
-                thenSchemaEither.toRightValueOrNull(),
-                elseSchemaEither.toRightValueOrNull()))
+            Either.Right(IfThenElseRule(ifSchemaEither.right(),
+                thenSchemaEither.right(),
+                elseSchemaEither.right()))
         } else Either.Left(errors)
     }
 
     private fun leftOrEmptyList(either: Either<List<Error>, ValidationRule?>): List<Error> {
-        return either.toLeftValueOrNull() ?: emptyList()
+        return either.left() ?: emptyList()
     }
 
     private fun parse(element: JsonElement?): Either<List<Error>, ValidationRule?> {
-        return element?.asObject()?.map(::listOf) { x -> factory.make().parse(x) } ?: Either.Right(null)
+        return element?.asObject()?.mapEither(::listOf) { x -> factory.make().parse(x) } ?: Either.Right(null)
     }
 }

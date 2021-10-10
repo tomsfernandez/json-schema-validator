@@ -14,7 +14,7 @@ interface NumberRule : ValidationRule {
 
     fun getNumber(element: JsonElement): Number? {
         return element.asScalar()
-            .map({null}) { scalar -> scalar.asNumber() }
+            .mapEither({null}) { scalar -> scalar.asNumber() }
             .fold({null}) { x -> x }
     }
 }
@@ -27,8 +27,8 @@ interface NumberRuleParser : RuleParser {
 
     override fun parse(element: JsonObject): Either<List<Error>, ValidationRule> {
         val constElement = element.get(key) !!
-        return constElement.asScalar().map(::listOf) { scalar ->
-            scalar.asNumber().map(::listOf, ::parse)
+        return constElement.asScalar().mapEither(::listOf) { scalar ->
+            scalar.asNumber().mapEither(::listOf, ::parse)
         }
     }
 

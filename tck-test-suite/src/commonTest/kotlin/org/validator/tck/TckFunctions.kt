@@ -17,9 +17,9 @@ fun provideParser(draft: String): RuleParser {
 fun run_test(schemaAsString: String, payloadAsString: String, conforms: Boolean, draft: String) {
     val schema = adapt(schemaAsString) as JsonObject
     val maybeRule = provideParser(draft).parse(schema)
-    assertEquals(null, maybeRule.toLeftValueOrNull())
+    assertEquals(null, maybeRule.left())
 
-    val rule = maybeRule.toRightValueOrNull() !!
+    val rule = maybeRule.right() !!
 
     val payloadAsObj = adapt(payloadAsString)
     val results = rule.eval(payloadAsObj)

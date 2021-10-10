@@ -9,8 +9,8 @@ abstract class PropertyAmountParser : RuleParser {
     override fun canParse(element: JsonObject) = element.get(key) != null
 
     override fun parse(element: JsonObject): Either<List<Error>, ValidationRule> {
-        return element.get(key).asScalar().map(::listOf) { scalar ->
-            scalar.asNumber().map(::listOf) { number ->
+        return element.get(key).asScalar().mapEither(::listOf) { scalar ->
+            scalar.asNumber().mapEither(::listOf) { number ->
                 if (number.toInt() < 0) Either.Left(listOf(Error("maxProperties should have a non-negative value")))
                 else parse(number)
             }

@@ -4,7 +4,7 @@ import kotlin.Unit
 import kotlin.test.Test
 import org.validator.tck.run_test
 
-public class `Float-overflowTest` {
+public class `Float_overflowTest` {
   @Test
   public fun all_integers_are_multiples_of_0_5__if_overflow_is_handled(): Unit {
     val schema = "{\"type\":\"number\",\"multipleOf\":0.5}"

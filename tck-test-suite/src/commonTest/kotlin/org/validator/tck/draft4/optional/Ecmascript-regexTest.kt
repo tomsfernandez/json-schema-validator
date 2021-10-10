@@ -4,7 +4,7 @@ import kotlin.Unit
 import kotlin.test.Test
 import org.validator.tck.run_test
 
-public class `Ecmascript-regexTest` {
+public class `Ecmascript_regexTest` {
   @Test
   public fun `ECMA_262_regex_$_does_not_match_trailing_newline`(): Unit {
     val schema = "{\"type\":\"string\",\"pattern\":\"^abc${'$'}\"}"

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.validator.tck.draft4.TypeTest" tests="11" skipped="0" failures="0" errors="0" timestamp="2021-10-10T21:33:34" hostname="tomasfer-ltm.internal.salesforce.com" time="0.005">
+  <properties/>
+  <testcase name="type_as_array_with_one_item[jvm]" classname="org.validator.tck.draft4.TypeTest" time="0.0"/>
+  <testcase name="string_type_matches_strings[jvm]" classname="org.validator.tck.draft4.TypeTest" time="0.0"/>
+  <testcase name="boolean_type_matches_booleans[jvm]" classname="org.validator.tck.draft4.TypeTest" time="0.0"/>
+  <testcase name="integer_type_matches_integers[jvm]" classname="org.validator.tck.draft4.TypeTest" time="0.001"/>
+  <testcase name="type__array__object_or_null[jvm]" classname="org.validator.tck.draft4.TypeTest" time="0.0"/>
+  <testcase name="multiple_types_can_be_specified_in_an_array[jvm]" classname="org.validator.tck.draft4.TypeTest" time="0.001"/>
+  <testcase name="type__array_or_object[jvm]" classname="org.validator.tck.draft4.TypeTest" time="0.0"/>
+  <testcase name="number_type_matches_numbers[jvm]" classname="org.validator.tck.draft4.TypeTest" time="0.001"/>
+  <testcase name="object_type_matches_objects[jvm]" classname="org.validator.tck.draft4.TypeTest" time="0.0"/>
+  <testcase name="array_type_matches_arrays[jvm]" classname="org.validator.tck.draft4.TypeTest" time="0.0"/>
+  <testcase name="null_type_matches_only_the_null_object[jvm]" classname="org.validator.tck.draft4.TypeTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

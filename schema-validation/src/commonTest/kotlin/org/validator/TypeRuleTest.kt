@@ -16,6 +16,6 @@ class TypeRuleTest : JsonParsingHelper {
         val schema = parseJson(schemaFile)
         val payload = parseJson(payloadFile)
         val rule = TypeRuleParser.parse(schema)
-        assertEquals(rule.toRightValueOrNull()?.eval(payload)?.isEmpty(), expected)
+        assertEquals(rule.right()?.eval(payload)?.isEmpty(), expected)
     }
 }

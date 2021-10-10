@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.validator.tck.draft4.AdditionalItemsTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2021-10-10T21:33:34" hostname="tomasfer-ltm.internal.salesforce.com" time="0.005">
+  <properties/>
+  <testcase name="items_validation_adjusts_the_starting_index_for_additionalItems[jvm]" classname="org.validator.tck.draft4.AdditionalItemsTest" time="0.002"/>
+  <testcase name="additionalItems_as_schema[jvm]" classname="org.validator.tck.draft4.AdditionalItemsTest" time="0.0"/>
+  <testcase name="additionalItems_should_not_look_in_applicators__invalid_case[jvm]" classname="org.validator.tck.draft4.AdditionalItemsTest" time="0.0"/>
+  <testcase name="array_of_items_with_no_additionalItems_permitted[jvm]" classname="org.validator.tck.draft4.AdditionalItemsTest" time="0.0"/>
+  <testcase name="additionalItems_should_not_look_in_applicators__valid_case[jvm]" classname="org.validator.tck.draft4.AdditionalItemsTest" time="0.001"/>
+  <testcase name="additionalItems_as_false_without_items[jvm]" classname="org.validator.tck.draft4.AdditionalItemsTest" time="0.0"/>
+  <testcase name="additionalItems_are_allowed_by_default[jvm]" classname="org.validator.tck.draft4.AdditionalItemsTest" time="0.0"/>
+  <testcase name="when_items_is_schema__additionalItems_does_nothing[jvm]" classname="org.validator.tck.draft4.AdditionalItemsTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

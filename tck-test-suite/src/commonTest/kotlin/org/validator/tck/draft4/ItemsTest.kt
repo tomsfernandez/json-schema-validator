@@ -3,6 +3,7 @@ package org.validator.tck.draft4
 import kotlin.Unit
 import kotlin.test.Test
 import org.validator.tck.run_test
+import kotlin.test.Ignore
 
 public class ItemsTest {
   @Test

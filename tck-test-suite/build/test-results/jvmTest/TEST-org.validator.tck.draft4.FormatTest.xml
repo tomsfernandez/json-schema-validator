@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.validator.tck.draft4.FormatTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2021-10-10T21:33:34" hostname="tomasfer-ltm.internal.salesforce.com" time="0.005">
+  <properties/>
+  <testcase name="ipv6_format[jvm]" classname="org.validator.tck.draft4.FormatTest" time="0.003"/>
+  <testcase name="date_time_format[jvm]" classname="org.validator.tck.draft4.FormatTest" time="0.0"/>
+  <testcase name="uri_format[jvm]" classname="org.validator.tck.draft4.FormatTest" time="0.001"/>
+  <testcase name="ipv4_format[jvm]" classname="org.validator.tck.draft4.FormatTest" time="0.0"/>
+  <testcase name="email_format[jvm]" classname="org.validator.tck.draft4.FormatTest" time="0.0"/>
+  <testcase name="hostname_format[jvm]" classname="org.validator.tck.draft4.FormatTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

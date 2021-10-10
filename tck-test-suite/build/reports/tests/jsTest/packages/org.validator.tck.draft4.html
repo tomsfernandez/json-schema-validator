@@ -22,13 +22,13 @@
 <tr>
 <td>
 <div class="infoBox" id="tests">
-<div class="counter">8</div>
+<div class="counter">107</div>
 <p>tests</p>
 </div>
 </td>
 <td>
 <div class="infoBox" id="failures">
-<div class="counter">5</div>
+<div class="counter">11</div>
 <p>failures</p>
 </div>
 </td>
@@ -40,7 +40,7 @@
 </td>
 <td>
 <div class="infoBox" id="duration">
-<div class="counter">0.278s</div>
+<div class="counter">0.367s</div>
 <p>duration</p>
 </div>
 </td>
@@ -50,7 +50,7 @@
 </td>
 <td>
 <div class="infoBox failures" id="successRate">
-<div class="percent">37%</div>
+<div class="percent">89%</div>
 <p>successful</p>
 </div>
 </td>
@@ -70,24 +70,48 @@
 <h2>Failed tests</h2>
 <ul class="linkList">
 <li>
-<a href="../classes/org.validator.tck.draft4.AnyOfTest.html">AnyOfTest</a>.
-<a href="../classes/org.validator.tck.draft4.AnyOfTest.html#anyOf_complex_types">anyOf_complex_types[js, node]</a>
+<a href="../classes/org.validator.tck.draft4.AdditionalPropertiesTest.html">AdditionalPropertiesTest</a>.
+<a href="../classes/org.validator.tck.draft4.AdditionalPropertiesTest.html#additionalProperties_being_false_does_not_allow_other_properties">additionalProperties_being_false_does_not_allow_other_properties[js, node]</a>
 </li>
 <li>
-<a href="../classes/org.validator.tck.draft4.AnyOfTest.html">AnyOfTest</a>.
-<a href="../classes/org.validator.tck.draft4.AnyOfTest.html#anyOf_with_base_schema">anyOf_with_base_schema[js, node]</a>
+<a href="../classes/org.validator.tck.draft4.AdditionalPropertiesTest.html">AdditionalPropertiesTest</a>.
+<a href="../classes/org.validator.tck.draft4.AdditionalPropertiesTest.html#non_ASCII_pattern_with_additionalProperties">non_ASCII_pattern_with_additionalProperties[js, node]</a>
 </li>
 <li>
-<a href="../classes/org.validator.tck.draft4.AnyOfTest.html">AnyOfTest</a>.
-<a href="../classes/org.validator.tck.draft4.AnyOfTest.html#anyOf_with_boolean_schemas__all_false">anyOf_with_boolean_schemas__all_false[js, node]</a>
+<a href="../classes/org.validator.tck.draft4.DependenciesTest.html">DependenciesTest</a>.
+<a href="../classes/org.validator.tck.draft4.DependenciesTest.html#dependencies_with_escaped_characters">dependencies_with_escaped_characters[js, node]</a>
 </li>
 <li>
-<a href="../classes/org.validator.tck.draft4.AnyOfTest.html">AnyOfTest</a>.
-<a href="../classes/org.validator.tck.draft4.AnyOfTest.html#anyOf_with_boolean_schemas__all_true">anyOf_with_boolean_schemas__all_true[js, node]</a>
+<a href="../classes/org.validator.tck.draft4.DependenciesTest.html">DependenciesTest</a>.
+<a href="../classes/org.validator.tck.draft4.DependenciesTest.html#multiple_dependencies_subschema">multiple_dependencies_subschema[js, node]</a>
 </li>
 <li>
-<a href="../classes/org.validator.tck.draft4.AnyOfTest.html">AnyOfTest</a>.
-<a href="../classes/org.validator.tck.draft4.AnyOfTest.html#anyOf_with_boolean_schemas__some_true">anyOf_with_boolean_schemas__some_true[js, node]</a>
+<a href="../classes/org.validator.tck.draft4.ItemsTest.html">ItemsTest</a>.
+<a href="../classes/org.validator.tck.draft4.ItemsTest.html#items_and_subitems">items_and_subitems[js, node]</a>
+</li>
+<li>
+<a href="../classes/org.validator.tck.draft4.MaxLengthTest.html">MaxLengthTest</a>.
+<a href="../classes/org.validator.tck.draft4.MaxLengthTest.html#maxLength_validation">maxLength_validation[js, node]</a>
+</li>
+<li>
+<a href="../classes/org.validator.tck.draft4.MinLengthTest.html">MinLengthTest</a>.
+<a href="../classes/org.validator.tck.draft4.MinLengthTest.html#minLength_validation">minLength_validation[js, node]</a>
+</li>
+<li>
+<a href="../classes/org.validator.tck.draft4.PatternPropertiesTest.html">PatternPropertiesTest</a>.
+<a href="../classes/org.validator.tck.draft4.PatternPropertiesTest.html#multiple_simultaneous_patternProperties_are_validated">multiple_simultaneous_patternProperties_are_validated[js, node]</a>
+</li>
+<li>
+<a href="../classes/org.validator.tck.draft4.PatternPropertiesTest.html">PatternPropertiesTest</a>.
+<a href="../classes/org.validator.tck.draft4.PatternPropertiesTest.html#patternProperties_validates_properties_matching_a_regex">patternProperties_validates_properties_matching_a_regex[js, node]</a>
+</li>
+<li>
+<a href="../classes/org.validator.tck.draft4.PatternPropertiesTest.html">PatternPropertiesTest</a>.
+<a href="../classes/org.validator.tck.draft4.PatternPropertiesTest.html#regexes_are_not_anchored_by_default_and_are_case_sensitive">regexes_are_not_anchored_by_default_and_are_case_sensitive[js, node]</a>
+</li>
+<li>
+<a href="../classes/org.validator.tck.draft4.PropertiesTest.html">PropertiesTest</a>.
+<a href="../classes/org.validator.tck.draft4.PropertiesTest.html#properties__patternProperties__additionalProperties_interaction">properties__patternProperties__additionalProperties_interaction[js, node]</a>
 </li>
 </ul>
 </div>
@@ -105,14 +129,254 @@
 </tr>
 </thread>
 <tr>
-<td class="failures">
-<a href="../classes/org.validator.tck.draft4.AnyOfTest.html">AnyOfTest</a>
+<td class="success">
+<a href="../classes/org.validator.tck.draft4.AdditionalItemsTest.html">AdditionalItemsTest</a>
 </td>
 <td>8</td>
+<td>0</td>
+<td>0</td>
+<td>0.004s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="failures">
+<a href="../classes/org.validator.tck.draft4.AdditionalPropertiesTest.html">AdditionalPropertiesTest</a>
+</td>
+<td>6</td>
+<td>2</td>
+<td>0</td>
+<td>0.289s</td>
+<td class="failures">66%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="../classes/org.validator.tck.draft4.AllOfTest.html">AllOfTest</a>
+</td>
+<td>9</td>
+<td>0</td>
+<td>0</td>
+<td>0.013s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="../classes/org.validator.tck.draft4.AnyOfTest.html">AnyOfTest</a>
+</td>
 <td>5</td>
 <td>0</td>
-<td>0.278s</td>
-<td class="failures">37%</td>
+<td>0</td>
+<td>0.006s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="../classes/org.validator.tck.draft4.DefaultTest.html">DefaultTest</a>
+</td>
+<td>3</td>
+<td>0</td>
+<td>0</td>
+<td>0.001s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="failures">
+<a href="../classes/org.validator.tck.draft4.DependenciesTest.html">DependenciesTest</a>
+</td>
+<td>4</td>
+<td>2</td>
+<td>0</td>
+<td>0.006s</td>
+<td class="failures">50%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="../classes/org.validator.tck.draft4.EnumTest.html">EnumTest</a>
+</td>
+<td>10</td>
+<td>0</td>
+<td>0</td>
+<td>0.006s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="../classes/org.validator.tck.draft4.FormatTest.html">FormatTest</a>
+</td>
+<td>6</td>
+<td>0</td>
+<td>0</td>
+<td>0.003s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="failures">
+<a href="../classes/org.validator.tck.draft4.ItemsTest.html">ItemsTest</a>
+</td>
+<td>4</td>
+<td>1</td>
+<td>0</td>
+<td>0.004s</td>
+<td class="failures">75%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="../classes/org.validator.tck.draft4.MaxItemsTest.html">MaxItemsTest</a>
+</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0.001s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="failures">
+<a href="../classes/org.validator.tck.draft4.MaxLengthTest.html">MaxLengthTest</a>
+</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>0.001s</td>
+<td class="failures">0%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="../classes/org.validator.tck.draft4.MaxPropertiesTest.html">MaxPropertiesTest</a>
+</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>0s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="../classes/org.validator.tck.draft4.MaximumTest.html">MaximumTest</a>
+</td>
+<td>4</td>
+<td>0</td>
+<td>0</td>
+<td>0s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="../classes/org.validator.tck.draft4.MinItemsTest.html">MinItemsTest</a>
+</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0.001s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="failures">
+<a href="../classes/org.validator.tck.draft4.MinLengthTest.html">MinLengthTest</a>
+</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>0s</td>
+<td class="failures">0%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="../classes/org.validator.tck.draft4.MinPropertiesTest.html">MinPropertiesTest</a>
+</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0.001s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="../classes/org.validator.tck.draft4.MinimumTest.html">MinimumTest</a>
+</td>
+<td>4</td>
+<td>0</td>
+<td>0</td>
+<td>0.003s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="../classes/org.validator.tck.draft4.MultipleOfTest.html">MultipleOfTest</a>
+</td>
+<td>4</td>
+<td>0</td>
+<td>0</td>
+<td>0s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="../classes/org.validator.tck.draft4.NotTest.html">NotTest</a>
+</td>
+<td>4</td>
+<td>0</td>
+<td>0</td>
+<td>0.002s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="../classes/org.validator.tck.draft4.OneOfTest.html">OneOfTest</a>
+</td>
+<td>7</td>
+<td>0</td>
+<td>0</td>
+<td>0.008s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="failures">
+<a href="../classes/org.validator.tck.draft4.PatternPropertiesTest.html">PatternPropertiesTest</a>
+</td>
+<td>3</td>
+<td>3</td>
+<td>0</td>
+<td>0.003s</td>
+<td class="failures">0%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="../classes/org.validator.tck.draft4.PatternTest.html">PatternTest</a>
+</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>0.001s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="failures">
+<a href="../classes/org.validator.tck.draft4.PropertiesTest.html">PropertiesTest</a>
+</td>
+<td>3</td>
+<td>1</td>
+<td>0</td>
+<td>0.004s</td>
+<td class="failures">66%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="../classes/org.validator.tck.draft4.RequiredTest.html">RequiredTest</a>
+</td>
+<td>3</td>
+<td>0</td>
+<td>0</td>
+<td>0.003s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="../classes/org.validator.tck.draft4.TypeTest.html">TypeTest</a>
+</td>
+<td>11</td>
+<td>0</td>
+<td>0</td>
+<td>0.007s</td>
+<td class="success">100%</td>
 </tr>
 </table>
 </div>
@@ -124,7 +388,7 @@
 <input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
 </label>
 </div>Generated by 
-<a href="http://www.gradle.org">Gradle 6.8</a> at Oct 7, 2021, 9:42:31 AM</p>
+<a href="http://www.gradle.org">Gradle 6.8</a> at Oct 8, 2021, 6:16:15 PM</p>
 </div>
 </div>
 </body>

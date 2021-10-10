@@ -30,6 +30,10 @@
     },
     "5b337cc3610dde3ec3719bda35d999e0": {
       "src": "/Users/tfernandez/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-common/1.5.31/43331609c7de811fed085e0dfd150874b157c32/kotlin-stdlib-common-1.5.31.jar"
+    },
+    "ff79b8174e381e57564499f9b649df93": {
+      "src": "/Users/tfernandez/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-datetime-js/0.3.0/c686160f8d0776dc8e24ce0382c109117c6a8b37/kotlinx-datetime-jslegacy-0.3.0.jar",
+      "target": "Kotlin-DateTime-library-kotlinx-datetime-js-legacy/0.3.0"
     }
   }
 }

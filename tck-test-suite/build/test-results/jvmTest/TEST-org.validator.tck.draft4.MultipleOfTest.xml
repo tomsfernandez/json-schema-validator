@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.validator.tck.draft4.MultipleOfTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2021-10-10T21:33:34" hostname="tomasfer-ltm.internal.salesforce.com" time="0.001">
+  <properties/>
+  <testcase name="by_int[jvm]" classname="org.validator.tck.draft4.MultipleOfTest" time="0.001"/>
+  <testcase name="by_small_number[jvm]" classname="org.validator.tck.draft4.MultipleOfTest" time="0.0"/>
+  <testcase name="invalid_instance_should_not_raise_error_when_float_division___inf[jvm]" classname="org.validator.tck.draft4.MultipleOfTest" time="0.0"/>
+  <testcase name="by_number[jvm]" classname="org.validator.tck.draft4.MultipleOfTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
