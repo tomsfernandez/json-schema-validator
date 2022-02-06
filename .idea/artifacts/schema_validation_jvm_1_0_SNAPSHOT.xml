@@ -1,8 +1,6 @@
 <component name="ArtifactManager">
   <artifact type="jar" name="schema-validation-jvm-1.0-SNAPSHOT">
     <output-path>$PROJECT_DIR$/schema-validation/build/libs</output-path>
-    <root id="archive" name="schema-validation-jvm-1.0-SNAPSHOT.jar">
-      <element id="module-output" name="json-schema-validator.schema-validation.jvmMain" />
-    </root>
+    <root id="archive" name="schema-validation-jvm-1.0-SNAPSHOT.jar" />
   </artifact>
 </component>
