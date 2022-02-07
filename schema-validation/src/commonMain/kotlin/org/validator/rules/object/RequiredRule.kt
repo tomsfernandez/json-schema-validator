@@ -1,23 +1,24 @@
 package org.validator.rules.`object`
 
 import org.validator.*
+import org.validator.Either.*
 
 object RequiredRuleParser : RuleParser {
 
-    private val key = "required"
+    private const val KEY = "required"
+    private val INVALID_VALUE_ERROR = Error("Some elements in the array are not strings")
+    private val NOT_ARRAY_ERROR = Error("'required' key is not an array")
 
-    override fun canParse(element: JsonObject): Boolean = element.get(key) != null
+    override fun canParse(element: JsonObject): Boolean = element.get(KEY) != null
 
     override fun parse(element: JsonObject): Either<List<Error>, ValidationRule> {
-       return  when(val elem = element.get(key)) {
+       return  when(val elem = element.get(KEY)) {
             is JsonArray -> {
-                val requiredKeys = elem.elements().mapNotNull { x -> x.asScalar().right() }.mapNotNull { scalar ->
-                    scalar.asString().right()
-                }
-                if (requiredKeys.size != elem.elements().size) Either.Left(listOf(Error("Some elements in the array are not strings")))
-                else Either.Right(RequiredRule(requiredKeys))
+                val requiredKeys = elem.elements().mapNotNull { x -> x.string().right() }
+                if (requiredKeys.size != elem.elements().size) Left(listOf(INVALID_VALUE_ERROR))
+                else Right(RequiredRule(requiredKeys))
             }
-            else -> Either.Left(listOf(Error("'required' key is not an array")))
+            else -> Left(listOf(NOT_ARRAY_ERROR))
         }
     }
 }

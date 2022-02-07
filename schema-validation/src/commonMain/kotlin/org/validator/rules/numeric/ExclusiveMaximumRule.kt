@@ -4,7 +4,7 @@ import org.validator.*
 
 object ExclusiveMaximumRuleParser : NumberRuleParser {
 
-    override val key: String = "exclusiveMaximum"
+    override val KEY: String = "exclusiveMaximum"
 
     override fun parse(number: Number): Either<List<Error>, ValidationRule> {
         return Either.Right(ExclusiveMaximumRule(number))

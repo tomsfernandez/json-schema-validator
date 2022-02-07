@@ -16,15 +16,8 @@ data class DefinitionsRuleParser(val factory: SchemaRuleParserFactory): RulePars
 
     override fun parse(element: JsonObject): Either<List<Error>, ValidationRule> {
         val parser = factory.make()
-        val (errors, objects) = element.entries().map { entry -> entry.second.asObject() }.partitionList()
-
-        if (errors.any()) return Either.Left(errors)
-
-        val (parseErrors, parseResults) = objects.map { obj -> parser.parse(obj) }.partitionList()
-
-
-        // TODO: do something with parseResults
-        return if (parseErrors.any()) Either.Left(parseErrors.flatten())
-        else Either.Right(DefinitionsRule)
+        return element.entries().map { entry -> entry.second.asObject() }.toEither()
+            .withRight { objects -> objects.map { obj -> parser.parse(obj)}.toFlatEither() }
+            .map { DefinitionsRule }
     }
 }

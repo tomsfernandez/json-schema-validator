@@ -11,7 +11,7 @@ data class AdditionalPropertiesRuleParser(val factory: SchemaRuleParserFactory) 
 
     override fun parse(element: JsonObject): Either<List<Error>, ValidationRule> {
         return when(val entry = element.get(key)) {
-            is BooleanJsonScalar -> parseBooleanValue(entry, element)
+            is JsonBoolean -> parseBooleanValue(entry, element)
             is JsonObject -> parseObjectValue(entry, element)
             else -> Either.Left(listOf(Error("additionalProperties should be a boolean")))
         }
@@ -24,7 +24,7 @@ data class AdditionalPropertiesRuleParser(val factory: SchemaRuleParserFactory) 
         return parsedRule.map { rule -> ObjectAdditionalPropertiesRule(rule, ignoredProperties, pattern)}
     }
 
-    private fun parseBooleanValue(scalar: BooleanJsonScalar, parent: JsonObject): Either<List<Error>, ValidationRule> {
+    private fun parseBooleanValue(scalar: JsonBoolean, parent: JsonObject): Either<List<Error>, ValidationRule> {
         val allowed = if (!scalar.value) scanDeclaredProperties(parent) else emptyList()
         val pattern = if (!scalar.value) scanPatternProperties(parent) else emptyList()
         return Either.Right(BooleanAdditionalPropertiesRule(scalar.value, allowed, pattern))

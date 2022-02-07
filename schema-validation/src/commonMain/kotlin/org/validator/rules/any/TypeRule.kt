@@ -1,101 +1,100 @@
 package org.validator.rules.any
 
 import org.validator.*
+import org.validator.Either.*
 
 object TypeRuleParser: RuleParser {
 
+    private const val ARRAY_TYPE = "array"
+    private const val OBJECT_TYPE = "object"
+    private const val NULL_TYPE = "null"
+    private const val STRING_TYPE = "string"
+    private const val NUMBER_TYPE = "number"
+    private const val BOOLEAN_TYPE = "boolean"
+    private const val INTEGER_TYPE = "integer"
+    private const val KEY = "type"
+
+
     private val ruleMap = mapOf(
-        "array" to ArrayRule,
-        "object" to ObjectRule,
-        "null" to NullRule,
-        "string" to StringRule,
-        "number" to NumberRule,
-        "boolean" to BooleanRule,
-        "integer" to IntegerRule
+        ARRAY_TYPE to ArrayRule,
+        OBJECT_TYPE to ObjectRule,
+        NULL_TYPE to NullRule,
+        STRING_TYPE to StringRule,
+        NUMBER_TYPE to NumberRule,
+        BOOLEAN_TYPE to BooleanRule,
+        INTEGER_TYPE to IntegerRule
     )
 
     override fun canParse(element: JsonObject): Boolean {
-        return element.get("type") != null
+        return element.get(KEY) != null
     }
 
     override fun parse(element: JsonObject): Either<List<Error>, ValidationRule> {
-        return when (val typeEntry = element.get("type")) {
-            is JsonArray -> parseArrayElements(typeEntry)
-            is JsonScalar -> parseScalarElement(typeEntry).mapEither(::listOf) { x -> Either.Right(x) }
-            else -> Either.Left(listOf(Error("Element is neither an array or a scalar")))
+        return when (val typeEntry = element.get(KEY)) {
+            is JsonArray -> parseTypeList(typeEntry)
+            is JsonScalar -> parseType(typeEntry).mapEither(::listOf) { x -> Right(x) }
+            else -> Left(listOf(Error("Element is neither an array or a scalar")))
         }
     }
 
-    private fun parseArrayElements(array: JsonArray): Either<List<Error>, ValidationRule> {
-        val schemaOrErrors: List<Either<Error, ValidationRule>> = array.elements().map { x -> this.parseScalarElement(x) }
+    private fun parseTypeList(array: JsonArray): Either<List<Error>, ValidationRule> {
+        val schemaOrErrors: List<Either<Error, ValidationRule>> = array.elements().map { x -> this.parseType(x) }
         val errors = schemaOrErrors.mapNotNull { x -> x.left() }
         return if (errors.isEmpty()) {
-            val rules = OrValidationRule(schemaOrErrors.mapNotNull { it.right() })
-            Either.Right(rules)
-        } else Either.Left(errors)
+            val rules = OrRule(schemaOrErrors.mapNotNull { it.right() })
+            Right(rules)
+        } else Left(errors)
     }
 
-    private fun parseScalarElement(element: JsonElement): Either<Error, ValidationRule> {
-        return element.asScalar().mapEither(::identity) { x -> parseScalarElement(x) }
+    private fun parseType(element: JsonElement): Either<Error, ValidationRule> {
+        return element.string().mapEither(::identity) { x -> parseType(x) }
     }
 
-    private fun parseScalarElement(scalar: JsonScalar): Either<Error, ValidationRule> {
-        return scalar.asString().fold({x -> Either.Left(x) }) { x ->
-            val value = ruleMap[x]
-            if (value != null) Either.Right(value)
-            else Either.Left(Error("$x is not amount allowed values"))
-        }
+    private fun parseType(type: String): Either<Error, ValidationRule> {
+        val value = ruleMap[type]
+        return if (value != null) Right(value)
+        else Left(Error("$type is not an allowed value"))
     }
 }
 
 object ObjectRule : ValidationRule {
     override fun eval(element: JsonElement): List<Error> {
-        return element.asObject().fold(::listOf) { emptyList() }
+        return element.asObject().fold({ listOf(it)}) { emptyList() }
     }
 }
 
 object ArrayRule : ValidationRule {
     override fun eval(element: JsonElement): List<Error> {
-        return element.asArray().fold(::listOf) { emptyList() }
+        return element.array().fold({ listOf(it)}) { emptyList() }
     }
 }
 
 object StringRule : ValidationRule {
     override fun eval(element: JsonElement): List<Error> {
-        return element.asScalar().fold(::listOf) { x -> evalString(x) }
+        return element.string().fold({ listOf(it)} ) { emptyList() }
     }
-
-    private fun evalString(scalar: JsonScalar): List<Error> = scalar.asString().fold(::listOf) { emptyList() }
 }
 
 object BooleanRule : ValidationRule {
     override fun eval(element: JsonElement): List<Error> {
-        return element.asScalar().fold(::listOf) { x -> evalBoolean(x) }
+        return element.boolean().fold({ listOf(it)} ) { emptyList() }
     }
-
-    private fun evalBoolean(scalar: JsonScalar): List<Error> = scalar.asBoolean().fold(::listOf) { emptyList() }
 }
 
 object NumberRule : ValidationRule {
     override fun eval(element: JsonElement): List<Error> {
-        return element.asScalar().fold(::listOf) { x -> evalNumber(x) }
+        return element.double().fold({ listOf(it)} ) { emptyList() }
     }
-
-    private fun evalNumber(scalar: JsonScalar): List<Error> = scalar.asNumber().fold(::listOf) { emptyList() }
 }
 
 object NullRule : ValidationRule {
     override fun eval(element: JsonElement): List<Error> {
-        return element.asNull().fold(::listOf) { emptyList() }
+        return element.asNull().fold({ listOf(it)} ) { emptyList() }
     }
 }
 
 object IntegerRule : ValidationRule {
     override fun eval(element: JsonElement): List<Error> {
-        return element.asScalar().fold(::listOf) { evalInteger(it) }
-    }
-
-    private fun evalInteger(scalar: JsonScalar): List<Error> = scalar.asNumber().fold(::listOf) { num ->
-        if (num.toDouble() % 1.0 == 0.0) emptyList() else listOf(Error("Value is not an integer"))
+        return element.integer().fold({ listOf(it)} ) { emptyList() }
     }
 }

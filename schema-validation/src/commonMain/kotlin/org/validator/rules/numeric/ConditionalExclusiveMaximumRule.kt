@@ -1,42 +1,29 @@
 package org.validator.rules.numeric
 
 import org.validator.*
-import org.validator.Either.*
 
-object ConditionalExclusiveMaximumRuleParser: RuleParser {
+object ConditionalExclusiveMaximumRuleParser: ConditionalExclusiveRuleParser {
 
-    private val key = "maximum"
-    private val conditionalKey = "exclusiveMaximum"
+    override val KEY = "maximum"
+    override val CONDITIONAL_KEY = "exclusiveMaximum"
 
-    override fun canParse(element: JsonObject): Boolean = element.get(key) != null || element.get(conditionalKey) != null
-
-    override fun parse(element: JsonObject): Either<List<Error>, ValidationRule> {
-        val maximum = element.get(key)
-        val exclusive = element.get(conditionalKey)
-
-        if (maximum == null && exclusive != null) return Left(listOf(Error("maximum key must exist to use exclusiveMaximum")))
-
-        return when(val maxInt = maximum.asNumber()) {
-            is Left -> maxInt.mapLeft(::listOf)
-            is Right -> {
-                if (exclusive == null) return Right(ConditionalExclusiveMaximumRule(maxInt.r, false))
-                return when(val exclusiveBool = exclusive.asBoolean()) {
-                    is Left -> exclusiveBool.mapLeft(::listOf)
-                    is Right -> Right(ConditionalExclusiveMaximumRule(maxInt.r, exclusiveBool.r))
-                }
-            }
-        }
+    override fun rule(integer: Double, exclusive: Boolean): ValidationRule {
+        return ConditionalExclusiveMaximumRule(integer, exclusive)
     }
 }
 
 data class ConditionalExclusiveMaximumRule(val maximum: Number, val exclusive: Boolean): ValidationRule {
     override fun eval(element: JsonElement): List<Error> {
-        return element.asNumber().map { eval(it) }.rightOrDefault(emptyList())
+        return element.double().map { eval(it) }.rightOrDefault(emptyList())
     }
 
-    private fun eval(number: Number): List<Error> {
-        return if (exclusive && number.toDouble() >= maximum.toDouble()) listOf(Error("$number is equal or bigger than $maximum"))
-        else if (number.toDouble() <= maximum.toDouble()) emptyList()
-        else listOf(Error("$number is bigger than $maximum"))
+    private fun eval(number: Double): List<Error> {
+        return if (exclusive && biggerOrEqualsThan(number)) listOf(Error("$number is equal or bigger than $maximum"))
+        else if(!exclusive && biggerThan(number)) listOf(Error("$number is bigger than $maximum"))
+        else emptyList()
     }
+
+    private fun biggerThan(number: Double): Boolean = number > maximum.toDouble()
+
+    private fun biggerOrEqualsThan(number: Number) = number.toDouble() >= maximum.toDouble()
 }

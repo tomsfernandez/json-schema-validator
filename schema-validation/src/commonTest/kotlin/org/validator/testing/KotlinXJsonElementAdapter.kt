@@ -39,10 +39,10 @@ object KotlinXJsonElementAdapter {
             is JsonNull -> DefaultNullElement
             else -> {
                 return when {
-                    scalar.intOrNull != null -> DefaultJsonScalar(scalar.int)
-                    scalar.booleanOrNull != null -> DefaultJsonScalar(scalar.boolean)
-                    scalar.doubleOrNull != null -> DefaultJsonScalar(scalar.double)
-                    else -> DefaultJsonScalar(scalar.content)
+                    scalar.intOrNull != null -> JsonInt(scalar.int)
+                    scalar.booleanOrNull != null -> JsonBoolean(scalar.boolean)
+                    scalar.doubleOrNull != null -> JsonDouble(scalar.double)
+                    else -> JsonString(scalar.content)
                 }
             }
         }

@@ -4,13 +4,13 @@ import org.validator.*
 
 abstract class PropertyAmountParser : RuleParser {
 
-    protected abstract val key: String
+    protected abstract val KEY: String
 
-    override fun canParse(element: JsonObject) = element.get(key) != null
+    override fun canParse(element: JsonObject) = element.get(KEY) != null
 
     override fun parse(element: JsonObject): Either<List<Error>, ValidationRule> {
-        return element.get(key).asScalar().mapEither(::listOf) { scalar ->
-            scalar.asNumber().mapEither(::listOf) { number ->
+        return element.get(KEY).asScalar().mapEither(::listOf) { scalar ->
+            scalar.double().mapEither(::listOf) { number ->
                 if (number.toInt() < 0) Either.Left(listOf(Error("maxProperties should have a non-negative value")))
                 else parse(number)
             }
@@ -22,7 +22,7 @@ abstract class PropertyAmountParser : RuleParser {
 
 object MaxPropertiesRuleParser: PropertyAmountParser() {
 
-    override val key = "maxProperties"
+    override val KEY = "maxProperties"
 
     override fun parse(number: Number): Either<List<Error>, ValidationRule> {
         return if (number.toInt() < 0) Either.Left(listOf(Error("maxProperties should have a non-negative value")))

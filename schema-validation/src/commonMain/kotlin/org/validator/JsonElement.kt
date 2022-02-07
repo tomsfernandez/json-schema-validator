@@ -1,5 +1,6 @@
 package org.validator
 
+import org.validator.Either.*
 import kotlin.math.abs
 
 interface JsonElement {
@@ -8,57 +9,57 @@ interface JsonElement {
 
 fun JsonElement?.asObject(): Either<Error, JsonObject> {
     return when(this) {
-        is JsonObject -> Either.Right(this)
-        else -> Either.Left(Error("Element is not an object"))
+        is JsonObject -> Right(this)
+        else -> Left(Error("Element is not an object"))
     }
 }
 
 fun JsonElement?.asScalar(): Either<Error, JsonScalar> {
     return when(this) {
-        is JsonScalar -> Either.Right(this)
-        else -> Either.Left(Error("Element is not a scalar"))
+        is JsonScalar -> Right(this)
+        else -> Left(Error("Element is not a scalar"))
     }
 }
 
-fun JsonElement?.asString(): Either<Error, String> {
+fun JsonElement?.string(): Either<Error, String> {
     return when(this) {
-        is JsonScalar -> this.asString()
-        else -> Either.Left(Error("Element is not a scalar"))
+        is JsonScalar -> this.string()
+        else -> Left(Error("Element is not a scalar"))
     }
 }
 
-fun JsonElement?.asBoolean(): Either<Error, Boolean> {
+fun JsonElement?.boolean(): Either<Error, Boolean> {
     return when(this) {
-        is JsonScalar -> this.asBoolean()
-        else -> Either.Left(Error("Element is not a scalar"))
+        is JsonScalar -> this.boolean()
+        else -> Left(Error("Element is not a scalar"))
     }
 }
 
-fun JsonElement?.asNumber(): Either<Error, Number> {
+fun JsonElement?.double(): Either<Error, Double> {
     return when(this) {
-        is JsonScalar -> this.asNumber()
-        else -> Either.Left(Error("Element is not a scalar"))
+        is JsonScalar -> this.double()
+        else -> Left(Error("Element is not a scalar"))
     }
 }
 
-fun JsonElement?.asInteger(): Either<Error, Int> {
+fun JsonElement?.integer(): Either<Error, Int> {
     return when(this) {
-        is JsonScalar -> this.asInteger()
-        else -> Either.Left(Error("Element is not a scalar"))
+        is JsonScalar -> this.integer()
+        else -> Left(Error("Element is not a scalar"))
     }
 }
 
-fun JsonElement?.asArray(): Either<Error, JsonArray> {
+fun JsonElement?.array(): Either<Error, JsonArray> {
     return when(this) {
-        is JsonArray -> Either.Right(this)
-        else -> Either.Left(Error("Element it not an array"))
+        is JsonArray -> Right(this)
+        else -> Left(Error("Element it not an array"))
     }
 }
 
 fun JsonElement?.asNull(): Either<Error, NullElement> {
     return when(this) {
-        is NullElement -> Either.Right(this)
-        else -> Either.Left(Error("Element it not null"))
+        is NullElement -> Right(this)
+        else -> Left(Error("Element it not null"))
     }
 }
 
@@ -136,31 +137,32 @@ interface NullElement : JsonElement {
 }
 object DefaultNullElement : NullElement
 
-fun JsonScalar.asString(): Either<Error, String> {
+fun JsonScalar.string(): Either<Error, String> {
     return when(value) {
-        is String -> Either.Right(value as String)
-        else -> Either.Left(Error("Element is not a string"))
+        is String -> Right(value as String)
+        else -> Left(Error("Element is not a string"))
     }
 }
 
-fun JsonScalar.asBoolean(): Either<Error, Boolean> {
+fun JsonScalar.boolean(): Either<Error, Boolean> {
     return when(value) {
-        is Boolean -> Either.Right(value as Boolean)
-        else -> Either.Left(Error("Element is not a boolean"))
+        is Boolean -> Right(value as Boolean)
+        else -> Left(Error("Element is not a boolean"))
     }
 }
 
-fun JsonScalar.asNumber(): Either<Error, Number> {
+fun JsonScalar.double(): Either<Error, Double> {
     return when(value) {
-        is Number -> Either.Right(value as Number)
-        else -> Either.Left(Error("Element is not a number"))
+        is Double -> Right(value as Double)
+        is Int -> Right((value as Int).toDouble())
+        else -> Left(Error("Element is not a number"))
     }
 }
 
-fun JsonScalar.asInteger(): Either<Error, Int> {
+fun JsonScalar.integer(): Either<Error, Int> {
     return when(value) {
-        is Int -> Either.Right(value as Int)
-        else -> Either.Left(Error("Element is not a number"))
+        is Int -> Right(value as Int)
+        else -> Left(Error("Element is not a number"))
     }
 }
 
@@ -170,17 +172,17 @@ interface JsonScalar : JsonElement {
     override fun equals(other: Any?): Boolean
     override fun deepEquals(element: JsonElement): Boolean {
         return when(element) {
-            is NumberJsonScalar -> {
+            is JsonDouble -> {
                 when(this) {
-                    is NumberJsonScalar -> abs(element.value.toDouble() - value.toDouble()) == 0.0
-                    is IntJsonScalar -> abs(element.value.toDouble() - value.toDouble()) == 0.0
+                    is JsonDouble -> abs(element.value.toDouble() - value.toDouble()) == 0.0
+                    is JsonInt -> abs(element.value.toDouble() - value.toDouble()) == 0.0
                     else -> element.value == value
                 }
             }
-            is IntJsonScalar -> {
+            is JsonInt -> {
                 when(this) {
-                    is NumberJsonScalar -> abs(element.value.toDouble() - value.toDouble()) == 0.0
-                    is IntJsonScalar -> abs(element.value.toDouble() - value.toDouble()) == 0.0
+                    is JsonDouble -> abs(element.value.toDouble() - value.toDouble()) == 0.0
+                    is JsonInt -> abs(element.value.toDouble() - value.toDouble()) == 0.0
                     else -> element.value == value
                 }
             }
@@ -189,10 +191,10 @@ interface JsonScalar : JsonElement {
         }
     }
 }
-data class BooleanJsonScalar(override val value: Boolean) : JsonScalar
-data class StringJsonScalar(override val value: String) : JsonScalar
-data class NumberJsonScalar(override val value: Number) : JsonScalar
-data class IntJsonScalar(override val value: Int) : JsonScalar
+data class JsonBoolean(override val value: Boolean) : JsonScalar
+data class JsonString(override val value: String) : JsonScalar
+data class JsonDouble(override val value: Double) : JsonScalar
+data class JsonInt(override val value: Int) : JsonScalar
 
 fun <T> identity(t: T): T = t
 
@@ -200,6 +202,58 @@ fun <L, R> Collection<Either<L, R>>.partitionList(): Pair<List<L>,List<R>> {
     val lefts = this.mapNotNull { it.left() }
     val rights = this.mapNotNull { it.right() }
     return Pair(lefts, rights)
+}
+
+fun <R> Collection<Either<Error, R>>.toEither(): Either<List<Error>, List<R>> {
+    val lefts = mutableListOf<Error>()
+    val rights = mutableListOf<R>()
+    this.forEach {
+        when(it) {
+            is Left -> lefts.add(it.l)
+            is Right -> rights.add(it.r)
+        }
+    }
+    return if (lefts.isNotEmpty()) Left(lefts) else Right(rights)
+}
+
+fun <R> Collection<Either<List<Error>, R>>.toFlatEither(): Either<List<Error>, List<R>> {
+    val lefts = mutableListOf<Error>()
+    val rights = mutableListOf<R>()
+    this.forEach {
+        when(it) {
+            is Left -> lefts.addAll(it.l)
+            is Right -> rights.add(it.r)
+        }
+    }
+    return if (lefts.isNotEmpty()) Left(lefts) else Right(rights)
+}
+
+fun <L, R, R2> Either<L, R>.withRight(func: (R) -> Either<L, R2> ): Either<L, R2> {
+    return when(this) {
+        is Left -> this
+        is Right -> func(this.r)
+    }
+}
+
+fun <R> Collection<Either<List<Error>, R>>.flatten(): Pair<List<Error>, List<R>> {
+    val lefts = mutableListOf<Error>()
+    val rights = mutableListOf<R>()
+    this.forEach {
+        when(it) {
+            is Left -> lefts.addAll(it.l)
+            is Right -> rights.add(it.r)
+        }
+    }
+    return Pair(lefts, rights)
+}
+
+fun <R, R2> Collection<Either<Collection<Error>, R>>.bubbleErrors(func: (List<R>) -> (R2)): Either<Collection<Error>, R2> {
+    val lefts = this.mapNotNull { it.left() }.flatten()
+    return if (lefts.isNotEmpty()) Left(lefts)
+    else {
+        val rights = this.mapNotNull { it.right() }
+        Right(func(rights))
+    }
 }
 
 fun <T, L, R> Collection<Pair<T, Either<L, R>>>.partitionPairList(): Pair<List<Pair<T, L>>,List<Pair<T, R>>> {

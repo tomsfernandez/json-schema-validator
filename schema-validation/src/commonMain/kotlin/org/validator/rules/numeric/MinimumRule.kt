@@ -4,7 +4,7 @@ import org.validator.*
 
 object MinimumRuleParser : NumberRuleParser {
 
-    override val key: String = "minimum"
+    override val KEY: String = "minimum"
 
     override fun parse(number: Number): Either<List<Error>, ValidationRule> {
         return Either.Right(MinimumRule(number))

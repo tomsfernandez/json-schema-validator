@@ -1,8 +1,6 @@
 package org.validator.rules.string
 
 import kotlinx.datetime.Instant
-import kotlinx.datetime.serializers.LocalDateTimeIso8601Serializer
-import kotlinx.serialization.json.JsonDecoder
 import org.validator.*
 
 typealias FormatValidator = (String) -> Error?
@@ -10,7 +8,7 @@ typealias FormatValidator = (String) -> Error?
 data class StringFormatRule(val formatter: FormatValidator): ValidationRule {
 
     override fun eval(element: JsonElement): List<Error> {
-        return element.asString().map(formatter)
+        return element.string().map(formatter)
             .map { maybeError -> if (maybeError != null) listOf(maybeError) else emptyList() }
             .rightOrDefault(emptyList())
     }
@@ -29,7 +27,7 @@ data class StringFormatRuleParser(val formatters: Map<String, FormatValidator>):
     override fun canParse(element: JsonObject): Boolean = element.containsKey(key)
 
     override fun parse(element: JsonObject): Either<List<Error>, ValidationRule> {
-        return element.get(key).asString()
+        return element.get(key).string()
             .mapEither(::listOf) { format ->
                 val maybeFormatter = formatters[format]
                 if (maybeFormatter == null) Either.Left(listOf(Error("Couldn't find formatter for format: $format")))

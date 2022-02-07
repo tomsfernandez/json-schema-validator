@@ -44,7 +44,7 @@ data class DependenciesRuleParser(val factory: SchemaRuleParserFactory): RulePar
     }
 
     private fun parseRequiredRule(key: String, array: JsonArray): Either<List<Error>, ValidationRule> {
-        val conversions = array.elements().map { it.asString() }
+        val conversions = array.elements().map { it.string() }
         val errors: List<Error> = conversions.mapNotNull { it.left() }
         return if(errors.any()) Either.Left(errors)
         else Either.Right(PropertyDependenciesRule(key, conversions.mapNotNull { it.right() }.toSet()))

@@ -1,14 +1,16 @@
 package org.validator.rules.`object`
 
 import org.validator.*
+import org.validator.Either.*
 
 object MinPropertiesRuleParser: PropertyAmountParser() {
 
-    override val key = "minProperties"
+    override val KEY = "minProperties"
+    private val ERROR = Error("minProperties should have a non-negative value")
 
     override fun parse(number: Number): Either<List<Error>, ValidationRule> {
-        return if (number.toInt() < 0) Either.Left(listOf(Error("minProperties should have a non-negative value")))
-        else Either.Right(MinPropertiesRule(number.toInt()))
+        return if (number.toInt() < 0) Left(listOf(ERROR))
+        else Right(MinPropertiesRule(number.toInt()))
     }
 }
 

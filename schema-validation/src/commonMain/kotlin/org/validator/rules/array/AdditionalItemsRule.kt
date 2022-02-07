@@ -1,30 +1,35 @@
 package org.validator.rules.array
 
 import org.validator.*
-import org.validator.rules.SchemaRule
+import org.validator.Either.*
 import org.validator.rules.SchemaRuleParserFactory
 
-data class BooleanAdditionalItemsRule(val itemsKeyExists: Boolean, val itemsIsObject: Boolean, val amountOfItems: Int, val allowAdditional: Boolean): ValidationRule {
+data class BooleanAdditionalItemsRule(val itemsKeyExists: Boolean, val amountOfItems: Int, val allowAdditional: Boolean): ValidationRule {
 
     override fun eval(element: JsonElement): List<Error> {
-        return element.asArray().map { eval(it) }.rightOrDefault(emptyList())
+        return element.array().map { eval(it) }.rightOrDefault(emptyList())
     }
 
     private fun eval(array: JsonArray): List<Error> {
-        return if(itemsIsObject || !itemsKeyExists) emptyList()
-            else if (!allowAdditional && array.elements().size > amountOfItems) listOf(Error("Array has ${array.elements().size > amountOfItems} more items"))
+        return if(!itemsKeyExists) emptyList()
+            else if (itemsIsSchema()) emptyList()
+            else if (!allowAdditional && array.elements().size > amountOfItems) listOf(error(array))
             else emptyList()
     }
+
+    private fun itemsIsSchema() = amountOfItems == 0
+
+    private fun error(array: JsonArray): Error = Error("Array has ${array.elements().size - amountOfItems} more items")
 }
 
-data class ObjectAdditionalItemsRule(val itemsKeyExists: Boolean, val itemsIsObject: Boolean, val amountOfItems: Int, val rule: ValidationRule): ValidationRule {
+data class ObjectAdditionalItemsRule(val itemsKeyExists: Boolean, val amountOfItems: Int, val rule: ValidationRule): ValidationRule {
 
     override fun eval(element: JsonElement): List<Error> {
-        return element.asArray().map { eval(it) }.rightOrDefault(emptyList())
+        return element.array().map { eval(it) }.rightOrDefault(emptyList())
     }
 
     private fun eval(array: JsonArray): List<Error> {
-        return if(itemsIsObject || !itemsKeyExists) emptyList()
+        return if(!itemsKeyExists) emptyList()
         else if (array.elements().size > amountOfItems) {
             val startIndex = array.elements().size - amountOfItems
             val elementsToTest = array.elements().subList(startIndex, array.elements().size)
@@ -36,20 +41,25 @@ data class ObjectAdditionalItemsRule(val itemsKeyExists: Boolean, val itemsIsObj
 
 data class AdditionalItemsRuleParser(val factory: SchemaRuleParserFactory): RuleParser {
 
-    private val key = "additionalItems"
+    private val KEY = "additionalItems"
+    private val ITEMS_KEY = "items"
 
-    override fun canParse(element: JsonObject): Boolean = element.containsKey(key)
+    companion object {
+        private val VALUE_ERROR = Error("'additionalItems' key must be boolean or object")
+    }
+
+    override fun canParse(element: JsonObject): Boolean = element.containsKey(KEY)
 
     override fun parse(element: JsonObject): Either<List<Error>, ValidationRule> {
-        val itemsProp = element.get("items")
-        val itemsIsObject = itemsProp is JsonObject
-        val itemsArraySize = if (itemsProp is JsonArray) itemsProp.elements().size else 0
-        return when(val entry = element.get(key)) {
-            is BooleanJsonScalar -> Either.Right(BooleanAdditionalItemsRule(itemsProp != null, itemsIsObject, itemsArraySize, entry.value))
-            is JsonObject -> {
-                factory.make().parse(entry).map { ObjectAdditionalItemsRule(itemsProp != null, itemsIsObject, itemsArraySize, it) }
-            }
-            else -> Either.Left(listOf(Error("'additionalItems' key must be boolean or object")))
+        val itemsProp = element.get(ITEMS_KEY)
+        val itemsArraySize = itemsProp.array().fold(0) { it.elements().size }
+        val itemsPropExists = itemsProp != null
+        return when(val entry = element.get(KEY)) {
+            is JsonBoolean -> Right(BooleanAdditionalItemsRule(itemsPropExists, itemsArraySize, entry.value))
+            is JsonObject -> factory.make()
+                .parse(entry)
+                .map { ObjectAdditionalItemsRule(itemsPropExists, itemsArraySize, it) }
+            else -> Left(listOf(VALUE_ERROR))
         }
     }
 }

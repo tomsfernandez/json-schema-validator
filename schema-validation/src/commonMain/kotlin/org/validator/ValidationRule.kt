@@ -14,7 +14,7 @@ object NothingValidationRule : ValidationRule {
     override fun eval(element: JsonElement) = emptyList<Error>()
 }
 
-data class OrValidationRule(val rules: List<ValidationRule>) : ValidationRule {
+data class OrRule(val rules: List<ValidationRule>) : ValidationRule {
     override fun eval(element: JsonElement): List<Error> {
         val errors = rules.map { x -> x.eval(element) }
         val atLeastOneValid = errors.any { it.isEmpty() }

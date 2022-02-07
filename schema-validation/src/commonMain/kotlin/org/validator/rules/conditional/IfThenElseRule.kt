@@ -16,11 +16,11 @@ data class IfThenElseRule(val ifSchema: ValidationRule?, val thenSchema: Validat
 
 data class IfThenElseRuleParser(val factory: SchemaRuleParserFactory): RuleParser {
 
-    private val ifKey: String = "if"
-    private val elseKey: String = "else"
-    private val thenKey: String = "then"
+    private val IF_KEY: String = "if"
+    private val ELSE_KEY: String = "else"
+    private val THEN_KEY: String = "then"
 
-    override fun canParse(element: JsonObject) = element.get(ifKey) != null || element.get(thenKey) != null || element.get(elseKey) != null
+    override fun canParse(element: JsonObject) = element.keys().any { IF_KEY == it || ELSE_KEY == it || THEN_KEY == it }
 
     override fun parse(element: JsonObject): Either<List<Error>, ValidationRule> {
         val ifSchemaEither = parse(element.get("if"))

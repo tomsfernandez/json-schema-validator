@@ -1,7 +1,6 @@
 package org.validator.rules.boolean
 
 import org.validator.*
-import org.validator.rules.SchemaRuleParser
 import org.validator.rules.SchemaRuleParserFactory
 
 data class AnyOfRule(val rules: List<ValidationRule>): ValidationRule {
@@ -12,4 +11,4 @@ data class AnyOfRule(val rules: List<ValidationRule>): ValidationRule {
     }
 }
 
-class AnyOfRuleParser(parserFactory: SchemaRuleParserFactory) : ArrayOfRuleParser("anyOf", { schemas -> AnyOfRule(schemas)}, { element -> parserFactory.make().parse(element) })
+class AnyOfRuleParser(parserFactory: SchemaRuleParserFactory) : OfRuleParser("anyOf", { schemas -> AnyOfRule(schemas)}, { element -> parserFactory.make().parse(element) })

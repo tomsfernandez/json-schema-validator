@@ -1,14 +1,18 @@
 package org.validator.rules.any
 
 import org.validator.*
+import org.validator.Either.*
 
 object EnumRuleParser: RuleParser {
+
+    private const val KEY = "enum"
+
     override fun canParse(element: JsonObject): Boolean {
-        return element.get("enum") != null
+        return element.get(KEY) != null
     }
 
     override fun parse(element: JsonObject): Either<List<Error>, ValidationRule> {
-        return element.get("enum").asArray().mapEither(::listOf) { array -> Either.Right(EnumRule(array.elements())) }
+        return element.get(KEY).array().mapEither(::listOf) { array -> Right(EnumRule(array.elements())) }
     }
 }
 

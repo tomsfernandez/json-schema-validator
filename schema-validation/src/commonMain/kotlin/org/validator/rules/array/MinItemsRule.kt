@@ -1,10 +1,11 @@
 package org.validator.rules.array
 
 import org.validator.*
+import org.validator.Either.*
 
 data class MinItemsRule(val minimum: Int) : ValidationRule {
     override fun eval(element: JsonElement): List<Error> {
-        return element.asArray().map { assertSize(it) }.rightOrDefault(emptyList())
+        return element.array().map { assertSize(it) }.rightOrDefault(emptyList())
     }
 
     private fun assertSize(array: JsonArray): List<Error> {
@@ -15,14 +16,12 @@ data class MinItemsRule(val minimum: Int) : ValidationRule {
 
 object MinItemsRuleParser: RuleParser {
 
-    private val key = "minItems"
+    private val KEY = "minItems"
+    private val FORMAT_ERROR = Error("minItems must be an integer")
 
-    override fun canParse(element: JsonObject): Boolean = element.get(key) != null
+    override fun canParse(element: JsonObject): Boolean = element.get(KEY) != null
 
     override fun parse(element: JsonObject): Either<List<Error>, ValidationRule> {
-        return when(val entry = element.get(key)) {
-            is IntJsonScalar -> Either.Right(MinItemsRule(entry.value))
-            else -> Either.Left(listOf(Error("minItems must be an integer")))
-        }
+        return element.get(KEY).integer().map({ listOf(FORMAT_ERROR) }) { int -> MinItemsRule(int) }
     }
 }

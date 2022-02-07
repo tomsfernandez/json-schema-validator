@@ -41,7 +41,7 @@ class TypeRuleParserTest {
 
     @Test
     fun parse_array_of_types() {
-        test_rule_is_correct("/schemas/type/array-of-types.json", OrValidationRule(listOf(StringRule, NumberRule)))
+        test_rule_is_correct("/schemas/type/array-of-types.json", OrRule(listOf(StringRule, NumberRule)))
     }
 
     private fun test_rule_is_correct(file: String, expected: ValidationRule) {

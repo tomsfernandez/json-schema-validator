@@ -11,7 +11,7 @@ interface JsonParsingHelper {
 
     fun parseJsonScalar(schemaFile: String): JsonElement {
         val schemaAsString = loadResourceText(schemaFile)
-        return DefaultJsonScalar(removeLeadingEscapedQuotes(schemaAsString.trim()))
+        return JsonString(removeLeadingEscapedQuotes(schemaAsString.trim()))
     }
 
     private fun removeLeadingEscapedQuotes(value: String): String {

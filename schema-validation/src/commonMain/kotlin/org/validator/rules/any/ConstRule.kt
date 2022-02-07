@@ -4,12 +4,14 @@ import org.validator.*
 
 object ConstRuleParser: RuleParser {
 
+    private const val KEY = "const"
+
     override fun canParse(element: JsonObject): Boolean {
-        return element.get("const") != null
+        return element.get(KEY) != null
     }
 
     override fun parse(element: JsonObject): Either<List<Error>, ValidationRule> {
-        val constElement = element.get("const") !!
+        val constElement = element.get(KEY) !!
         return Either.Right(ConstRule(constElement))
     }
 }

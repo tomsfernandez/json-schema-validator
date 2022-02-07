@@ -4,7 +4,7 @@ import org.validator.*
 
 object MultipleOfRuleParser : NumberRuleParser {
 
-    override val key: String = "multipleOf"
+    override val KEY: String = "multipleOf"
 
     override fun parse(number: Number): Either<List<Error>, ValidationRule> {
         return if (number == 0) Either.Left(listOf(Error("0 is not a valid multipleOf anything")))
