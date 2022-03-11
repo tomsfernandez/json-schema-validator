@@ -2,6 +2,7 @@ package org.validator
 
 import com.squareup.kotlinpoet.*
 import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.validator.model.Test
 import org.validator.model.TestCase
@@ -19,6 +20,7 @@ fun generateTestSuites(rootPath: String, base: File, draft: String, to: String) 
     val fileList = base.listFiles()!!
     fileList.forEach { file ->
         if (file.isDirectory) generateTestSuites(rootPath, file, draft, to)
+        else if(file.absolutePath.contains("optional")) // skip
         else {
             println("Generating test suite for: ${file.absolutePath}")
             generateTest(rootPath, file, draft, to)
@@ -67,18 +69,24 @@ fun writeTest(test: Test, draft: String): FunSpec {
 }
 
 fun writeTestCodeBlock(test: Test, draft: String): CodeBlock {
+    val render = Json {
+        prettyPrint = true
+    }
     val assertions = test.tests.map { writeAssertions(it, draft) }
     val builder = CodeBlock
         .builder()
-        .addStatement("val schema = %S", test.schema)
+        .addStatement("val schema = %P", render.encodeToString(test.schema).replace("$", "\${'$'}"))
     return assertions.fold(builder) { acc, curr -> acc.add(curr) }.build()
 }
 
 fun writeAssertions(case: TestCase, draft: String): CodeBlock {
+    val render = Json {
+        prettyPrint = true
+    }
     val varName = clean(case.description)
     return CodeBlock
         .builder()
-        .addStatement("val `$varName` = %S", case.data)
+        .addStatement("val `$varName` = %P", render.encodeToString(case.data).replace("$", "\${'$'}"))
         .addStatement("run_test(schema, `$varName`, ${case.valid}, %S)", draft)
         .build()
 }
