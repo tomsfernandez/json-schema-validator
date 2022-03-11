@@ -13,7 +13,10 @@ object MinLengthRuleParser: StringLengthRuleParser {
 
 data class MinLengthRule(val minimum: Int): StringLengthRule {
     override fun eval(string: String): List<Error> {
-        return if (string.length < minimum) listOf(Error("String should be shorter than $minimum"))
+        val stringSize = characterCount(string)
+        return if (stringSize < minimum) listOf(Error("String should be shorter than $minimum"))
         else emptyList()
     }
 }
+
+expect fun characterCount(value: String): Int

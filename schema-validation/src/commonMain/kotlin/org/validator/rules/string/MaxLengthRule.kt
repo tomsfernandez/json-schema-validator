@@ -13,7 +13,7 @@ object MaxLengthRuleParser: StringLengthRuleParser {
 
 data class MaxLengthRule(val maximum: Int): StringLengthRule {
     override fun eval(string: String): List<Error> {
-        return if (string.length > maximum) listOf(Error("String should be longer than $maximum"))
+        return if (characterCount(string) > maximum) listOf(Error("String should be longer than $maximum"))
         else emptyList()
     }
 }

@@ -22,7 +22,7 @@ data class SchemaRuleParser(val parsers: List<RuleParser>): RuleParser {
     override fun canParse(element: JsonObject): Boolean = true
     override fun parse(element: JsonObject): Either<List<Error>, ValidationRule> {
         val applicableParsers = parsers.filter { it.canParse(element) }
-        return applicableParsers.map { x -> x.parse(element) }
+        return applicableParsers.map { it.parse(element) }
             .toFlatEither()
             .map { SchemaRule(it) }
     }
