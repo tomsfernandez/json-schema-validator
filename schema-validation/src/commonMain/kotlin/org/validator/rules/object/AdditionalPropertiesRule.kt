@@ -5,29 +5,30 @@ import org.validator.rules.SchemaRuleParserFactory
 
 data class AdditionalPropertiesRuleParser(val factory: SchemaRuleParserFactory) : RuleParser {
 
-    private val key = "additionalProperties"
+    private val KEY = "additionalProperties"
 
-    override fun canParse(element: JsonObject): Boolean = element.get(key) != null
+    override fun canParse(element: JsonObject): Boolean = element.get(KEY) != null
 
-    override fun parse(element: JsonObject): Either<List<Error>, ValidationRule> {
-        return when(val entry = element.get(key)) {
-            is JsonBoolean -> parseBooleanValue(entry, element)
-            is JsonObject -> parseObjectValue(entry, element)
-            else -> Either.Left(listOf(Error("additionalProperties should be a boolean")))
+    override fun parse(base: String, path: String, element: JsonObject): Schema {
+        val finalPath = objectKey(path, KEY)
+        return when(val entry = element.get(KEY)) {
+            is JsonBoolean -> parseBooleanValue(base, finalPath, entry, element)
+            is JsonObject -> parseObjectValue(base, finalPath, entry, element)
+            else -> Schema(base, finalPath, Error("additionalProperties should be a boolean"))
         }
     }
 
-    private fun parseObjectValue(element: JsonObject, parent: JsonObject): Either<List<Error>, ValidationRule> {
-        val parsedRule = factory.make().parse(element)
+    private fun parseObjectValue(base: String, finalPath: String, element: JsonObject, parent: JsonObject): Schema {
+        val parsedRule = factory.make().parse(base, finalPath, element)
         val ignoredProperties = scanDeclaredProperties(parent)
         val pattern = scanPatternProperties(parent)
-        return parsedRule.map { rule -> ObjectAdditionalPropertiesRule(rule, ignoredProperties, pattern)}
+        return parsedRule.map(base, finalPath) { rule -> ObjectAdditionalPropertiesRule(rule, ignoredProperties, pattern)}
     }
 
-    private fun parseBooleanValue(scalar: JsonBoolean, parent: JsonObject): Either<List<Error>, ValidationRule> {
+    private fun parseBooleanValue(base: String, finalPath: String, scalar: JsonBoolean, parent: JsonObject): Schema {
         val allowed = if (!scalar.value) scanDeclaredProperties(parent) else emptyList()
         val pattern = if (!scalar.value) scanPatternProperties(parent) else emptyList()
-        return Either.Right(BooleanAdditionalPropertiesRule(scalar.value, allowed, pattern))
+        return Schema(base, finalPath, BooleanAdditionalPropertiesRule(scalar.value, allowed, pattern))
     }
 
     private fun scanDeclaredProperties(parent: JsonObject) =
@@ -37,15 +38,15 @@ data class AdditionalPropertiesRuleParser(val factory: SchemaRuleParserFactory) 
         parent.get("patternProperties").asObject().map { x -> x.keys().map { it.toRegex() }.toList() }.rightOrDefault(emptyList<Regex>())
 }
 
-data class BooleanAdditionalPropertiesRule(val unlimitedProperties: Boolean, val allowedList: List<String>, val patternProps: List<Regex>): ValidationRule {
-    override fun eval(element: JsonElement): List<Error> {
+data class BooleanAdditionalPropertiesRule(val unlimitedProperties: Boolean, val allowedList: List<String>, val patternProps: List<Regex>): SchemaRule {
+    override fun eval(path: String, element: JsonElement, schema: Schema): List<RuleError> {
         return if (unlimitedProperties) emptyList()
         else {
             return when(element) {
                 is JsonObject -> {
                     val explicitNotAllowed = element.keys() - allowedList.toSet()
                     val patternedNotAllowed = explicitNotAllowed.filter { key -> patternProps.none { it.containsMatchIn(key)} }
-                    return patternedNotAllowed.map { Error("$it is not an allowed property") }
+                    return patternedNotAllowed.map { RuleError(objectKey(path, it), "$it is not an allowed property") }
                 }
                 else -> emptyList()
             }
@@ -53,14 +54,14 @@ data class BooleanAdditionalPropertiesRule(val unlimitedProperties: Boolean, val
     }
 }
 
-data class ObjectAdditionalPropertiesRule(val rule: ValidationRule, val ignoredProperties: List<String>, val patternProps: List<Regex>): ValidationRule {
-    override fun eval(element: JsonElement): List<Error> {
+data class ObjectAdditionalPropertiesRule(val rule: SchemaRule, val ignoredProperties: List<String>, val patternProps: List<Regex>): SchemaRule {
+    override fun eval(path: String, element: JsonElement, schema: Schema): List<RuleError> {
         return when(element) {
             is JsonObject -> {
                 val notAllowed = (element.keys() - ignoredProperties.toSet()).filter { key -> !patternProps.any { it.containsMatchIn(key)} }
                 return notAllowed
-                    .mapNotNull { element.get(it) }
-                    .map { rule.eval(it) }
+                    .map { Pair(it, element.get(it) !!) }
+                    .map { (key, element) -> rule.eval(objectKey(path, key), element, schema) }
                     .flatten()
             }
             else -> emptyList()

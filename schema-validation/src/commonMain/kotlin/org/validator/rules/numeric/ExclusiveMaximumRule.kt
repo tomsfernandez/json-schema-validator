@@ -6,14 +6,14 @@ object ExclusiveMaximumRuleParser : NumberRuleParser {
 
     override val KEY: String = "exclusiveMaximum"
 
-    override fun parse(number: Number): Either<List<Error>, ValidationRule> {
-        return Either.Right(ExclusiveMaximumRule(number))
+    override fun parse(number: Number): Schema {
+        return Schema(ExclusiveMaximumRule(number))
     }
 }
 
 data class ExclusiveMaximumRule(val maximum: Number) : NumberRule {
-    override fun eval(number: Number): List<Error> {
+    override fun eval(path: String, number: Number): List<RuleError> {
         return if (number.toDouble() < maximum.toDouble()) emptyList()
-        else listOf(Error("$number is equal or bigger than $maximum"))
+        else listOf(RuleError(path, "$number is equal or bigger than $maximum"))
     }
 }

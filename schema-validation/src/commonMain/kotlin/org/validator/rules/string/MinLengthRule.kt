@@ -6,17 +6,15 @@ object MinLengthRuleParser: StringLengthRuleParser {
 
     override val key: String = "minLength"
 
-    override fun parse(amount: Int): Either<List<Error>, ValidationRule> {
-        return Either.Right(MinLengthRule(amount))
+    override fun parse(base: String, finalPath: String, amount: Int): Schema {
+        return Schema(base, finalPath, MinLengthRule(amount))
     }
 }
 
 data class MinLengthRule(val minimum: Int): StringLengthRule {
-    override fun eval(string: String): List<Error> {
+    override fun eval(path: String, string: String): List<RuleError> {
         val stringSize = characterCount(string)
-        return if (stringSize < minimum) listOf(Error("String should be shorter than $minimum"))
+        return if (stringSize < minimum) listOf(RuleError(path, "String should be shorter than $minimum"))
         else emptyList()
     }
 }
-
-expect fun characterCount(value: String): Int

@@ -7,6 +7,7 @@ import kotlinx.serialization.json.Json
 import org.validator.model.Test
 import org.validator.model.TestCase
 import java.io.File
+import java.util.*
 
 fun main() {
     val writeTo = "/Users/tfernandez/projects/json-schema-validator/tck-test-suite/src/commonTest/kotlin"
@@ -41,6 +42,10 @@ fun generateTest(rootPath: String, file: File, draft: String, to: String) {
     val basePackagePath = "org.validator.tck.draft4" + subPackagePath
     val test = writeSuite(constraint, obj, draft, basePackagePath)
     test.writeTo(File(to))
+}
+
+fun String.capitalize(): String {
+    return this.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
 }
 
 fun writeSuite(constraint: String, test: List<Test>, draft: String, packageName: String): FileSpec {

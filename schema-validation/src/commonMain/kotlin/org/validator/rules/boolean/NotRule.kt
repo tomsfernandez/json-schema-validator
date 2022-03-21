@@ -3,15 +3,15 @@ package org.validator.rules.boolean
 import org.validator.*
 import org.validator.rules.SchemaRuleParserFactory
 
-data class NotRule(val rule: ValidationRule): ValidationRule {
+data class NotRule(val rule: SchemaRule): SchemaRule {
 
     companion object {
-        private val ERROR = Error("Element conforms with the 'not' schema")
+        private fun ERROR(path: String) = RuleError(path, "Element conforms with the 'not' schema")
     }
 
-    override fun eval(element: JsonElement): List<Error> {
-        val isValid = rule.eval(element).isEmpty()
-        return if (isValid) listOf(ERROR)
+    override fun eval(path: String, element: JsonElement, schema: Schema): List<RuleError> {
+        val isValid = rule.eval(path, element, schema).isEmpty()
+        return if (isValid) listOf(ERROR(path))
         else emptyList()
     }
 }
@@ -22,8 +22,9 @@ data class NotRuleParser(val parserFactory: SchemaRuleParserFactory): RuleParser
 
     override fun canParse(element: JsonObject) = element.get(KEY) != null
 
-    override fun parse(element: JsonObject): Either<List<Error>, ValidationRule> {
+    override fun parse(base: String, path: String, element: JsonObject): Schema {
+        val finalPath = objectKey(path, KEY)
         val notValue = element.get(KEY) !!
-        return notValue.asObject().mapLeft(::listOf).withRight { parserFactory.make().parse(it) }.map { NotRule(it) }
+        return notValue.asObject().fold({ error -> Schema(base, finalPath, error )}) { parserFactory.make().parse(base, path, it) }.map(base, finalPath) { NotRule(it) }
     }
 }

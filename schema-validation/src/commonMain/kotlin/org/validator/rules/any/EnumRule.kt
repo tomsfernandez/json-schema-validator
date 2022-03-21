@@ -1,7 +1,6 @@
 package org.validator.rules.any
 
 import org.validator.*
-import org.validator.Either.*
 
 object EnumRuleParser: RuleParser {
 
@@ -11,15 +10,19 @@ object EnumRuleParser: RuleParser {
         return element.get(KEY) != null
     }
 
-    override fun parse(element: JsonObject): Either<List<Error>, ValidationRule> {
-        return element.get(KEY).array().mapEither(::listOf) { array -> Right(EnumRule(array.elements())) }
+    override fun parse(base: String, path: String, element: JsonObject): Schema {
+        val finalPath = objectKey(path, KEY)
+        return element.get(KEY).array().fold({ error -> Schema(base, finalPath, error)}) { array ->
+            val rule = EnumRule(array.elements())
+            Schema(base, finalPath, rule)
+        }
     }
 }
 
-data class EnumRule(val toCompare: List<JsonElement>) : ValidationRule {
-    override fun eval(element: JsonElement): List<Error> {
+data class EnumRule(val toCompare: List<JsonElement>) : SchemaRule {
+    override fun eval(path: String, element: JsonElement, schema: Schema): List<RuleError> {
         val equalsAny = toCompare.any { x -> x.deepEquals(element) }
-        return if (!equalsAny) listOf(Error("Schema doesn't equal any value in enum"))
+        return if (!equalsAny) listOf(RuleError(path, "Schema doesn't equal any value in enum"))
         else emptyList()
     }
 }

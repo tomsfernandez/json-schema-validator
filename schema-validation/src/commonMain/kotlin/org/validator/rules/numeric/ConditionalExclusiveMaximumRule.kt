@@ -7,13 +7,13 @@ object ConditionalExclusiveMaximumRuleParser: ConditionalExclusiveRuleParser {
     override val KEY = "maximum"
     override val CONDITIONAL_KEY = "exclusiveMaximum"
 
-    override fun rule(integer: Double, exclusive: Boolean): ValidationRule {
+    override fun rule(integer: Double, exclusive: Boolean): SchemaRule {
         return ConditionalExclusiveMaximumRule(integer, exclusive)
     }
 }
 
-data class ConditionalExclusiveMaximumRule(val maximum: Number, val exclusive: Boolean): ValidationRule {
-    override fun eval(element: JsonElement): List<Error> {
+data class ConditionalExclusiveMaximumRule(val maximum: Number, val exclusive: Boolean): SchemaRule {
+    override fun eval(path: String, element: JsonElement, schema: Schema): List<RuleError> {
         return element.double().map { eval(it) }.rightOrDefault(emptyList())
     }
 

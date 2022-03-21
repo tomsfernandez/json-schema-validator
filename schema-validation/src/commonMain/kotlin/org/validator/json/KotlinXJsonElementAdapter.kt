@@ -1,4 +1,4 @@
-package org.validator.testing
+package org.validator.json
 
 import kotlinx.serialization.json.*
 import org.validator.*

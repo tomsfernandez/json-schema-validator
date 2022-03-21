@@ -6,14 +6,14 @@ object MinimumRuleParser : NumberRuleParser {
 
     override val KEY: String = "minimum"
 
-    override fun parse(number: Number): Either<List<Error>, ValidationRule> {
-        return Either.Right(MinimumRule(number))
+    override fun parse(number: Number): Schema {
+        return Schema(MinimumRule(number))
     }
 }
 
 data class MinimumRule(val minimum: Number) : NumberRule {
-    override fun eval(number: Number): List<Error> {
+    override fun eval(path: String, number: Number): List<RuleError> {
         return if (number.toDouble() >= minimum.toDouble()) emptyList()
-        else listOf(Error("$number is smaller than $minimum"))
+        else listOf(RuleError(path, "$number is smaller than $minimum"))
     }
 }

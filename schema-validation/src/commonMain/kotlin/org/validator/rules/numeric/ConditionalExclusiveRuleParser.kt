@@ -8,21 +8,23 @@ interface ConditionalExclusiveRuleParser : RuleParser {
 
     override fun canParse(element: JsonObject): Boolean = element.keys().any { KEY == it || CONDITIONAL_KEY == it }
 
-    override fun parse(element: JsonObject): Either<List<Error>, ValidationRule> {
+    override fun parse(base: String, path: String, element: JsonObject): Schema {
+        val finalPath = objectKey(path, KEY)
         val conditional = element.get(KEY)
         val exclusive = element.get(CONDITIONAL_KEY)
+        val exclusiveExists = exclusive != null
 
-        if (conditional == null && exclusive != null) return Either.Left(listOf(ONLY_CONDITIONAL_ERROR()))
+        if (conditional == null && exclusiveExists) return Schema(base, finalPath, ONLY_CONDITIONAL_ERROR())
 
-        return conditional.double().mapLeft(::listOf).withRight { maxInt ->
-            if (exclusive == null) Either.Right(rule(maxInt, false))
-            else exclusive.boolean().map(::listOf) { exclusiveBool ->
-                rule(maxInt, exclusiveBool)
+        return conditional.double().fold({ error -> Schema(base, finalPath, error)}) { maxInt ->
+            if (!exclusiveExists) Schema(base, finalPath, rule(maxInt, false))
+            else exclusive.boolean().fold({ error -> Schema(base, finalPath, error)}) { exclusiveBool ->
+                Schema(base, finalPath, rule(maxInt, exclusiveBool))
             }
         }
     }
 
-    fun rule(integer: Double, exclusive: Boolean): ValidationRule
+    fun rule(integer: Double, exclusive: Boolean): SchemaRule
 
     private fun ONLY_CONDITIONAL_ERROR() = Error("$KEY key must exist to use $CONDITIONAL_KEY")
 }

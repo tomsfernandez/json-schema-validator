@@ -1,39 +1,38 @@
 package org.validator.rules.array
 
 import org.validator.*
-import org.validator.Either.*
 import org.validator.rules.SchemaRuleParserFactory
 
-data class BooleanAdditionalItemsRule(val itemsKeyExists: Boolean, val amountOfItems: Int, val allowAdditional: Boolean): ValidationRule {
+data class BooleanAdditionalItemsRule(val itemsKeyExists: Boolean, val amountOfItems: Int, val allowAdditional: Boolean): SchemaRule {
 
-    override fun eval(element: JsonElement): List<Error> {
-        return element.array().map { eval(it) }.rightOrDefault(emptyList())
+    override fun eval(path: String, element: JsonElement, schema: Schema): List<RuleError> {
+        return element.array().map { eval(path, it) }.rightOrDefault(emptyList())
     }
 
-    private fun eval(array: JsonArray): List<Error> {
+    private fun eval(path: String, array: JsonArray): List<RuleError> {
         return if(!itemsKeyExists) emptyList()
             else if (itemsIsSchema()) emptyList()
-            else if (!allowAdditional && array.elements().size > amountOfItems) listOf(error(array))
+            else if (!allowAdditional && array.elements().size > amountOfItems) listOf(error(path, array))
             else emptyList()
     }
 
     private fun itemsIsSchema() = amountOfItems == 0
 
-    private fun error(array: JsonArray): Error = Error("Array has ${array.elements().size - amountOfItems} more items")
+    private fun error(path: String, array: JsonArray): RuleError = RuleError(path, "Array has ${array.elements().size - amountOfItems} more items")
 }
 
-data class ObjectAdditionalItemsRule(val itemsKeyExists: Boolean, val amountOfItems: Int, val rule: ValidationRule): ValidationRule {
+data class ObjectAdditionalItemsRule(val itemsKeyExists: Boolean, val amountOfItems: Int, val rule: SchemaRule): SchemaRule {
 
-    override fun eval(element: JsonElement): List<Error> {
-        return element.array().map { eval(it) }.rightOrDefault(emptyList())
+    override fun eval(path: String, element: JsonElement, schema: Schema): List<RuleError> {
+        return element.array().map { eval(path, it, schema) }.rightOrDefault(emptyList())
     }
 
-    private fun eval(array: JsonArray): List<Error> {
+    private fun eval(path: String, array: JsonArray, schema: Schema): List<RuleError> {
         return if(!itemsKeyExists) emptyList()
         else if (array.elements().size > amountOfItems) {
             val startIndex = array.elements().size - amountOfItems
             val elementsToTest = array.elements().subList(startIndex, array.elements().size)
-            elementsToTest.flatMap { elem -> rule.eval(elem) }
+            elementsToTest.flatMapIndexed { index, elem -> rule.eval(arrayIndex(path, index + startIndex), elem, schema) }
         }
         else emptyList()
     }
@@ -50,16 +49,17 @@ data class AdditionalItemsRuleParser(val factory: SchemaRuleParserFactory): Rule
 
     override fun canParse(element: JsonObject): Boolean = element.containsKey(KEY)
 
-    override fun parse(element: JsonObject): Either<List<Error>, ValidationRule> {
+    override fun parse(base: String, path: String, element: JsonObject): Schema {
+        val finalPath = objectKey(path, KEY)
         val itemsProp = element.get(ITEMS_KEY)
         val itemsArraySize = itemsProp.array().fold(0) { it.elements().size }
         val itemsPropExists = itemsProp != null
         return when(val entry = element.get(KEY)) {
-            is JsonBoolean -> Right(BooleanAdditionalItemsRule(itemsPropExists, itemsArraySize, entry.value))
+            is JsonBoolean -> Schema(base, finalPath, BooleanAdditionalItemsRule(itemsPropExists, itemsArraySize, entry.value))
             is JsonObject -> factory.make()
-                .parse(entry)
-                .map { ObjectAdditionalItemsRule(itemsPropExists, itemsArraySize, it) }
-            else -> Left(listOf(VALUE_ERROR))
+                .parse(base, path, entry)
+                .map(base, finalPath) { ObjectAdditionalItemsRule(itemsPropExists, itemsArraySize, it) }
+            else -> Schema(base, finalPath, VALUE_ERROR)
         }
     }
 }

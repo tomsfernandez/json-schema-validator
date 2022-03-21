@@ -1,6 +1,6 @@
 package org.validator
 
-import org.validator.testing.adapt
+import org.validator.json.adapt
 import org.validator.testing.loadResourceText
 import org.validator.rules.any.*
 import kotlin.test.Test
@@ -44,7 +44,7 @@ class TypeRuleParserTest {
         test_rule_is_correct("/schemas/type/array-of-types.json", OrRule(listOf(StringRule, NumberRule)))
     }
 
-    private fun test_rule_is_correct(file: String, expected: ValidationRule) {
+    private fun test_rule_is_correct(file: String, expected: SchemaRule) {
         val schemaAsString = loadResourceText(file)
         val schema = adapt(schemaAsString) as JsonObject
         val rule = TypeRuleParser.parse(schema)

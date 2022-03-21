@@ -1,15 +1,15 @@
 package org.validator.rules.`object`
 
 import org.validator.*
-import org.validator.rules.SchemaRule
+import org.validator.rules.CompositeSchemaRule
 import org.validator.rules.SchemaRuleParserFactory
 
-data class SchemaDependenciesRule(val property: String, val rule: ValidationRule): ValidationRule {
-    override fun eval(element: JsonElement): List<Error> {
+data class SchemaDependenciesRule(val property: String, val rule: SchemaRule): SchemaRule {
+    override fun eval(path: String, element: JsonElement, schema: Schema): List<RuleError> {
         return when(element) {
             is JsonObject -> {
                 val propertyExists = element.containsKey(property)
-                return if (propertyExists) rule.eval(element) else emptyList()
+                return if (propertyExists) rule.eval(objectKey(path, property), element, schema) else emptyList()
             } else -> emptyList()
         }
     }
@@ -21,38 +21,37 @@ data class DependenciesRuleParser(val factory: SchemaRuleParserFactory): RulePar
 
     override fun canParse(element: JsonObject): Boolean = element.get(key) != null
 
-    override fun parse(element: JsonObject): Either<List<Error>, ValidationRule> {
-        return element.get(key).asObject().mapEither(::listOf) { obj ->
-            val parseResults = obj.entries().map { e -> parseRule(e.first, e.second) }
-            val errors = parseResults.mapNotNull { e -> e.left() }.flatten()
-            if (errors.any()) Either.Left(errors)
-            else Either.Right(SchemaRule(parseResults.mapNotNull { e -> e.right() }))
+    override fun parse(base: String, path: String, element: JsonObject): Schema {
+        val finalPath = objectKey(path, key)
+        return element.get(key).asObject().fold({ error -> Schema(base, finalPath, error)}) { obj ->
+            val parseResults = obj.entries().map { e -> parseRule(base, e.first, path, e.second) }
+            parseResults.combine(base, finalPath, ::CompositeSchemaRule)
         }
     }
 
-    private fun parseRule(key: String, element: JsonElement): Either<List<Error>, ValidationRule> {
+    private fun parseRule(base: String, key: String, path: String, element: JsonElement): Schema {
+        val finalPath = objectKey(path, key)
         return when(element) {
-            is JsonArray -> parseRequiredRule(key, element)
-            is JsonObject -> parseSchemaRule(key, element)
-            else -> Either.Left(listOf(Error("Value is neither an array or an object")))
+            is JsonArray -> parseRequiredRule(key, path, element)
+            is JsonObject -> parseSchemaRule(base, key, path, element)
+            else -> Schema(base, finalPath, Error("Value is neither an array or an object"))
         }
     }
 
-    private fun parseSchemaRule(key: String, obj: JsonObject): Either<List<Error>, ValidationRule> {
-        val rule = factory.make().parse(obj)
-        return rule.map { SchemaDependenciesRule(key, it) }
+    private fun parseSchemaRule(base: String, key: String, path: String, obj: JsonObject): Schema {
+        val finalPath = objectKey(path, encodeUri(key))
+        val rule = factory.make().parse(base, path, obj)
+        return rule.map(base, finalPath) { SchemaDependenciesRule(key, it) }
     }
 
-    private fun parseRequiredRule(key: String, array: JsonArray): Either<List<Error>, ValidationRule> {
-        val conversions = array.elements().map { it.string() }
-        val errors: List<Error> = conversions.mapNotNull { it.left() }
-        return if(errors.any()) Either.Left(errors)
-        else Either.Right(PropertyDependenciesRule(key, conversions.mapNotNull { it.right() }.toSet()))
+    private fun parseRequiredRule(key: String, path: String, array: JsonArray): Schema {
+        val (errors, conversions) = array.elements().map { it.string() }.partitionList()
+        return Schema(PropertyDependenciesRule(key, conversions.toSet()), errors)
     }
 }
 
-data class PropertyDependenciesRule(val property: String, val required: Set<String>): ValidationRule {
-    override fun eval(element: JsonElement): List<Error> {
+data class PropertyDependenciesRule(val property: String, val required: Set<String>): SchemaRule {
+    override fun eval(path: String, element: JsonElement, schema: Schema): List<RuleError> {
         return when(element) {
             is JsonObject -> {
                 val propertyValue = element.get(property)
@@ -60,7 +59,7 @@ data class PropertyDependenciesRule(val property: String, val required: Set<Stri
                 return when {
                     propertyValue == null -> emptyList()
                     missingRequiredProperties.isEmpty() -> emptyList()
-                    else -> missingRequiredProperties.map { x -> Error("$x is required because $property entry exists") }
+                    else -> missingRequiredProperties.map { x -> RuleError(path, "$x is required because $property entry exists") }
                 }
             } else -> emptyList()
         }

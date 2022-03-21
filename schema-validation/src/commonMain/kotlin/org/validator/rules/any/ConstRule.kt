@@ -10,15 +10,16 @@ object ConstRuleParser: RuleParser {
         return element.get(KEY) != null
     }
 
-    override fun parse(element: JsonObject): Either<List<Error>, ValidationRule> {
+    override fun parse(base: String, path: String, element: JsonObject): Schema {
         val constElement = element.get(KEY) !!
-        return Either.Right(ConstRule(constElement))
+        val rule = ConstRule(constElement)
+        return Schema(base, objectKey(path, KEY), rule)
     }
 }
 
-data class ConstRule(val toCompare: JsonElement) : ValidationRule {
-    override fun eval(element: JsonElement): List<Error> {
-        return if (!toCompare.deepEquals(element)) listOf(Error("Schemas are not equal"))
+data class ConstRule(val toCompare: JsonElement) : SchemaRule {
+    override fun eval(path: String, element: JsonElement, schema: Schema): List<RuleError> {
+        return if (!toCompare.deepEquals(element)) listOf(RuleError(path, "Schemas are not equal"))
         else emptyList()
     }
 }

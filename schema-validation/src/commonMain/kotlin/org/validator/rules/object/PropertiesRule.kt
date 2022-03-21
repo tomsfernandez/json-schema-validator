@@ -4,29 +4,33 @@ import org.validator.*
 import org.validator.Either.*
 import org.validator.rules.SchemaRuleParserFactory
 
-typealias SpecificPropertyParser = (key: String, rule: ValidationRule) -> ValidationRule
+typealias SpecificPropertyParser = (key: String, rule: SchemaRule) -> SchemaRule
 
 open class AbstractPropertiesRuleParser(val key: String, private val factory: SchemaRuleParserFactory, val parser: SpecificPropertyParser): RuleParser {
 
     override fun canParse(element: JsonObject): Boolean = element.get(key) != null
 
-    override fun parse(element: JsonObject): Either<List<Error>, ValidationRule> {
+    override fun parse(base: String, path: String, element: JsonObject): Schema {
+        val finalPath = objectKey(path, key)
         return when(val entry = element.get(key)) {
             is JsonObject -> {
-                val maybeObjects =  entry.entries().map { Pair(it.first, it.second.asObject()) }
-                val (errors, conversions) = maybeObjects.partitionPairList()
-                if (errors.any()) return Left(errors.map { it.second })
-
-                val (parseErrors, rules) = conversions.map { parseProperty(it.first, it.second) }.partitionList()
-                return if (parseErrors.any()) Left(errors.map { it.second })
-                else Right(PropertiesRule(rules))
+                val schemas =  entry.entries().map { Pair(it.first, it.second.asObject()) }.map {
+                    val (key, objectOrError) = it
+                    val propFinalPath = objectKey(finalPath, encodeUri(key))
+                    when(objectOrError) {
+                        is Left -> Schema(base, propFinalPath, objectOrError.l)
+                        is Right -> parseProperty(base, key, finalPath, objectOrError.r)
+                    }
+                }
+                return schemas.combine(base, finalPath, ::PropertiesRule)
             }
-            else -> Left(listOf(Error("Properties must be an object")))
+            else -> Schema(base, finalPath, Error("Properties must be an object"))
         }
     }
 
-    private fun parseProperty(key: String, obj: JsonObject): Either<List<Error>, ValidationRule> {
-        return factory.make().parse(obj).map { rule -> parser(key, rule) }
+    private fun parseProperty(base: String, key: String, path: String, obj: JsonObject): Schema {
+        val finalPath = objectKey(path, encodeUri(key))
+        return factory.make().parse(base, finalPath, obj).map { rule -> parser(key, rule) }
     }
 }
 
@@ -38,26 +42,26 @@ data class PropertiesRuleParser(val factory: SchemaRuleParserFactory): AbstractP
 
 data class PatternPropertiesRuleParser(val factory: SchemaRuleParserFactory): AbstractPropertiesRuleParser("patternProperties", factory, parsePatternProperty)
 
-data class PropertiesRule(val rules: List<ValidationRule>): ValidationRule {
-    override fun eval(element: JsonElement): List<Error> {
-        return rules.flatMap { rule -> rule.eval(element) }
+data class PropertiesRule(val rules: List<SchemaRule>): SchemaRule {
+    override fun eval(path: String, element: JsonElement, schema: Schema): List<RuleError> {
+        return rules.flatMap { rule -> rule.eval(path, element, schema) }
     }
 }
 
-data class PatternPropertyRule(val regex: Regex, val rule: ValidationRule) : ValidationRule {
-    override fun eval(element: JsonElement): List<Error> {
+data class PatternPropertyRule(val regex: Regex, val rule: SchemaRule) : SchemaRule {
+    override fun eval(path: String, element: JsonElement, schema: Schema): List<RuleError> {
         return element.asObject().fold({ emptyList() }) { obj ->
             val properties = obj.entries(regex)
-            properties.flatMap { prop -> rule.eval(prop.second)}
+            properties.flatMap { (key, element) -> rule.eval(objectKey(path, key), element, schema)}
         }
     }
 }
 
-data class PropertyRule(val name: String, val rule: ValidationRule) : ValidationRule {
-    override fun eval(element: JsonElement): List<Error> {
+data class PropertyRule(val name: String, val rule: SchemaRule) : SchemaRule {
+    override fun eval(path: String, element: JsonElement, schema: Schema): List<RuleError> {
         return element.asObject().fold({ emptyList() }) { obj ->
             val property = obj.get(name)
-            if(property != null) rule.eval(property)
+            if(property != null) rule.eval(objectKey(path, name), property, schema)
             else emptyList()
         }
     }

@@ -2,11 +2,11 @@ package org.validator.rules.string
 
 import org.validator.*
 
-data class PatternRule(val pattern: Regex) : ValidationRule {
-    override fun eval(element: JsonElement): List<Error> {
+data class PatternRule(val pattern: Regex) : SchemaRule {
+    override fun eval(path: String, element: JsonElement, schema: Schema): List<RuleError> {
         return element.string().map {
             val matches = pattern.containsMatchIn(it)
-            if (!matches) listOf(Error("Value doesn't match regex"))
+            if (!matches) listOf(RuleError(path, "Value doesn't match regex"))
             else emptyList()
         }.rightOrDefault(emptyList())
     }
@@ -18,7 +18,8 @@ object PatternRuleParser : RuleParser {
 
     override fun canParse(element: JsonObject): Boolean = element.get(key) != null
 
-    override fun parse(element: JsonObject): Either<List<Error>, ValidationRule> {
-        return element.get(key).string().map(::listOf) { PatternRule(it.toRegex()) }
+    override fun parse(base: String, path: String, element: JsonObject): Schema {
+        val finalPath = objectKey(path, key)
+        return element.get(key).string().fold({ error -> Schema(base, finalPath, error)}) { Schema(base, finalPath, PatternRule(it.toRegex())) }
     }
 }

@@ -1,7 +1,6 @@
 package org.validator.rules.`object`
 
 import org.validator.*
-import org.validator.Either.*
 
 object RequiredRuleParser : RuleParser {
 
@@ -11,28 +10,29 @@ object RequiredRuleParser : RuleParser {
 
     override fun canParse(element: JsonObject): Boolean = element.get(KEY) != null
 
-    override fun parse(element: JsonObject): Either<List<Error>, ValidationRule> {
+    override fun parse(base: String, path: String, element: JsonObject): Schema {
+       val finalPath = objectKey(path, KEY)
        return  when(val elem = element.get(KEY)) {
             is JsonArray -> {
                 val requiredKeys = elem.elements().mapNotNull { x -> x.string().right() }
-                if (requiredKeys.size != elem.elements().size) Left(listOf(INVALID_VALUE_ERROR))
-                else Right(RequiredRule(requiredKeys))
+                if (requiredKeys.size != elem.elements().size) Schema(base, finalPath, INVALID_VALUE_ERROR)
+                else Schema(base, finalPath, RequiredRule(requiredKeys))
             }
-            else -> Left(listOf(NOT_ARRAY_ERROR))
+            else -> Schema(base, finalPath, NOT_ARRAY_ERROR)
         }
     }
 }
 
-data class RequiredRule(val members: List<String>) : ValidationRule {
-    override fun eval(element: JsonElement): List<Error> {
+data class RequiredRule(val members: List<String>) : SchemaRule {
+    override fun eval(path: String, element: JsonElement, schema: Schema): List<RuleError> {
         return element.asObject().fold({ emptyList() }) { x ->
             val differentMembers = members subtract x.keys()
             if (differentMembers.isEmpty()) emptyList()
-            else createErrors(members)
+            else createErrors(path, members)
         }
     }
 
-    private fun createErrors(keys: List<String>): List<Error> {
-        return keys.map { member -> Error("$member is required but not present in object") }
+    private fun createErrors(path: String, keys: List<String>): List<RuleError> {
+        return keys.map { member -> RuleError(path, "$member is required but not present in object") }
     }
 }

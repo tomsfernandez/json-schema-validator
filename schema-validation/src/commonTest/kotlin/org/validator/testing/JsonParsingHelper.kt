@@ -1,6 +1,7 @@
 package org.validator.testing
 
 import org.validator.*
+import org.validator.json.adapt
 
 interface JsonParsingHelper {
 

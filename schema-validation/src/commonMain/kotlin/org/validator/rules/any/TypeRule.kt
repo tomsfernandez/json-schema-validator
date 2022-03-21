@@ -1,7 +1,6 @@
 package org.validator.rules.any
 
 import org.validator.*
-import org.validator.Either.*
 
 object TypeRuleParser: RuleParser {
 
@@ -29,72 +28,69 @@ object TypeRuleParser: RuleParser {
         return element.get(KEY) != null
     }
 
-    override fun parse(element: JsonObject): Either<List<Error>, ValidationRule> {
+    override fun parse(base: String, path: String, element: JsonObject): Schema {
+        val schemaPath = objectKey(path, KEY)
         return when (val typeEntry = element.get(KEY)) {
-            is JsonArray -> parseTypeList(typeEntry)
-            is JsonScalar -> parseType(typeEntry).mapEither(::listOf) { x -> Right(x) }
-            else -> Left(listOf(Error("Element is neither an array or a scalar")))
+            is JsonArray -> parseTypeList(base, schemaPath, typeEntry)
+            is JsonScalar -> parseType(base, schemaPath, typeEntry)
+            else -> Schema(base, schemaPath, Error("Element is neither an array or a scalar"))
         }
     }
 
-    private fun parseTypeList(array: JsonArray): Either<List<Error>, ValidationRule> {
-        val schemaOrErrors: List<Either<Error, ValidationRule>> = array.elements().map { x -> this.parseType(x) }
-        val errors = schemaOrErrors.mapNotNull { x -> x.left() }
-        return if (errors.isEmpty()) {
-            val rules = OrRule(schemaOrErrors.mapNotNull { it.right() })
-            Right(rules)
-        } else Left(errors)
+    private fun parseTypeList(base: String, path: String, array: JsonArray): Schema {
+        val schemas = array.elements().map { x -> this.parseType(base, path, x) }
+        return schemas.combine(base, path, ::OrRule)
     }
 
-    private fun parseType(element: JsonElement): Either<Error, ValidationRule> {
-        return element.string().mapEither(::identity) { x -> parseType(x) }
+    private fun parseType(base: String, path: String, element: JsonElement): Schema {
+        return element.string().fold({ error -> Schema(base, path, error)}) { x -> parseType(base, path, x) }
     }
 
-    private fun parseType(type: String): Either<Error, ValidationRule> {
+    private fun parseType(base: String, path: String, type: String): Schema {
         val value = ruleMap[type]
-        return if (value != null) Right(value)
-        else Left(Error("$type is not an allowed value"))
+        return if (value != null) Schema(value)
+        else Schema(base, path, Error("$type is not an allowed value"))
     }
 }
 
-object ObjectRule : ValidationRule {
-    override fun eval(element: JsonElement): List<Error> {
-        return element.asObject().fold({ listOf(it)}) { emptyList() }
+object ObjectRule : SchemaRule {
+    override fun eval(path: String, element: JsonElement, schema: Schema): List<RuleError> {
+        return element.asObject().fold({ listOf(RuleError(path, it.reason)) }) { emptyList() }
     }
 }
 
-object ArrayRule : ValidationRule {
-    override fun eval(element: JsonElement): List<Error> {
-        return element.array().fold({ listOf(it)}) { emptyList() }
+object ArrayRule : SchemaRule {
+    override fun eval(path: String, element: JsonElement, schema: Schema): List<RuleError> {
+        return element.array().fold({ listOf(RuleError(path, it.reason)) }) { emptyList() }
     }
 }
 
-object StringRule : ValidationRule {
-    override fun eval(element: JsonElement): List<Error> {
-        return element.string().fold({ listOf(it)} ) { emptyList() }
+object StringRule : SchemaRule {
+    override fun eval(path: String, element: JsonElement, schema: Schema): List<RuleError> {
+        return element.string().fold({ listOf(RuleError(path, it.reason)) } ) { emptyList() }
     }
 }
 
-object BooleanRule : ValidationRule {
-    override fun eval(element: JsonElement): List<Error> {
-        return element.boolean().fold({ listOf(it)} ) { emptyList() }
+object BooleanRule : SchemaRule {
+    override fun eval(path: String, element: JsonElement, schema: Schema): List<RuleError> {
+        return element.boolean().fold({ listOf(RuleError(path, it.reason)) } ) { emptyList() }
     }
 }
 
-object NumberRule : ValidationRule {
-    override fun eval(element: JsonElement): List<Error> {
-        return element.double().fold({ listOf(it)} ) { emptyList() }
+object NumberRule : SchemaRule {
+    override fun eval(path: String, element: JsonElement, schema: Schema): List<RuleError> {
+        return element.double().fold({ listOf(RuleError(path, it.reason)) } ) { emptyList() }
     }
 }
 
-object NullRule : ValidationRule {
-    override fun eval(element: JsonElement): List<Error> {
-        return element.asNull().fold({ listOf(it)} ) { emptyList() }
+object NullRule : SchemaRule {
+    override fun eval(path: String, element: JsonElement, schema: Schema): List<RuleError> {
+        return element.asNull().fold({ listOf(RuleError(path, it.reason)) } ) { emptyList() }
     }
 }
 
-object IntegerRule : ValidationRule {
-    override fun eval(element: JsonElement): List<Error> {
-        return element.integer().fold({ listOf(it)} ) { emptyList() }
+object IntegerRule : SchemaRule {
+    override fun eval(path: String, element: JsonElement, schema: Schema): List<RuleError> {
+        return element.integer().fold({ listOf(RuleError(path, it.reason)) } ) { emptyList() }
     }
 }

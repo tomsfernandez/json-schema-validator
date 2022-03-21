@@ -5,11 +5,11 @@ import org.validator.*
 
 typealias FormatValidator = (String) -> Error?
 
-data class StringFormatRule(val formatter: FormatValidator): ValidationRule {
+data class StringFormatRule(val formatter: FormatValidator): SchemaRule {
 
-    override fun eval(element: JsonElement): List<Error> {
+    override fun eval(path: String, element: JsonElement, schema: Schema): List<RuleError> {
         return element.string().map(formatter)
-            .map { maybeError -> if (maybeError != null) listOf(maybeError) else emptyList() }
+            .map { maybeError -> if (maybeError != null) listOf(RuleError(path, maybeError.reason)) else emptyList() }
             .rightOrDefault(emptyList())
     }
 }
@@ -26,12 +26,13 @@ data class StringFormatRuleParser(val formatters: Map<String, FormatValidator>):
 
     override fun canParse(element: JsonObject): Boolean = element.containsKey(key)
 
-    override fun parse(element: JsonObject): Either<List<Error>, ValidationRule> {
+    override fun parse(base: String, path: String, element: JsonObject): Schema {
+        val finalPath = objectKey(path, key)
         return element.get(key).string()
-            .mapEither(::listOf) { format ->
+            .fold({ error -> Schema(base, finalPath, error)}) { format ->
                 val maybeFormatter = formatters[format]
-                if (maybeFormatter == null) Either.Left(listOf(Error("Couldn't find formatter for format: $format")))
-                else Either.Right(StringFormatRule(maybeFormatter))
+                if (maybeFormatter == null) Schema(base, finalPath, Error("Couldn't find formatter for format: $format"))
+                else Schema(StringFormatRule(maybeFormatter))
             }
     }
 }
