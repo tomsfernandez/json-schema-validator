@@ -15,11 +15,11 @@ actual fun characterCount(value: String): Int {
 }
 
 actual fun decodeUri(value: String): String {
-    return js("url.decodeUri(value)") as String
+    return js("decodeURI(value)") as String
 }
 
 actual fun encodeUri(value: String): String {
-    return js("url.encodeUri(value)") as String
+    return js("encodeURI(value)") as String
 }
 
 actual fun resolveUri(base: String, value: String): String {

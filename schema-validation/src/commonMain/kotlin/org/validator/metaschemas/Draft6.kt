@@ -3,45 +3,62 @@ package org.validator.metaschemas
 import org.validator.JsonObject
 import org.validator.asObject
 import org.validator.json.JsonParser
-import org.validator.rules.DraftParsers.DRAFT_4_ROOT
+import org.validator.rules.DraftParsers
 
-object Draft4 {
+object Draft6 {
 
     private val jsonSchemaAsString = """
         {
-            "id": "http://json-schema.org/draft-04/schema#",
-            "${'$'}schema": "http://json-schema.org/draft-04/schema#",
-            "description": "Core schema meta-schema",
+            "${'$'}schema": "http://json-schema.org/draft-06/schema#",
+            "${'$'}id": "http://json-schema.org/draft-06/schema#",
+            "title": "Core schema meta-schema",
             "definitions": {
                 "schemaArray": {
                     "type": "array",
                     "minItems": 1,
                     "items": { "${'$'}ref": "#" }
                 },
-                "positiveInteger": {
+                "nonNegativeInteger": {
                     "type": "integer",
                     "minimum": 0
                 },
-                "positiveIntegerDefault0": {
-                    "allOf": [ { "${'$'}ref": "#/definitions/positiveInteger" }, { "default": 0 } ]
+                "nonNegativeIntegerDefault0": {
+                    "allOf": [
+                        { "${'$'}ref": "#/definitions/nonNegativeInteger" },
+                        { "default": 0 }
+                    ]
                 },
                 "simpleTypes": {
-                    "enum": [ "array", "boolean", "integer", "null", "number", "object", "string" ]
+                    "enum": [
+                        "array",
+                        "boolean",
+                        "integer",
+                        "null",
+                        "number",
+                        "object",
+                        "string"
+                    ]
                 },
                 "stringArray": {
                     "type": "array",
                     "items": { "type": "string" },
-                    "minItems": 1,
-                    "uniqueItems": true
+                    "uniqueItems": true,
+                    "default": []
                 }
             },
-            "type": "object",
+            "type": ["object", "boolean"],
             "properties": {
-                "id": {
-                    "type": "string"
+                "${'$'}id": {
+                    "type": "string",
+                    "format": "uri-reference"
                 },
                 "${'$'}schema": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "uri"
+                },
+                "${'$'}ref": {
+                    "type": "string",
+                    "format": "uri-reference"
                 },
                 "title": {
                     "type": "string"
@@ -50,38 +67,33 @@ object Draft4 {
                     "type": "string"
                 },
                 "default": {},
+                "examples": {
+                    "type": "array",
+                    "items": {}
+                },
                 "multipleOf": {
                     "type": "number",
-                    "minimum": 0,
-                    "exclusiveMinimum": true
+                    "exclusiveMinimum": 0
                 },
                 "maximum": {
                     "type": "number"
                 },
                 "exclusiveMaximum": {
-                    "type": "boolean",
-                    "default": false
+                    "type": "number"
                 },
                 "minimum": {
                     "type": "number"
                 },
                 "exclusiveMinimum": {
-                    "type": "boolean",
-                    "default": false
+                    "type": "number"
                 },
-                "maxLength": { "${'$'}ref": "#/definitions/positiveInteger" },
-                "minLength": { "${'$'}ref": "#/definitions/positiveIntegerDefault0" },
+                "maxLength": { "${'$'}ref": "#/definitions/nonNegativeInteger" },
+                "minLength": { "${'$'}ref": "#/definitions/nonNegativeIntegerDefault0" },
                 "pattern": {
                     "type": "string",
                     "format": "regex"
                 },
-                "additionalItems": {
-                    "anyOf": [
-                        { "type": "boolean" },
-                        { "${'$'}ref": "#" }
-                    ],
-                    "default": {}
-                },
+                "additionalItems": { "${'$'}ref": "#" },
                 "items": {
                     "anyOf": [
                         { "${'$'}ref": "#" },
@@ -89,22 +101,17 @@ object Draft4 {
                     ],
                     "default": {}
                 },
-                "maxItems": { "${'$'}ref": "#/definitions/positiveInteger" },
-                "minItems": { "${'$'}ref": "#/definitions/positiveIntegerDefault0" },
+                "maxItems": { "${'$'}ref": "#/definitions/nonNegativeInteger" },
+                "minItems": { "${'$'}ref": "#/definitions/nonNegativeIntegerDefault0" },
                 "uniqueItems": {
                     "type": "boolean",
                     "default": false
                 },
-                "maxProperties": { "${'$'}ref": "#/definitions/positiveInteger" },
-                "minProperties": { "${'$'}ref": "#/definitions/positiveIntegerDefault0" },
+                "contains": { "${'$'}ref": "#" },
+                "maxProperties": { "${'$'}ref": "#/definitions/nonNegativeInteger" },
+                "minProperties": { "${'$'}ref": "#/definitions/nonNegativeIntegerDefault0" },
                 "required": { "${'$'}ref": "#/definitions/stringArray" },
-                "additionalProperties": {
-                    "anyOf": [
-                        { "type": "boolean" },
-                        { "${'$'}ref": "#" }
-                    ],
-                    "default": {}
-                },
+                "additionalProperties": { "${'$'}ref": "#" },
                 "definitions": {
                     "type": "object",
                     "additionalProperties": { "${'$'}ref": "#" },
@@ -118,6 +125,7 @@ object Draft4 {
                 "patternProperties": {
                     "type": "object",
                     "additionalProperties": { "${'$'}ref": "#" },
+                    "propertyNames": { "format": "regex" },
                     "default": {}
                 },
                 "dependencies": {
@@ -129,6 +137,8 @@ object Draft4 {
                         ]
                     }
                 },
+                "propertyNames": { "${'$'}ref": "#" },
+                "const": {},
                 "enum": {
                     "type": "array",
                     "minItems": 1,
@@ -151,10 +161,6 @@ object Draft4 {
                 "oneOf": { "${'$'}ref": "#/definitions/schemaArray" },
                 "not": { "${'$'}ref": "#" }
             },
-            "dependencies": {
-                "exclusiveMaximum": [ "maximum" ],
-                "exclusiveMinimum": [ "minimum" ]
-            },
             "default": {}
         }
 
@@ -162,5 +168,5 @@ object Draft4 {
 
     private val jsonSchemaAsJson: JsonObject = JsonParser.parse(jsonSchemaAsString).asObject().right() !!
 
-    fun schema() = DRAFT_4_ROOT.parse("#", "http://json-schema.org/draft-04/schema#", jsonSchemaAsJson)
+    fun schema() = DraftParsers.DRAFT_6_ROOT.parse("#", "http://json-schema.org/draft-06/schema#", jsonSchemaAsJson)
 }

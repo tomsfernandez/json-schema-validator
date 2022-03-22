@@ -37,6 +37,6 @@ data class IfThenElseRuleParser(val factory: SchemaRuleParserFactory): RuleParse
 
     private fun parse(base: String, key: String, path: String, element: JsonElement?): Schema? {
         val finalPath = objectKey(path, key)
-        return element?.asObject()?.fold({ error -> Schema(base, finalPath, error)}) { x -> factory.make().parse(base, finalPath, x) }
+        return if (element != null) factory.make().parse(base, finalPath, element) else null
     }
 }

@@ -13,13 +13,9 @@ data class DefinitionsRuleParser(private val factory: SchemaRuleParserFactory) :
         val definitionsObj = element.get(KEY).asObject()
 
         return definitionsObj.fold({ error -> Schema(base, definitionsPath, error) }) { obj ->
-            obj.entries().map { (key, element) -> Pair(objectKey(definitionsPath, encodeUri(key)), element.asObject()) }
-                .map { (path, objectOrError) ->
-                    when (objectOrError) {
-                        is Either.Left -> Schema(base, path, objectOrError.l)
-                        is Either.Right -> factory.make().parse(base, path, objectOrError.r)
-                    }
-                }.combine(::NothingRule)
+            val definitions = obj.entries().map { (key, element) -> Pair(objectKey(definitionsPath, encodeUri(key)), element) }
+                .map { (path, element) -> factory.make().parse(base, path, element) }
+            definitions.combine(::NothingRule)
         }
     }
 }

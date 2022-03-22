@@ -1,6 +1,7 @@
 package org.validator.rules.any
 
 import org.validator.*
+import org.validator.Either.*
 
 object TypeRuleParser: RuleParser {
 
@@ -91,6 +92,18 @@ object NullRule : SchemaRule {
 
 object IntegerRule : SchemaRule {
     override fun eval(path: String, element: JsonElement, schema: Schema): List<RuleError> {
-        return element.integer().fold({ listOf(RuleError(path, it.reason)) } ) { emptyList() }
+        return when(element.integer()) {
+            is Left -> {
+                val errors = listOf(RuleError(path, "Element is not an integer"))
+                when(val maybeDouble = element.double()) {
+                    is Left -> errors
+                    is Right -> if (doesntHaveDecimals(maybeDouble)) emptyList() else errors
+                }
+            }
+            is Right -> emptyList()
+        }
     }
+
+    private fun doesntHaveDecimals(maybeDouble: Right<Double>) =
+        maybeDouble.r.rem(1).equals(0.0)
 }

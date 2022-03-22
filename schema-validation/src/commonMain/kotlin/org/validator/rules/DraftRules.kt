@@ -11,16 +11,20 @@ import org.validator.rules.boolean.AnyOfRuleParser
 import org.validator.rules.boolean.NotRuleParser
 import org.validator.rules.boolean.OneOfRuleParser
 import org.validator.rules.conditional.IfThenElseRuleParser
-import org.validator.rules.numeric.ConditionalExclusiveMaximumRuleParser
-import org.validator.rules.numeric.ConditionalExclusiveMinimumRuleParser
-import org.validator.rules.numeric.MultipleOfRuleParser
+import org.validator.rules.numeric.*
 import org.validator.rules.string.MaxLengthRuleParser
 import org.validator.rules.string.MinLengthRuleParser
 import org.validator.rules.string.PatternRuleParser
 import org.validator.rules.string.StringFormatRuleParser
 
-
 fun DRAFT_4_RULES(factory: SchemaRuleParserFactory): List<RuleParser> {
+    return COMMON_RULES(factory) + listOf(
+        ConditionalExclusiveMaximumRuleParser,
+        ConditionalExclusiveMinimumRuleParser
+    )
+}
+
+fun COMMON_RULES(factory: SchemaRuleParserFactory): List<RuleParser> {
     return listOf(
         ConstRuleParser,
         EnumRuleParser,
@@ -30,8 +34,6 @@ fun DRAFT_4_RULES(factory: SchemaRuleParserFactory): List<RuleParser> {
         NotRuleParser(factory),
         OneOfRuleParser(factory),
         IfThenElseRuleParser(factory),
-        ConditionalExclusiveMaximumRuleParser,
-        ConditionalExclusiveMinimumRuleParser,
         RequiredRuleParser,
         MultipleOfRuleParser,
         MinLengthRuleParser,
@@ -51,4 +53,15 @@ fun DRAFT_4_RULES(factory: SchemaRuleParserFactory): List<RuleParser> {
         UniqueItemsRuleParser,
         DependenciesRuleParser(factory),
         ReferenceRuleParser)
+}
+
+fun DRAFT_6_RULES(factory: SchemaRuleParserFactory): List<RuleParser> {
+    return COMMON_RULES(factory) + listOf(
+        ContainsRuleParser(factory),
+        ExclusiveMaximumRuleParser,
+        ExclusiveMinimumRuleParser,
+        MinimumRuleParser,
+        MaximumRuleParser,
+        PropertyNamesRuleParser(factory)
+    )
 }

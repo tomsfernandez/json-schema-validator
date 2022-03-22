@@ -30,25 +30,21 @@ data class ItemsRuleParser(val factory: SchemaRuleParserFactory): RuleParser {
 
     override fun parse(base: String, path: String, element: JsonObject): Schema {
         val finalPath = objectKey(path, KEY)
-        return when(val entry = element.get(KEY)) {
-            is JsonObject -> parseSchema(base, finalPath, entry)
+        return when(val entry = element.get(KEY) !!) {
             is JsonArray -> parseTuple(base, finalPath, entry)
-            else -> Schema(base, finalPath, FORMAT_ERROR)
+            else -> parseSchema(base, finalPath, entry)
         }
     }
 
-    private fun parseSchema(base: String, path: String, obj: JsonObject): Schema {
-        return factory.make().parse(base, path, obj).map(base, path, ::SingleItemsRule)
+    private fun parseSchema(base: String, path: String, element: JsonElement): Schema {
+        return factory.make().parse(base, path, element).map(base, path, ::SingleItemsRule)
     }
 
     private fun parseTuple(base: String, path: String, array: JsonArray): Schema {
         val schemaParser = factory.make()
-        val schemas = array.elements().map { it.asObject() }.mapIndexed { index, elem ->
+        val schemas = array.elements().mapIndexed { index, elem ->
             val arrayPath = "$path/$index"
-            when(elem) {
-                is Left -> Schema(base, arrayPath, elem.l)
-                is Right -> schemaParser.parse(base, arrayPath, elem.r)
-            }
+            schemaParser.parse(base, arrayPath, elem)
         }
         return schemas.combine(base, path, ::TupleRule)
     }

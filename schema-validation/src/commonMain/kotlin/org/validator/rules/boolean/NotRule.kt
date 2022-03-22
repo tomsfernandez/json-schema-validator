@@ -25,6 +25,6 @@ data class NotRuleParser(val parserFactory: SchemaRuleParserFactory): RuleParser
     override fun parse(base: String, path: String, element: JsonObject): Schema {
         val finalPath = objectKey(path, KEY)
         val notValue = element.get(KEY) !!
-        return notValue.asObject().fold({ error -> Schema(base, finalPath, error )}) { parserFactory.make().parse(base, path, it) }.map(base, finalPath) { NotRule(it) }
+        return parserFactory.make().parse(base, path, notValue).map(base, finalPath) { NotRule(it) }
     }
 }

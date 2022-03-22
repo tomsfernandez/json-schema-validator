@@ -33,14 +33,13 @@ data class DependenciesRuleParser(val factory: SchemaRuleParserFactory): RulePar
         val finalPath = objectKey(path, key)
         return when(element) {
             is JsonArray -> parseRequiredRule(key, path, element)
-            is JsonObject -> parseSchemaRule(base, key, path, element)
-            else -> Schema(base, finalPath, Error("Value is neither an array or an object"))
+            else -> parseSchemaRule(base, key, path, element)
         }
     }
 
-    private fun parseSchemaRule(base: String, key: String, path: String, obj: JsonObject): Schema {
+    private fun parseSchemaRule(base: String, key: String, path: String, element: JsonElement): Schema {
         val finalPath = objectKey(path, encodeUri(key))
-        val rule = factory.make().parse(base, path, obj)
+        val rule = factory.make().parse(base, path, element)
         return rule.map(base, finalPath) { SchemaDependenciesRule(key, it) }
     }
 

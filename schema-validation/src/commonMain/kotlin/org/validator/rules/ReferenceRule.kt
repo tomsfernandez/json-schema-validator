@@ -12,7 +12,7 @@ object ReferenceRuleParser: RuleParser {
     override fun parse(base: String, path: String, element: JsonObject): Schema {
         return element.get(KEY).string().fold(::Schema) { ref ->
             val decoded = refDecodeUri(ref)
-            Schema(ReferenceRule(base, decoded))
+            Schema(base, path, ReferenceRule(base, decoded))
         }
     }
 

@@ -14,13 +14,10 @@ open class AbstractPropertiesRuleParser(val key: String, private val factory: Sc
         val finalPath = objectKey(path, key)
         return when(val entry = element.get(key)) {
             is JsonObject -> {
-                val schemas =  entry.entries().map { Pair(it.first, it.second.asObject()) }.map {
-                    val (key, objectOrError) = it
+                val schemas =  entry.entries().map {
+                    val (key, element) = it
                     val propFinalPath = objectKey(finalPath, encodeUri(key))
-                    when(objectOrError) {
-                        is Left -> Schema(base, propFinalPath, objectOrError.l)
-                        is Right -> parseProperty(base, key, finalPath, objectOrError.r)
-                    }
+                    parseProperty(base, key, finalPath, element)
                 }
                 return schemas.combine(base, finalPath, ::PropertiesRule)
             }
@@ -28,9 +25,9 @@ open class AbstractPropertiesRuleParser(val key: String, private val factory: Sc
         }
     }
 
-    private fun parseProperty(base: String, key: String, path: String, obj: JsonObject): Schema {
+    private fun parseProperty(base: String, key: String, path: String, element: JsonElement): Schema {
         val finalPath = objectKey(path, encodeUri(key))
-        return factory.make().parse(base, finalPath, obj).map { rule -> parser(key, rule) }
+        return factory.make().parse(base, finalPath, element).map { rule -> parser(key, rule) }
     }
 }
 
