@@ -8,6 +8,8 @@ object DraftParsers {
     val DRAFT_4_ROOT = Draft4SchemaParser(DRAFT_4_RULES(Draft4ParserFactory) + DefinitionsRuleParser(Draft4ParserFactory))
     val DRAFT_6 = Draft6SchemaParser(DRAFT_6_RULES(Draft6ParserFactory))
     val DRAFT_6_ROOT = Draft6SchemaParser(DRAFT_6_RULES(Draft6ParserFactory) + DefinitionsRuleParser(Draft6ParserFactory))
+    val DRAFT_7 = Draft6SchemaParser(DRAFT_7_RULES(Draft7ParserFactory))
+    val DRAFT_7_ROOT = Draft6SchemaParser(DRAFT_7_RULES(Draft7ParserFactory) + DefinitionsRuleParser(Draft7ParserFactory))
 }
 
 interface SchemaRuleParserFactory {
@@ -22,7 +24,13 @@ object Draft4ParserFactory : SchemaRuleParserFactory {
 
 object Draft6ParserFactory : SchemaRuleParserFactory {
     override fun make(): SchemaParser {
-        return Draft6SchemaParser(DRAFT_4_RULES(this))
+        return Draft6SchemaParser(DRAFT_6_RULES(this))
+    }
+}
+
+object Draft7ParserFactory : SchemaRuleParserFactory {
+    override fun make(): SchemaParser {
+        return Draft7SchemaParser(DRAFT_7_RULES(this))
     }
 }
 
@@ -49,6 +57,12 @@ object Draft6SchemaUriResolver : SchemaUriResolver {
             is Left -> Pair(base, path)
             is Right -> Pair(resolveUri(base, maybeBase.r), "")
         }
+    }
+}
+
+data class Draft7SchemaParser(val parsers: List<RuleParser>): SchemaParser {
+    override fun parse(base: String, path: String, element: JsonElement): Schema {
+        return Draft6SchemaParser(parsers).parse(base, path, element)
     }
 }
 

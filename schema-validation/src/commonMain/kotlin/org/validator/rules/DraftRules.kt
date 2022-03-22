@@ -65,3 +65,9 @@ fun DRAFT_6_RULES(factory: SchemaRuleParserFactory): List<RuleParser> {
         PropertyNamesRuleParser(factory)
     )
 }
+
+fun DRAFT_7_RULES(factory: SchemaRuleParserFactory): List<RuleParser> {
+    return DRAFT_6_RULES(factory) + listOf(
+        IfThenElseRuleParser(factory)
+    )
+}
