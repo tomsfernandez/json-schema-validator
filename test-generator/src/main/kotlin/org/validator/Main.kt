@@ -11,9 +11,9 @@ import java.util.*
 
 fun main() {
     val writeTo = "/Users/tfernandez/projects/json-schema-validator/tck-test-suite/src/commonTest/kotlin"
-    val draft = "DRAFT_7"
+    val draft = "DRAFT_2019_09"
     val baseFile =
-        File("/Users/tfernandez/projects/json-schema-validator/test-generator/src/main/resources/json-schema-test-suite/draft7")
+        File("/Users/tfernandez/projects/json-schema-validator/test-generator/src/main/resources/json-schema-test-suite/draft2019-09")
     generateTestSuites(baseFile.absolutePath, baseFile, draft, writeTo)
 }
 
@@ -39,7 +39,7 @@ fun generateTest(rootPath: String, file: File, draft: String, to: String) {
     val constraint = file.absolutePath.split("/").last().split(".").first()
     val subPackagePath =
         file.absolutePath.split("/").dropLast(1).joinToString("/").replace(rootPath, "").replace("/", ".")
-    val basePackagePath = "org.validator.tck.draft7" + subPackagePath
+    val basePackagePath = "org.validator.tck.draft2019" + subPackagePath
     val test = writeSuite(constraint, obj, draft, basePackagePath)
     test.writeTo(File(to))
 }
@@ -102,4 +102,8 @@ fun clean(value: String): String {
         .replace("[", "{")
         .replace("]", "}")
         .replace("=", "_")
+        .replace("%", "percent_char")
+        .replace(";", "")
+        .replace("<", "less_than_sign")
+        .replace(">", "more_than_sign")
 }
