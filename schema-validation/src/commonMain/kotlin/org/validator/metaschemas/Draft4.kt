@@ -3,7 +3,7 @@ package org.validator.metaschemas
 import org.validator.JsonObject
 import org.validator.asObject
 import org.validator.json.JsonParser
-import org.validator.rules.DraftParsers.DRAFT_4_ROOT
+import org.validator.rules.DraftParsers.DRAFT_4
 
 object Draft4 {
 
@@ -162,5 +162,5 @@ object Draft4 {
 
     private val jsonSchemaAsJson: JsonObject = JsonParser.parse(jsonSchemaAsString).asObject().right() !!
 
-    fun schema() = DRAFT_4_ROOT.parse("#", "http://json-schema.org/draft-04/schema#", jsonSchemaAsJson)
+    fun schema() = DRAFT_4.parse("#", "http://json-schema.org/draft-04/schema#", jsonSchemaAsJson)
 }

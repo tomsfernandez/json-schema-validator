@@ -5,11 +5,9 @@ import org.validator.Either.*
 
 object DraftParsers {
     val DRAFT_4 = Draft4SchemaParser(DRAFT_4_RULES(Draft4ParserFactory))
-    val DRAFT_4_ROOT = Draft4SchemaParser(DRAFT_4_RULES(Draft4ParserFactory) + DefinitionsRuleParser(Draft4ParserFactory))
     val DRAFT_6 = Draft6SchemaParser(DRAFT_6_RULES(Draft6ParserFactory))
-    val DRAFT_6_ROOT = Draft6SchemaParser(DRAFT_6_RULES(Draft6ParserFactory) + DefinitionsRuleParser(Draft6ParserFactory))
     val DRAFT_7 = Draft6SchemaParser(DRAFT_7_RULES(Draft7ParserFactory))
-    val DRAFT_7_ROOT = Draft6SchemaParser(DRAFT_7_RULES(Draft7ParserFactory) + DefinitionsRuleParser(Draft7ParserFactory))
+    val DRAFT_2019 = Draft2019SchemaParser(DRAFT_2019_RULES(Draft2019ParserFactory))
 }
 
 interface SchemaRuleParserFactory {
@@ -31,6 +29,12 @@ object Draft6ParserFactory : SchemaRuleParserFactory {
 object Draft7ParserFactory : SchemaRuleParserFactory {
     override fun make(): SchemaParser {
         return Draft7SchemaParser(DRAFT_7_RULES(this))
+    }
+}
+
+object Draft2019ParserFactory: SchemaRuleParserFactory {
+    override fun make(): SchemaParser {
+        return Draft7SchemaParser(DRAFT_2019_RULES(this))
     }
 }
 
@@ -56,6 +60,34 @@ object Draft6SchemaUriResolver : SchemaUriResolver {
         return  when(val maybeBase = element.get("\$id").string()) {
             is Left -> Pair(base, path)
             is Right -> Pair(resolveUri(base, maybeBase.r), "")
+        }
+    }
+}
+
+data class Draft2019SchemaParser(val parsers: List<RuleParser>): SchemaParser {
+
+    private val uriResolver: SchemaUriResolver = Draft6SchemaUriResolver
+
+    override fun parse(base: String, path: String, element: JsonElement): Schema {
+        return when(element) {
+            is JsonBoolean -> parseBooleanSchema(base, path, element)
+            is JsonObject -> parseObjectSchema(base, path, element)
+            else -> Schema(base, path, Error("Schema is neither a JSON object or boolean"))
+        }
+    }
+
+    private fun parseBooleanSchema(base: String, path: String, element: JsonBoolean): Schema {
+        val rule = BooleanSchemaRule(element.value)
+        return Schema(base, path, rule)
+    }
+
+    private fun parseObjectSchema(base: String, path: String, element: JsonObject): Schema {
+        return element.asObject().fold(::Schema) { jsonObject ->
+            val (nextBase, nextPath) = uriResolver.nextUris(base, path, jsonObject)
+            val applicableParsers = parsers.filter { it.canParse(jsonObject) }
+            val parsed = applicableParsers.map { it.parse(nextBase, path.ifEmpty { "#" }, jsonObject) }
+            if (nextPath.isEmpty()) parsed.combineOnlyBase(nextBase, ::CompositeSchemaRule)
+            else parsed.combine(nextBase, nextPath, ::CompositeSchemaRule)
         }
     }
 }

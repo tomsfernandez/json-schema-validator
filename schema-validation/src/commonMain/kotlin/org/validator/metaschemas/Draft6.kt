@@ -168,5 +168,5 @@ object Draft6 {
 
     private val jsonSchemaAsJson: JsonObject = JsonParser.parse(jsonSchemaAsString).asObject().right() !!
 
-    fun schema() = DraftParsers.DRAFT_6_ROOT.parse("#", "http://json-schema.org/draft-06/schema#", jsonSchemaAsJson)
+    fun schema() = DraftParsers.DRAFT_6.parse("#", "http://json-schema.org/draft-06/schema#", jsonSchemaAsJson)
 }

@@ -41,7 +41,6 @@ fun COMMON_RULES(factory: SchemaRuleParserFactory): List<RuleParser> {
         MaxPropertiesRuleParser,
         MinPropertiesRuleParser,
         AdditionalPropertiesRuleParser(factory),
-        DefinitionsRuleParser(factory),
         PropertiesRuleParser(factory),
         MaxItemsRuleParser,
         MinItemsRuleParser,
@@ -51,8 +50,10 @@ fun COMMON_RULES(factory: SchemaRuleParserFactory): List<RuleParser> {
         PatternPropertiesRuleParser(factory),
         StringFormatRuleParser.default(),
         UniqueItemsRuleParser,
-        DependenciesRuleParser(factory),
-        ReferenceRuleParser)
+        Draft4DefinitionsRuleParser(factory),
+        ReferenceRuleParser,
+        DependenciesRuleParser(factory)
+    )
 }
 
 fun DRAFT_6_RULES(factory: SchemaRuleParserFactory): List<RuleParser> {
@@ -70,4 +71,43 @@ fun DRAFT_7_RULES(factory: SchemaRuleParserFactory): List<RuleParser> {
     return DRAFT_6_RULES(factory) + listOf(
         IfThenElseRuleParser(factory)
     )
+}
+
+fun DRAFT_2019_RULES(factory: SchemaRuleParserFactory): List<RuleParser> {
+    return listOf(
+        TypeRuleParser,
+        EnumRuleParser,
+        ConstRuleParser,
+        MultipleOfRuleParser,
+        MaximumRuleParser,
+        ExclusiveMaximumRuleParser,
+        MinimumRuleParser,
+        ExclusiveMinimumRuleParser,
+        MaxLengthRuleParser,
+        MinLengthRuleParser,
+        PatternRuleParser,
+        MaxItemsRuleParser,
+        MinItemsRuleParser,
+        UniqueItemsRuleParser,
+        MaxPropertiesRuleParser,
+        MinPropertiesRuleParser,
+        RequiredRuleParser,
+        AllOfRuleParser(factory),
+        AnyOfRuleParser(factory),
+        OneOfRuleParser(factory),
+        NotRuleParser(factory),
+        IfThenElseRuleParser(factory),
+        DependentRequiredRuleParser,
+        DependentSchemasRuleParser(factory),
+        PropertiesRuleParser(factory),
+        AdditionalPropertiesRuleParser(factory),
+        AdditionalItemsRuleParser(factory),
+        ItemsRuleParser(factory),
+        PatternPropertiesRuleParser(factory),
+        Draft2019DefsRuleParser(factory),
+        MinMaxContainsRuleParser(factory),
+        PropertyNamesRuleParser(factory),
+        ReferenceRuleParser
+    )
+    // maxContains, minContains, dependentRequired, format, dependentSchemas, unevaluatedItems, unevaluatedProperties, contentEncoding, contentMediaType, contentSchema
 }

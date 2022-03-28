@@ -10,10 +10,10 @@ import kotlin.test.assertTrue
 
 fun provideParser(draft: String): SchemaParser {
     return when(draft) {
-        "DRAFT_4" -> DraftParsers.DRAFT_4_ROOT
-        "DRAFT_6" -> DraftParsers.DRAFT_6_ROOT
-        "DRAFT_7" -> DraftParsers.DRAFT_7_ROOT
-        "DRAFT_2019_09" -> DraftParsers.DRAFT_7_ROOT
+        "DRAFT_4" -> DraftParsers.DRAFT_4
+        "DRAFT_6" -> DraftParsers.DRAFT_6
+        "DRAFT_7" -> DraftParsers.DRAFT_7
+        "DRAFT_2019_09" -> DraftParsers.DRAFT_2019
         else -> throw RuntimeException("something")
     }
 }
