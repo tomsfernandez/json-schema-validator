@@ -20,7 +20,7 @@ fun provideParser(draft: String): SchemaParser {
 
 fun run_test(schemaAsString: String, payloadAsString: String, conforms: Boolean, draft: String) {
     val json = adapt(schemaAsString)
-    val schema = provideParser(draft).parse("#", "#", json)
+    val schema = provideParser(draft).parse(json)
         .addSchema("http://json-schema.org/draft-04/schema#", Draft4.schema())
         .addSchema("http://json-schema.org/draft-06/schema#", Draft6.schema())
         .addSchema("http://json-schema.org/draft-07/schema#", Draft7.schema())

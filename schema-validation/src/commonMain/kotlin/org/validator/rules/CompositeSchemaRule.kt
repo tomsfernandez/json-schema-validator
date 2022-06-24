@@ -39,6 +39,8 @@ object Draft2019ParserFactory: SchemaRuleParserFactory {
 }
 
 interface SchemaParser {
+
+    fun parse(element: JsonElement): Schema = parse("#", "#", element)
     fun parse(base: String, path: String, element: JsonElement): Schema
 }
 
