@@ -40,6 +40,7 @@ data class Schema(val rule: SchemaRule, val errors: List<Error> = emptyList(), v
     constructor(base: String, path: String, rule: SchemaRule): this(rule, emptyList(), mapOf(enforceFragment(resolveUri(base, path)) to rule))
 
     fun addSchema(path: String, schema: Schema): Schema = copy(seen = seen + schema.seen + (path to schema.rule))
+    fun eval(json: JsonElement): List<RuleError> = rule.eval("", json, this)
 }
 
 object ErrorRule: SchemaRule {

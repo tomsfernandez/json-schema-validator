@@ -27,7 +27,7 @@ fun run_test(schemaAsString: String, payloadAsString: String, conforms: Boolean,
     assertTrue("Schema results: ${schema.errors}") { schema.errors.isEmpty() }
 
     val payloadAsObj = adapt(payloadAsString)
-    val results = schema.rule.eval("", payloadAsObj, schema)
+    val results = schema.eval(payloadAsObj)
     if (results.isEmpty() != conforms) println("Expected: $conforms, got: $results")
     assertTrue("Evaluation results: $results") { results.isEmpty() == conforms }
 }
